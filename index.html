@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -1822,7 +1822,7 @@
 <div id="half-modal" class="overlay hidden">
   <div class="modal">
     <h3 id="half-modal-title">Half Time</h3>
-    <p id="half-modal-body"></p>
+    <div id="half-modal-body" style="margin-bottom:18px;"></div>
     <div class="modal-btns">
       <button class="btn btn-green" id="half-confirm-btn" onclick="confirmHalfAction()">Start 2nd Half</button>
       <button class="btn btn-gray" onclick="closeHalfModal()">Back</button>
@@ -1986,8 +1986,17 @@ function buildProfile(includeGameRecord) {
 
 function exportProfile(includeGameRecord = false) {
   const profile  = buildProfile(includeGameRecord);
-  const safeName = (teamName || 'team').replace(/[^a-z0-9]/gi, '_');
-  const filename = `${safeName}-profile.json`;
+  const safeName = (teamName || 'team').replace(/[^a-z0-9]/gi, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
+  let filename;
+  if (includeGameRecord) {
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const dateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    const timeStr = `${pad(now.getHours())}${pad(now.getMinutes())}`;
+    filename = `${safeName}_Game_${dateStr}_${timeStr}.json`;
+  } else {
+    filename = `${safeName}-profile.json`;
+  }
 
   const blob = new Blob([JSON.stringify(profile, null, 2)], { type: 'application/json' });
   const url  = URL.createObjectURL(blob);
@@ -3336,18 +3345,36 @@ function handleHalfEnd() {
 
   if (currentHalf === 1) {
     title.textContent = 'Half Time';
-    const lines = [...players]
-      .sort((a, b) => getPlayedTime(b) - getPlayedTime(a))
-      .map(p => `${p.name}: ${fmt(getPlayedTime(p))}`)
-      .join('  \u00B7  ');
-    body.textContent = lines;
+    const sorted  = [...players].sort((a, b) => getPlayedTime(b) - getPlayedTime(a));
+    const maxTime = sorted.length ? getPlayedTime(sorted[0]) : 1;
+    const rows = sorted.map(p => {
+      const t   = getPlayedTime(p);
+      const pct = maxTime > 0 ? Math.round((t / maxTime) * 100) : 0;
+      const avatarBg = playerPhotos[p.id] ? '' : `background:${avatarColor(p.id)};`;
+      const avatarContent = playerPhotos[p.id]
+        ? `<img src="${playerPhotos[p.id]}" style="width:100%;height:100%;object-fit:cover;display:block;">`
+        : escHtml((p.name || '?')[0].toUpperCase());
+      return `<tr>
+        <td style="padding:5px 6px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:26px;height:26px;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;${avatarBg}">${avatarContent}</div>
+            <span style="font-size:0.85rem;font-weight:600;color:var(--text-card-name);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;">${escHtml(p.name)}</span>
+          </div>
+        </td>
+        <td style="padding:5px 6px;text-align:right;white-space:nowrap;font-size:0.85rem;color:var(--text-card-time);font-variant-numeric:tabular-nums;">${fmt(t)}</td>
+        <td style="padding:5px 6px;width:70px;">
+          <div class="time-bar"><div class="time-bar-fill" style="width:${pct}%;"></div></div>
+        </td>
+      </tr>`;
+    }).join('');
+    body.innerHTML = `<div style="max-height:220px;overflow-y:auto;border-radius:8px;border:1px solid var(--border);"><table style="width:100%;border-collapse:collapse;">${rows}</table></div>`;
     confirmBtn.textContent        = 'Start 2nd Half \u2192';
     confirmBtn.className          = 'btn btn-green';
     halfActionIsEnd               = false;
     document.getElementById('half-end-early-btn').style.display = 'block';
   } else {
     title.textContent = 'End Game?';
-    body.textContent  = 'This will stop all timers and show the final summary.';
+    body.innerHTML    = '<p style="color:var(--text-modal-p);font-size:0.92rem;line-height:1.5;margin:0;">This will stop all timers and show the final summary.</p>';
     confirmBtn.textContent = 'End Game';
     confirmBtn.className   = 'btn btn-red';
     halfActionIsEnd        = true;
