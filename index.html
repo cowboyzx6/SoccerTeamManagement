@@ -2276,6 +2276,14 @@ function avatarHtml(id, name, size = 38) {
   return `<div style="${s}background:${avatarColor(id)};">${escHtml((name || '?')[0].toUpperCase())}</div>`;
 }
 
+// Returns [bgStyle, innerHtml] for use in templates that provide their own container element
+function avatarParts(id, name) {
+  if (playerPhotos[id]) {
+    return ['', `<img src="${playerPhotos[id]}" style="width:100%;height:100%;object-fit:cover;display:block;">`];
+  }
+  return [`background:${avatarColor(id)};`, escHtml((name || '?')[0].toUpperCase())];
+}
+
 let photoUploadTargetId = null;
 
 function triggerPhotoUpload(id) {
@@ -2581,10 +2589,7 @@ function renderLineupField() {
     slot.onclick = () => lineupSlotTap(pos);
 
     if (assigned) {
-      const avatarBg = playerPhotos[assigned.id] ? '' : `background:${avatarColor(assigned.id)};`;
-      const avatarContent = playerPhotos[assigned.id]
-        ? `<img src="${playerPhotos[assigned.id]}" style="width:100%;height:100%;object-fit:cover;display:block;">`
-        : escHtml((assigned.name || '?')[0].toUpperCase());
+      const [avatarBg, avatarContent] = avatarParts(assigned.id, assigned.name);
       slot.innerHTML = `
         <div class="pos-label">${pos}</div>
         <div class="pos-avatar" style="${avatarBg}">${avatarContent}</div>
@@ -2697,9 +2702,9 @@ let gkSpinMode        = false;
 let gkSpinWinner      = null;
 let gkSpinPhase       = 1;
 
-function resetWheelUI() {
-  document.getElementById('goalie-wheel-title').textContent    = '1st Half Goalie';
-  document.getElementById('goalie-wheel-subtitle').textContent = 'Spin the wheel to pick!';
+function resetWheelUI(title = '1st Half Goalie', subtitle = 'Spin the wheel to pick!') {
+  document.getElementById('goalie-wheel-title').textContent    = title;
+  document.getElementById('goalie-wheel-subtitle').textContent = subtitle;
   document.getElementById('wheel-result').style.display        = 'none';
   document.getElementById('wheel-spin-btn').style.display      = 'block';
   document.getElementById('wheel-stop-btn').style.display      = 'none';
@@ -2739,13 +2744,14 @@ function openGkSpin() {
 }
 
 function confirmGkFromSpin() {
-  if (!gkSpinWinner) return;
+  const winner = gkSpinWinner;
+  if (!winner) return;
 
   if (gkSpinPhase === 1) {
     // Assign 1st half goalie to GK slot in lineupDraft
-    goalie1Id = gkSpinWinner.id;
+    goalie1Id = winner.id;
     lineupDraft.forEach(p => {
-      if (p.id === gkSpinWinner.id) { p.onField = true; p.position = 'GK'; }
+      if (p.id === winner.id) { p.onField = true; p.position = 'GK'; }
     });
 
     // Move to 2nd half pick (exclude 1st half goalie from wheel)
@@ -2755,16 +2761,11 @@ function confirmGkFromSpin() {
       .filter(p => p.id !== goalie1Id)
       .sort((a, b) => a.name.localeCompare(b.name));
 
-    document.getElementById('goalie-wheel-title').textContent    = '2nd Half Goalie';
-    document.getElementById('goalie-wheel-subtitle').textContent = 'Spin to pick!';
-    document.getElementById('wheel-result').style.display        = 'none';
-    document.getElementById('wheel-spin-btn').style.display      = 'block';
-    document.getElementById('wheel-stop-btn').style.display      = 'none';
-    document.getElementById('gk-assign-btn').style.display       = 'none';
+    resetWheelUI('2nd Half Goalie', 'Spin to pick!');
     buildWheel();
   } else {
     // Assign 2nd half goalie and proceed to lineup
-    goalie2Id = gkSpinWinner.id;
+    goalie2Id = winner.id;
     closeModal('goalie-modal');
     gkSpinMode = false;
     showScreen('lineup-screen');
@@ -2866,11 +2867,7 @@ function nextGoaliePick() {
   currentGoaliePick = 2;
   wheelPlayers      = wheelPlayers.filter(p => p.id !== goalie1Id);
 
-  document.getElementById('goalie-wheel-title').textContent    = '2nd Half Goalie';
-  document.getElementById('goalie-wheel-subtitle').textContent = 'Spin again to pick!';
-  document.getElementById('wheel-result').style.display        = 'none';
-  document.getElementById('wheel-next-btn').style.display      = 'none';
-  document.getElementById('wheel-spin-btn').style.display      = 'block';
+  resetWheelUI('2nd Half Goalie', 'Spin again to pick!');
   buildWheel();
 }
 
@@ -2905,6 +2902,9 @@ function _initGame() {
   planningBenchId = null;
   halfActionIsEnd = false;
   activeGoalieId  = goalie1Id;
+  benchSort       = 'name';
+  document.getElementById('sort-name-btn').classList.add('active');
+  document.getElementById('sort-time-btn').classList.remove('active');
 
   document.getElementById('half-pill').textContent   = 'HALF 1';
   document.getElementById('action-btn').textContent  = 'HALF';
@@ -3119,10 +3119,7 @@ function renderField(fairShare) {
         };
       }
 
-      const avatarBg = playerPhotos[player.id] ? '' : `background:${avatarColor(player.id)};`;
-      const avatarContent = playerPhotos[player.id]
-        ? `<img src="${playerPhotos[player.id]}" style="width:100%;height:100%;object-fit:cover;display:block;">`
-        : escHtml((player.name || '?')[0].toUpperCase());
+      const [avatarBg, avatarContent] = avatarParts(player.id, player.name);
 
       const incomingHtml = incomingPlayer
         ? `<div class="pos-incoming">&#8593; ${escHtml(incomingPlayer.name)}</div>`
@@ -3195,10 +3192,9 @@ function renderGrid(gridId, list, zone, fairShare) {
       if (e.target.closest('.btn-remove-player')) return;
       handleTap(player.id, zone);
     };
+    const [avatarBg, avatarContent] = avatarParts(player.id, player.name);
     card.innerHTML = `
-      <div class="p-avatar" style="background:${avatarColor(player.id)}">
-        ${playerPhotos[player.id] ? `<img src="${playerPhotos[player.id]}">` : escHtml((player.name || '?')[0].toUpperCase())}
-      </div>
+      <div class="p-avatar" style="${avatarBg}">${avatarContent}</div>
       <div class="p-info">
         <div class="p-name">${escHtml(player.name)}</div>
         <div class="p-time">${fmt(time)}</div>
@@ -3324,7 +3320,7 @@ function executeAllPlans() {
       out.onField  = false;
       out.subInAt  = null;
       out.position = null;
-      if (activeGoalieId === out.id) activeGoalieId = inId;
+      if (activeGoalieId === out.id) setActiveGoalie(inId);
     }
 
     inn.onField  = true;
@@ -3353,10 +3349,14 @@ function moveFieldPlayerToBench(id) {
   renderGame();
 }
 
-function assignGoalie(id) {
+function setActiveGoalie(id) {
   activeGoalieId = id;
   if (currentHalf === 1) goalie1Id = id;
   else goalie2Id = id;
+}
+
+function assignGoalie(id) {
+  setActiveGoalie(id);
   renderGame();
 }
 
@@ -3382,9 +3382,7 @@ function makeSub(outId, inId) {
 
   // If goalie was subbed out, incoming player takes the goalie role
   if (outId === activeGoalieId) {
-    activeGoalieId = inId;
-    if (currentHalf === 1) goalie1Id = inId;
-    else goalie2Id = inId;
+    setActiveGoalie(inId);
   }
 
   // Clear any pending plans involving the incoming player — they're now on the field
@@ -3427,13 +3425,14 @@ function closeLateModal() {
 function confirmLateArrival(rosterId) {
   const rosterPlayer = roster.find(p => p.id === rosterId);
   if (!rosterPlayer) return;
+  if (players.find(p => p.id === rosterId)) { closeLateModal(); return; }
   players.push({
     id:            rosterPlayer.id,
     name:          rosterPlayer.name,
     onField:       false,
     totalPlayed:   0,
     subInAt:       null,
-    h1Snapshot:    null,
+    h1Snapshot:    currentHalf === 2 ? 0 : null,
     position:      null,
     positionTime:  {},
     positionStart: null,
@@ -3448,7 +3447,6 @@ function confirmLateArrival(rosterId) {
 function handleHalfEnd() {
   pauseGame();
 
-  const modal     = document.getElementById('half-modal');
   const title     = document.getElementById('half-modal-title');
   const body      = document.getElementById('half-modal-body');
   const confirmBtn = document.getElementById('half-confirm-btn');
@@ -3460,10 +3458,7 @@ function handleHalfEnd() {
     const rows = sorted.map(p => {
       const t   = getPlayedTime(p);
       const pct = maxTime > 0 ? Math.round((t / maxTime) * 100) : 0;
-      const avatarBg = playerPhotos[p.id] ? '' : `background:${avatarColor(p.id)};`;
-      const avatarContent = playerPhotos[p.id]
-        ? `<img src="${playerPhotos[p.id]}" style="width:100%;height:100%;object-fit:cover;display:block;">`
-        : escHtml((p.name || '?')[0].toUpperCase());
+      const [avatarBg, avatarContent] = avatarParts(p.id, p.name);
       return `<tr>
         <td style="padding:5px 6px;">
           <div style="display:flex;align-items:center;gap:8px;">
@@ -3577,10 +3572,7 @@ function updateGoalBtn() {
   if (btn) btn.disabled = !isRunning;
 }
 
-let pendingGoalTeam = null;
-
 function openGoalModal() {
-  pendingGoalTeam = null;
   document.getElementById('goal-scorer-section').style.display = 'none';
   document.getElementById('goal-them-section').style.display   = 'none';
   document.getElementById('goal-them-preview').textContent     = scoreThem;
@@ -3591,11 +3583,9 @@ function openGoalModal() {
 
 function closeGoalModal() {
   closeModal('goal-modal');
-  pendingGoalTeam = null;
 }
 
 function recordGoal(team) {
-  pendingGoalTeam = team;
   if (team === 'us') {
     // Build scorer list from on-field + bench players
     const list = document.getElementById('goal-scorer-list');
