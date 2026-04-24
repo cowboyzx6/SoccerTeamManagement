@@ -3092,15 +3092,25 @@ function renderField() {
     if (player) {
       const hasPlan = !!plan;
       slot.className = `pos-slot ${status}${isSelected ? ' selected' : ''}${hasPlan ? ' planned-out' : ''}`;
+      slot.dataset.playerId = String(player.id);
 
       // In planning mode: tap slot to create/replace a plan
       // If slot already has a plan and no bench player is being assigned, tap cancels the plan
       if (planningBenchId !== null) {
-        slot.onclick = () => createPlan(planningBenchId, pos);
+        slot.onclick = e => {
+          if (e.target.closest('.pos-gk-btn, .pos-bench-btn')) return;
+          createPlan(planningBenchId, pos);
+        };
       } else if (hasPlan) {
-        slot.onclick = () => cancelPlanForPos(pos);
+        slot.onclick = e => {
+          if (e.target.closest('.pos-gk-btn, .pos-bench-btn')) return;
+          cancelPlanForPos(pos);
+        };
       } else {
-        slot.onclick = () => handleTap(player.id, 'field');
+        slot.onclick = e => {
+          if (e.target.closest('.pos-gk-btn, .pos-bench-btn')) return;
+          handleTap(player.id, 'field');
+        };
       }
 
       const avatarBg = playerPhotos[player.id] ? '' : `background:${avatarColor(player.id)};`;
@@ -3126,16 +3136,6 @@ function renderField() {
         <button class="pos-bench-btn" title="Move to bench">\u2193</button>
       `;
 
-      if (pos === 'GK') {
-        slot.querySelector('.pos-gk-btn').addEventListener('click', e => {
-          e.stopPropagation();
-          assignGoalie(player.id);
-        });
-      }
-      slot.querySelector('.pos-bench-btn').addEventListener('click', e => {
-        e.stopPropagation();
-        moveFieldPlayerToBench(player.id);
-      });
     } else {
       // Empty slot — allow planning a sub into an open position or selecting the slot first
       const emptyClass = planningPosition === pos ? ' slot-sel-empty' : '';
@@ -3184,7 +3184,11 @@ function renderGrid(gridId, list, zone) {
 
     const card = document.createElement('div');
     card.className = `player-card ${status}${selected}${planClass}`;
-    card.onclick   = () => handleTap(player.id, zone);
+    card.dataset.playerId = String(player.id);
+    card.onclick = e => {
+      if (e.target.closest('.btn-remove-player')) return;
+      handleTap(player.id, zone);
+    };
     card.innerHTML = `
       <div class="p-avatar" style="background:${avatarColor(player.id)}">
         ${playerPhotos[player.id] ? `<img src="${playerPhotos[player.id]}">` : escHtml((player.name || '?')[0].toUpperCase())}
@@ -3196,12 +3200,6 @@ function renderGrid(gridId, list, zone) {
       </div>
       <button class="btn-remove-player" title="Remove from game">&#10005;</button>
     `;
-
-    const btn = card.querySelector('.btn-remove-player');
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      promptRemovePlayer(player.id);
-    });
 
     grid.appendChild(card);
   });
@@ -3806,6 +3804,28 @@ loadPhotos();
 loadSettings();
 loadGameHistory();
 loadRoster();
+
+// ─────────────────────────────────────────────────────────────
+//  DELEGATED LISTENERS (attached once; survive re-renders)
+// ─────────────────────────────────────────────────────────────
+document.getElementById('field-positions').addEventListener('click', e => {
+  const gkBtn = e.target.closest('.pos-gk-btn');
+  if (gkBtn) {
+    assignGoalie(parseInt(gkBtn.closest('[data-player-id]').dataset.playerId));
+    return;
+  }
+  const benchBtn = e.target.closest('.pos-bench-btn');
+  if (benchBtn) {
+    moveFieldPlayerToBench(parseInt(benchBtn.closest('[data-player-id]').dataset.playerId));
+  }
+});
+
+document.getElementById('bench-grid').addEventListener('click', e => {
+  const removeBtn = e.target.closest('.btn-remove-player');
+  if (removeBtn) {
+    promptRemovePlayer(parseInt(removeBtn.closest('[data-player-id]').dataset.playerId));
+  }
+});
 </script>
 </body>
 </html>
