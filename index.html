@@ -1455,7 +1455,10 @@
   <div class="setup-container">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
       <button class="btn-theme" id="theme-btn" onclick="toggleTheme()">&#9728;&#65039;</button>
-      <button class="btn btn-gray" style="font-size:0.82rem;padding:6px 12px;" onclick="goToTeamSetup()">&#9881; Team Settings</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-gray" style="font-size:0.82rem;padding:6px 12px;" onclick="importGameReview()">&#128202; Review Game</button>
+        <button class="btn btn-gray" style="font-size:0.82rem;padding:6px 12px;" onclick="goToTeamSetup()">&#9881; Team Settings</button>
+      </div>
     </div>
 
     <div class="app-title">&#9917; <span id="app-title-name">My Team</span></div>
@@ -1536,6 +1539,7 @@
       <input type="file" id="photo-file-input" accept="image/*" style="display:none">
       <input type="file" id="import-file-input" accept=".json" style="display:none">
       <input type="file" id="csv-file-input" accept=".csv" style="display:none">
+      <input type="file" id="review-file-input" accept=".json" style="display:none">
       <button class="btn btn-blue" id="add-player-btn" onclick="addRosterPlayer()" disabled>Add</button>
     </div>
 
@@ -2140,6 +2144,102 @@ document.getElementById('import-file-input').addEventListener('change', function
     reader.readAsText(file);
     this.value = '';
   });
+
+// ─────────────────────────────────────────────────────────────
+//  GAME REVIEW (import a past game JSON for read-only display)
+// ─────────────────────────────────────────────────────────────
+function importGameReview() {
+  document.getElementById('review-file-input').click();
+}
+
+document.getElementById('review-file-input').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const profile = JSON.parse(ev.target.result);
+      if (!Array.isArray(profile.games) || profile.games.length === 0) {
+        alert('No game records found in this file.');
+        return;
+      }
+      const gameRecord = profile.games[profile.games.length - 1];
+      showGameReviewFromRecord(gameRecord, profile.teamName || teamName);
+    } catch {
+      alert('Invalid game file.');
+    }
+  };
+  reader.readAsText(file);
+  this.value = '';
+});
+
+function showGameReviewFromRecord(gameRecord, profileTeamName) {
+  const stats   = gameRecord.playerStats || [];
+  const sorted  = [...stats].sort((a, b) => b.secondsPlayed - a.secondsPlayed);
+  const maxTime = sorted.length ? sorted[0].secondsPlayed : 1;
+  const totalAll = stats.reduce((s, p) => s + p.secondsPlayed, 0);
+  const avg = stats.length ? Math.round(totalAll / stats.length) : 0;
+
+  const tbody = document.getElementById('summary-body');
+  tbody.innerHTML = sorted.map(p => {
+    const pct = maxTime > 0 ? Math.round((p.secondsPlayed / maxTime) * 100) : 0;
+    const posChips = Object.entries(p.positionSeconds || {})
+      .filter(([, t]) => t > 0)
+      .sort(([, a], [, b]) => b - a)
+      .map(([pos, t]) => `<span class="summary-pos-chip">${pos} <strong>${fmt(t)}</strong></span>`)
+      .join('');
+    const posHtml = posChips ? `<div class="summary-pos-breakdown">${posChips}</div>` : '';
+    return `
+      <tr>
+        <td>
+          <div class="summary-player-cell">
+            <div class="summary-player-avatar">${avatarHtml(p.id, p.name, 30)}</div>
+            <div class="summary-player-info">
+              <div class="summary-player-name">${escHtml(p.name)}</div>
+              ${posHtml}
+            </div>
+          </div>
+        </td>
+        <td>—</td>
+        <td>—</td>
+        <td class="total-col">
+          ${fmt(p.secondsPlayed)}
+          <div class="time-bar"><div class="time-bar-fill" style="width:${pct}%"></div></div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  const tn  = profileTeamName || 'Team';
+  const opp = gameRecord.opponent || 'Opponent';
+  document.getElementById('summary-team-name').textContent = tn;
+  document.getElementById('summary-vs-line').textContent =
+    `vs ${opp}  •  ${gameRecord.ourScore} – ${gameRecord.theirScore}`;
+  document.getElementById('summary-meta').textContent =
+    `${stats.length} players · Avg: ${fmt(avg)} · ${gameRecord.date || ''}`;
+
+  const gameGoals      = gameRecord.goals || [];
+  const goalsContainer = document.getElementById('summary-goals');
+  if (gameGoals.length === 0) {
+    goalsContainer.innerHTML = '<div class="summary-goal-empty">No goals recorded.</div>';
+  } else {
+    const grouped = gameGoals.reduce((acc, g) => {
+      const key = g.team === 'us' ? (g.scorer || 'Unknown') : '__opponent__';
+      if (!acc[key]) acc[key] = { team: g.team, scorer: g.scorer, count: 0 };
+      acc[key].count += 1;
+      return acc;
+    }, {});
+    goalsContainer.innerHTML = Object.values(grouped).map(entry => {
+      const label = entry.team === 'us'
+        ? escHtml(entry.scorer || 'Unknown')
+        : escHtml(opp);
+      const balls = '<span class="summary-goal-balls">' + '⚽'.repeat(entry.count) + '</span>';
+      return `<div class="summary-goal-item">${balls}<div class="summary-goal-scorer">${label}</div></div>`;
+    }).join('');
+  }
+
+  showScreen('summary-screen');
+}
 
 // ─────────────────────────────────────────────────────────────
 //  PHOTOS
