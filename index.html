@@ -2183,6 +2183,25 @@ document.getElementById('review-file-input').addEventListener('change', function
   this.value = '';
 });
 
+function renderGoalsHtml(goalsArray, opponentLabel) {
+  if (!goalsArray.length) {
+    return '<div class="summary-goal-empty">No goals recorded.</div>';
+  }
+  const grouped = goalsArray.reduce((acc, g) => {
+    const key = g.team === 'us' ? (g.scorer || 'Unknown') : '__opponent__';
+    if (!acc[key]) acc[key] = { team: g.team, scorer: g.scorer, count: 0 };
+    acc[key].count += 1;
+    return acc;
+  }, {});
+  return Object.values(grouped).map(entry => {
+    const label = entry.team === 'us'
+      ? escHtml(entry.scorer || 'Unknown')
+      : escHtml(opponentLabel);
+    const balls = '<span class="summary-goal-balls">' + '⚽'.repeat(entry.count) + '</span>';
+    return `<div class="summary-goal-item">${balls}<div class="summary-goal-scorer">${label}</div></div>`;
+  }).join('');
+}
+
 function showGameReviewFromRecord(gameRecord, profileTeamName) {
   const stats   = gameRecord.playerStats || [];
   const sorted  = [...stats].sort((a, b) => b.secondsPlayed - a.secondsPlayed);
@@ -2228,25 +2247,8 @@ function showGameReviewFromRecord(gameRecord, profileTeamName) {
   document.getElementById('summary-meta').textContent =
     `${stats.length} players · Avg: ${fmt(avg)} · ${gameRecord.date || ''}`;
 
-  const gameGoals      = gameRecord.goals || [];
-  const goalsContainer = document.getElementById('summary-goals');
-  if (gameGoals.length === 0) {
-    goalsContainer.innerHTML = '<div class="summary-goal-empty">No goals recorded.</div>';
-  } else {
-    const grouped = gameGoals.reduce((acc, g) => {
-      const key = g.team === 'us' ? (g.scorer || 'Unknown') : '__opponent__';
-      if (!acc[key]) acc[key] = { team: g.team, scorer: g.scorer, count: 0 };
-      acc[key].count += 1;
-      return acc;
-    }, {});
-    goalsContainer.innerHTML = Object.values(grouped).map(entry => {
-      const label = entry.team === 'us'
-        ? escHtml(entry.scorer || 'Unknown')
-        : escHtml(opp);
-      const balls = '<span class="summary-goal-balls">' + '⚽'.repeat(entry.count) + '</span>';
-      return `<div class="summary-goal-item">${balls}<div class="summary-goal-scorer">${label}</div></div>`;
-    }).join('');
-  }
+  document.getElementById('summary-goals').innerHTML =
+    renderGoalsHtml(gameRecord.goals || [], opp);
 
   showScreen('summary-screen');
 }
@@ -2679,7 +2681,7 @@ function launchGame() {
   const gkPlayer = lineupDraft.find(p => p.position === 'GK');
   if (gkPlayer) {
     goalie1Id = gkPlayer.id;
-    if (!goalie2Id) goalie2Id = gkPlayer.id;
+    goalie2Id = gkPlayer.id;
     startGameDirect();
   } else {
     openGoaliePicker();
@@ -2736,7 +2738,7 @@ function openGkSpin() {
   goalie1Id    = null;
   goalie2Id    = null;
 
-  wheelPlayers = [...lineupDraft].sort((a, b) => a.name.localeCompare(b.name));
+  wheelPlayers = lineupDraft.filter(p => p.onField).sort((a, b) => a.name.localeCompare(b.name));
 
   resetWheelUI();
   buildWheel();
@@ -2897,11 +2899,13 @@ function _initGame() {
   halfClock       = HALF_DURATION();
   currentHalf     = 1;
   isRunning       = false;
-  selectedId      = null;
-  subPlans        = [];
-  planningBenchId = null;
-  halfActionIsEnd = false;
-  activeGoalieId  = goalie1Id;
+  selectedId         = null;
+  subPlans           = [];
+  planningBenchId    = null;
+  planningPosition   = null;
+  selectedLineupSlot = null;
+  halfActionIsEnd    = false;
+  activeGoalieId     = goalie1Id;
   benchSort       = 'name';
   document.getElementById('sort-name-btn').classList.add('active');
   document.getElementById('sort-time-btn').classList.remove('active');
@@ -2956,6 +2960,7 @@ function tick() {
     totalElapsed++;
   } else {
     pauseGame();
+    halfActionIsEnd = currentHalf === 2;
     document.getElementById('action-btn').style.background = '#ef5350';
     document.getElementById('pause-btn').style.display = 'none';
   }
@@ -3328,9 +3333,10 @@ function executeAllPlans() {
     inn.position = pos;
     startPositionTimer(inn);
   });
-  subPlans       = [];
+  subPlans        = [];
   planningBenchId = null;
-  selectedId     = null;
+  planningPosition = null;
+  selectedId      = null;
   renderGame();
 }
 
@@ -3700,27 +3706,8 @@ function showSummary() {
   document.getElementById('summary-meta').textContent =
     `${players.length} players \u00B7 Avg: ${fmt(avg)} \u00B7 ${currentHalf === 2 ? 'Full game' : '1st half only'}`;
 
-  const goalsContainer = document.getElementById('summary-goals');
-  if (goals.length === 0) {
-    goalsContainer.innerHTML = '<div class="summary-goal-empty">No goals recorded.</div>';
-  } else {
-    const grouped = goals.reduce((acc, g) => {
-      const key = g.team === 'us' ? (g.scorer || 'Unknown') : '__opponent__';
-      if (!acc[key]) {
-        acc[key] = { team: g.team, scorer: g.scorer, count: 0 };
-      }
-      acc[key].count += 1;
-      return acc;
-    }, {});
-
-    goalsContainer.innerHTML = Object.values(grouped).map(entry => {
-      const label = entry.team === 'us'
-        ? escHtml(entry.scorer || 'Unknown')
-        : escHtml(opponentName || 'Opponent');
-      const balls = '<span class="summary-goal-balls">' + '⚽'.repeat(entry.count) + '</span>';
-      return `<div class="summary-goal-item">${balls}<div class="summary-goal-scorer">${label}</div></div>`;
-    }).join('');
-  }
+  document.getElementById('summary-goals').innerHTML =
+    renderGoalsHtml(goals, opponentName || 'Opponent');
 
   showScreen('summary-screen');
 }
