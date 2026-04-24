@@ -1952,6 +1952,26 @@ function saveGameHistory() {
 // ─────────────────────────────────────────────────────────────
 //  IMPORT / EXPORT PROFILE
 // ─────────────────────────────────────────────────────────────
+function buildGameRecord() {
+  return {
+    date:       new Date().toISOString().slice(0, 10),
+    opponent:   opponentName,
+    ourScore:   scoreUs,
+    theirScore: scoreThem,
+    goals,
+    playerStats: players.map(p => ({
+      id:            p.id,
+      name:          p.name,
+      minutesPlayed: Math.round(p.totalPlayed / 60 * 10) / 10,
+      secondsPlayed: p.totalPlayed,
+      positionSeconds: p.positionTime || {},
+      positionMinutes: Object.fromEntries(
+        Object.entries(p.positionTime || {}).map(([pos, s]) => [pos, Math.round(s / 60 * 10) / 10])
+      ),
+    })),
+  };
+}
+
 function buildProfile(includeGameRecord) {
   const profile = {
     teamName,
@@ -1965,24 +1985,7 @@ function buildProfile(includeGameRecord) {
   };
 
   if (includeGameRecord) {
-    const gameRecord = {
-      date:       new Date().toISOString().slice(0, 10),
-      opponent:   opponentName,
-      ourScore:   scoreUs,
-      theirScore: scoreThem,
-      goals,
-      playerStats: players.map(p => ({
-        id:            p.id,
-        name:          p.name,
-        minutesPlayed: Math.round(p.totalPlayed / 60 * 10) / 10,
-        secondsPlayed: p.totalPlayed,
-        positionSeconds: p.positionTime || {},
-        positionMinutes: Object.fromEntries(
-          Object.entries(p.positionTime || {}).map(([pos, s]) => [pos, Math.round(s / 60 * 10) / 10])
-        ),
-      })),
-    };
-    profile.games.push(gameRecord);
+    profile.games.push(buildGameRecord());
   }
 
   return profile;
@@ -3635,23 +3638,7 @@ function endGame() {
   });
 
   // Build game record, append to history, save, and auto-export
-  const gameRecord = {
-    date:       new Date().toISOString().slice(0, 10),
-    opponent:   opponentName,
-    ourScore:   scoreUs,
-    theirScore: scoreThem,
-    goals,
-    playerStats: players.map(p => ({
-      id:            p.id,
-      name:          p.name,
-      minutesPlayed: Math.round(p.totalPlayed / 60 * 10) / 10,
-      secondsPlayed: p.totalPlayed,
-      positionSeconds: p.positionTime || {},
-      positionMinutes: Object.fromEntries(
-        Object.entries(p.positionTime || {}).map(([pos, s]) => [pos, Math.round(s / 60 * 10) / 10])
-      ),
-    })),
-  };
+  const gameRecord = buildGameRecord();
   gameHistory.push(gameRecord);
   saveGameHistory();
 
