@@ -1795,8 +1795,8 @@
     <h3>&#9917; Goal!</h3>
 
     <div style="display:flex;gap:8px;margin-bottom:14px;">
-      <button class="btn btn-green" style="flex:1;font-size:0.95rem;" onclick="recordGoal('us')">&#9917; Our Goal</button>
-      <button class="btn btn-red"   style="flex:1;font-size:0.95rem;" onclick="recordGoal('them')">Opponent Goal</button>
+      <button id="goal-us-btn"   class="btn btn-green" style="flex:1;font-size:0.95rem;" onclick="recordGoal('us')">&#9917; Our Goal</button>
+      <button id="goal-them-btn" class="btn btn-red"   style="flex:1;font-size:0.95rem;" onclick="recordGoal('them')">Opponent Goal</button>
     </div>
 
     <!-- Our goal scorer section (shown after clicking Our Goal) -->
@@ -2395,7 +2395,7 @@ function openRenameModal(id) {
   renameTargetId = id;
   const input = document.getElementById('rename-input');
   input.value = player.name;
-  document.getElementById('rename-modal').classList.remove('hidden');
+  openModal('rename-modal');
   setTimeout(() => input.focus(), 50);
 }
 
@@ -2412,7 +2412,7 @@ function confirmRename() {
 }
 
 function closeRenameModal() {
-  document.getElementById('rename-modal').classList.add('hidden');
+  closeModal('rename-modal');
   renameTargetId = null;
 }
 
@@ -2429,7 +2429,7 @@ function removeRosterPlayer(id) {
   removeRosterTargetId = id;
   document.getElementById('remove-roster-body').textContent =
     `Remove ${player.name} from the roster permanently?`;
-  document.getElementById('remove-roster-modal').classList.remove('hidden');
+  openModal('remove-roster-modal');
 }
 
 function confirmRemoveRosterPlayer() {
@@ -2441,7 +2441,7 @@ function confirmRemoveRosterPlayer() {
 }
 
 function closeRemoveRosterModal() {
-  document.getElementById('remove-roster-modal').classList.add('hidden');
+  closeModal('remove-roster-modal');
   removeRosterTargetId = null;
 }
 
@@ -2522,7 +2522,7 @@ function showGkPicker() {
     btn.onclick = () => pickGk(p.id);
     list.appendChild(btn);
   });
-  document.getElementById('gk-picker-modal').classList.remove('hidden');
+  openModal('gk-picker-modal');
 }
 
 function pickGk(playerId) {
@@ -2533,13 +2533,13 @@ function pickGk(playerId) {
       p.position  = 'GK';
     }
   });
-  document.getElementById('gk-picker-modal').classList.add('hidden');
+  closeModal('gk-picker-modal');
   showScreen('lineup-screen');
   renderLineup();
 }
 
 function skipGkPicker() {
-  document.getElementById('gk-picker-modal').classList.add('hidden');
+  closeModal('gk-picker-modal');
   showScreen('lineup-screen');
   renderLineup();
 }
@@ -2712,12 +2712,12 @@ function openGoaliePicker() {
 
   resetWheelUI();
   buildWheel();
-  document.getElementById('goalie-modal').classList.remove('hidden');
+  openModal('goalie-modal');
 }
 
 function openGkSpin() {
   // Close the manual picker, open the wheel in GK-assign mode
-  document.getElementById('gk-picker-modal').classList.add('hidden');
+  closeModal('gk-picker-modal');
   gkSpinMode   = true;
   gkSpinPhase  = 1;
   gkSpinWinner = null;
@@ -2728,7 +2728,7 @@ function openGkSpin() {
 
   resetWheelUI();
   buildWheel();
-  document.getElementById('goalie-modal').classList.remove('hidden');
+  openModal('goalie-modal');
 }
 
 function confirmGkFromSpin() {
@@ -2758,7 +2758,7 @@ function confirmGkFromSpin() {
   } else {
     // Assign 2nd half goalie and proceed to lineup
     goalie2Id = gkSpinWinner.id;
-    document.getElementById('goalie-modal').classList.add('hidden');
+    closeModal('goalie-modal');
     gkSpinMode = false;
     showScreen('lineup-screen');
     renderLineup();
@@ -2868,7 +2868,7 @@ function nextGoaliePick() {
 }
 
 function confirmGoalies() {
-  document.getElementById('goalie-modal').classList.add('hidden');
+  closeModal('goalie-modal');
   startGameDirect();
 }
 
@@ -3211,7 +3211,7 @@ function promptRemovePlayer(id) {
   removePlayerId = id;
   document.getElementById('remove-player-body').textContent =
     `Remove ${player.name} from today's game? Their bench time will no longer affect the sub schedule.`;
-  document.getElementById('remove-player-modal').classList.remove('hidden');
+  openModal('remove-player-modal');
 }
 
 function confirmRemovePlayer() {
@@ -3224,7 +3224,7 @@ function confirmRemovePlayer() {
 }
 
 function closeRemovePlayerModal() {
-  document.getElementById('remove-player-modal').classList.add('hidden');
+  closeModal('remove-player-modal');
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -3403,11 +3403,11 @@ function openLateModal() {
     `).join('');
   }
 
-  document.getElementById('late-modal').classList.remove('hidden');
+  openModal('late-modal');
 }
 
 function closeLateModal() {
-  document.getElementById('late-modal').classList.add('hidden');
+  closeModal('late-modal');
 }
 
 function confirmLateArrival(rosterId) {
@@ -3477,7 +3477,7 @@ function handleHalfEnd() {
     document.getElementById('half-end-early-btn').style.display = 'none';
   }
 
-  modal.classList.remove('hidden');
+  openModal('half-modal');
 }
 
 function confirmHalfAction() {
@@ -3489,11 +3489,11 @@ function confirmHalfAction() {
 }
 
 function closeHalfModal() {
-  document.getElementById('half-modal').classList.add('hidden');
+  closeModal('half-modal');
 }
 
 function startSecondHalf() {
-  document.getElementById('half-modal').classList.add('hidden');
+  closeModal('half-modal');
 
   // Commit all 1st half position times before any position changes
   players.filter(p => p.onField).forEach(p => commitPositionTime(p));
@@ -3566,16 +3566,17 @@ function updateGoalBtn() {
 let pendingGoalTeam = null;
 
 function openGoalModal() {
-  if (!isRunning) return;
   pendingGoalTeam = null;
   document.getElementById('goal-scorer-section').style.display = 'none';
   document.getElementById('goal-them-section').style.display   = 'none';
   document.getElementById('goal-them-preview').textContent     = scoreThem;
-  document.getElementById('goal-modal').classList.remove('hidden');
+  document.getElementById('goal-us-btn').textContent   = teamName;
+  document.getElementById('goal-them-btn').textContent = opponentName || 'Opponent';
+  openModal('goal-modal');
 }
 
 function closeGoalModal() {
-  document.getElementById('goal-modal').classList.add('hidden');
+  closeModal('goal-modal');
   pendingGoalTeam = null;
 }
 
@@ -3619,7 +3620,7 @@ function confirmGoal(scorerName) {
 }
 
 function endGame() {
-  document.getElementById('half-modal').classList.add('hidden');
+  closeModal('half-modal');
   pauseGame();
 
   players.forEach(p => {
@@ -3732,11 +3733,11 @@ function goBackFromTeamSetup() {
 }
 
 function confirmClearData() {
-  document.getElementById('clear-data-modal').classList.remove('hidden');
+  openModal('clear-data-modal');
 }
 
 function closeClearDataModal() {
-  document.getElementById('clear-data-modal').classList.add('hidden');
+  closeModal('clear-data-modal');
 }
 
 function executeClearData() {
@@ -3764,6 +3765,9 @@ function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
+
+function openModal(id)  { document.getElementById(id).classList.remove('hidden'); }
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
 function escHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
