@@ -860,6 +860,13 @@
       margin-bottom: 4px;
     }
 
+    .summary-vs-line {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
     .summary-meta {
       color: var(--text-muted);
       font-size: 0.88rem;
@@ -1677,7 +1684,7 @@
 <div id="summary-screen" class="screen">
   <div class="summary-container">
     <div class="summary-title" id="summary-team-name">My Team</div>
-    <div style="font-size:1rem;font-weight:700;color:#607d8b;margin-bottom:4px;" id="summary-vs-line">Game Summary</div>
+    <div class="summary-vs-line" id="summary-vs-line">Game Summary</div>
     <div class="summary-meta" id="summary-meta"></div>
     <div class="summary-goals-title" id="summary-goals-title">Goals Scored</div>
     <div class="summary-goals" id="summary-goals"></div>
@@ -2934,11 +2941,13 @@ function pauseGame() {
 }
 
 function resumeGame() {
+  if (intervalId) clearInterval(intervalId);
   isRunning = true;
   const btn = document.getElementById('pause-btn');
   btn.textContent  = '\u23F8 PAUSE';
   btn.style.background = '#e65100';
   intervalId = setInterval(tick, 1000);
+  updateGoalBtn();
 }
 
 function tick() {
@@ -2976,15 +2985,16 @@ function getPlayedTime(player) {
 
 const GRACE_PERIOD = () => HALF_DURATION() / 3;
 
-function getStatus(player) {
-  if (player.id === activeGoalieId) return 's-goalie';
-  if (players.length === 0 || totalElapsed < GRACE_PERIOD()) return 's-green';
-  const fieldCount = players.filter(p => p.onField && p.id !== activeGoalieId).length;
+function computeFairShare() {
+  if (players.length === 0 || totalElapsed < GRACE_PERIOD()) return Infinity;
+  const fieldCount       = players.filter(p => p.onField && p.id !== activeGoalieId).length;
   const nonGoaliePlayers = players.filter(p => p.id !== activeGoalieId);
-  const fairShare  = nonGoaliePlayers.length > 0
-    ? (totalElapsed * fieldCount) / nonGoaliePlayers.length
-    : 0;
-  const played     = getPlayedTime(player);
+  return nonGoaliePlayers.length > 0 ? (totalElapsed * fieldCount) / nonGoaliePlayers.length : 0;
+}
+
+function getStatus(player, fairShare) {
+  if (player.id === activeGoalieId) return 's-goalie';
+  const played = getPlayedTime(player);
   if (played < fairShare * 0.75) return 's-red';
   if (played > fairShare * 1.25) return 's-yellow';
   return 's-green';
@@ -3027,8 +3037,9 @@ function renderGame() {
   document.getElementById('field-count').textContent = `(${players.filter(p => p.onField).length})`;
   document.getElementById('bench-count').textContent = bench.length ? `(${bench.length})` : '';
 
-  renderField();
-  renderGrid('bench-grid', bench, 'bench');
+  const fairShare = computeFairShare();
+  renderField(fairShare);
+  renderGrid('bench-grid', bench, 'bench', fairShare);
 
   // Sub Now button
   const subNowWrap = document.getElementById('sub-now-wrap');
@@ -3065,7 +3076,7 @@ function renderGame() {
   updateGoalBtn();
 }
 
-function renderField() {
+function renderField(fairShare) {
   const container     = document.getElementById('field-positions');
   container.innerHTML = '';
 
@@ -3073,7 +3084,7 @@ function renderField() {
   POSITION_ORDER.forEach(pos => {
     const coords = POSITIONS[pos];
     const player = players.find(p => p.onField && p.position === pos);
-    const status = player ? getStatus(player) : '';
+    const status = player ? getStatus(player, fairShare) : '';
     const isSelected = player && player.id === selectedId;
 
     const slot = document.createElement('div');
@@ -3156,11 +3167,11 @@ function renderField() {
 
 }
 
-function renderGrid(gridId, list, zone) {
+function renderGrid(gridId, list, zone, fairShare) {
   const grid = document.getElementById(gridId);
   grid.innerHTML = '';
   list.forEach(player => {
-    const status   = getStatus(player);
+    const status   = getStatus(player, fairShare);
     const time     = getPlayedTime(player);
     const selected = player.id === selectedId ? ' selected' : '';
 
@@ -3391,16 +3402,19 @@ function openLateModal() {
   const available = roster.filter(p => !inGameIds.has(p.id));
 
   const list = document.getElementById('late-player-list');
+  list.innerHTML = '';
   if (available.length === 0) {
     list.innerHTML = '<p style="color:#607d8b;text-align:center;margin:0;">Everyone on the roster is already in the game.</p>';
   } else {
-    list.innerHTML = available.map(p => `
-      <div class="lineup-player" style="margin-bottom:6px;" onclick="confirmLateArrival(${p.id})">
-        ${avatarHtml(p.id, p.name, 30)}
-        ${escHtml(p.name)}
-        <span style="font-size:0.8rem;color:var(--text-muted);">\u2192 bench</span>
-      </div>
-    `).join('');
+    available.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'lineup-player';
+      div.style.marginBottom = '6px';
+      div.innerHTML = `${avatarHtml(p.id, p.name, 30)} ${escHtml(p.name)}
+        <span style="font-size:0.8rem;color:var(--text-muted);">\u2192 bench</span>`;
+      div.addEventListener('click', () => confirmLateArrival(p.id));
+      list.appendChild(div);
+    });
   }
 
   openModal('late-modal');
@@ -3585,11 +3599,16 @@ function recordGoal(team) {
   if (team === 'us') {
     // Build scorer list from on-field + bench players
     const list = document.getElementById('goal-scorer-list');
+    list.innerHTML = '';
     const allPlayers = [...players].sort((a, b) => a.name.localeCompare(b.name));
-    list.innerHTML = allPlayers.map(p => `
-      <button class="btn btn-gray" style="width:100%;margin-bottom:6px;text-align:left;"
-        onclick="confirmGoal('${escHtml(p.name)}')">${escHtml(p.name)}</button>
-    `).join('');
+    allPlayers.forEach(p => {
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-gray';
+      btn.style.cssText = 'width:100%;margin-bottom:6px;text-align:left;';
+      btn.textContent = p.name;
+      btn.addEventListener('click', () => confirmGoal(p.name));
+      list.appendChild(btn);
+    });
     document.getElementById('goal-scorer-section').style.display = 'block';
     document.getElementById('goal-them-section').style.display   = 'none';
   } else {
