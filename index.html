@@ -2690,6 +2690,17 @@ let gkSpinMode        = false;
 let gkSpinWinner      = null;
 let gkSpinPhase       = 1;
 
+function resetWheelUI() {
+  document.getElementById('goalie-wheel-title').textContent    = '1st Half Goalie';
+  document.getElementById('goalie-wheel-subtitle').textContent = 'Spin the wheel to pick!';
+  document.getElementById('wheel-result').style.display        = 'none';
+  document.getElementById('wheel-spin-btn').style.display      = 'block';
+  document.getElementById('wheel-stop-btn').style.display      = 'none';
+  document.getElementById('wheel-next-btn').style.display      = 'none';
+  document.getElementById('goalie-confirm-btn').style.display  = 'none';
+  document.getElementById('gk-assign-btn').style.display       = 'none';
+}
+
 function openGoaliePicker() {
   goalie1Id         = null;
   goalie2Id         = null;
@@ -2699,15 +2710,7 @@ function openGoaliePicker() {
   wheelPlayers      = lineupDraft.filter(p => p.onField)
                                  .sort((a, b) => a.name.localeCompare(b.name));
 
-  document.getElementById('goalie-wheel-title').textContent    = '1st Half Goalie';
-  document.getElementById('goalie-wheel-subtitle').textContent = 'Spin the wheel to pick!';
-  document.getElementById('wheel-result').style.display        = 'none';
-  document.getElementById('wheel-spin-btn').style.display      = 'block';
-  document.getElementById('wheel-stop-btn').style.display      = 'none';
-  document.getElementById('wheel-next-btn').style.display      = 'none';
-  document.getElementById('goalie-confirm-btn').style.display  = 'none';
-  document.getElementById('gk-assign-btn').style.display       = 'none';
-
+  resetWheelUI();
   buildWheel();
   document.getElementById('goalie-modal').classList.remove('hidden');
 }
@@ -2723,15 +2726,7 @@ function openGkSpin() {
 
   wheelPlayers = [...lineupDraft].sort((a, b) => a.name.localeCompare(b.name));
 
-  document.getElementById('goalie-wheel-title').textContent    = '1st Half Goalie';
-  document.getElementById('goalie-wheel-subtitle').textContent = 'Spin the wheel to pick!';
-  document.getElementById('wheel-result').style.display        = 'none';
-  document.getElementById('wheel-spin-btn').style.display      = 'block';
-  document.getElementById('wheel-stop-btn').style.display      = 'none';
-  document.getElementById('wheel-next-btn').style.display      = 'none';
-  document.getElementById('goalie-confirm-btn').style.display  = 'none';
-  document.getElementById('gk-assign-btn').style.display       = 'none';
-
+  resetWheelUI();
   buildWheel();
   document.getElementById('goalie-modal').classList.remove('hidden');
 }
@@ -3177,7 +3172,7 @@ function renderGrid(gridId, list, zone) {
     let sublabel = 'on bench';
     if (plan) {
       const outPlayer = players.find(p => p.onField && p.position === plan.pos);
-      sublabel = `→ ${plan.pos}${outPlayer ? ` · ${outPlayer.name} out` : ''}`;
+      sublabel = `→ ${plan.pos}${outPlayer ? ` · ${escHtml(outPlayer.name)} out` : ''}`;
     } else if (isPlanning) {
       sublabel = 'tap a position slot...';
     }
