@@ -2839,17 +2839,10 @@ function showWheelResult(winner) {
 
   if (gkSpinMode) {
     gkSpinWinner = winner;
-    const phaseLabel = gkSpinPhase === 1 ? '1st Half Goalie' : '2nd Half Goalie';
-    result.innerHTML = `${avatarHtml(winner.id, winner.name, 32)} <strong>${escHtml(winner.name)}</strong> — ${phaseLabel}!`;
-    result.style.display = 'flex';
     const assignBtn = document.getElementById('gk-assign-btn');
     assignBtn.textContent = gkSpinPhase === 1 ? '✅ Assign as 1st Half Goalie →' : '✅ Set Lineup →';
     assignBtn.style.display = 'block';
   } else {
-    const halfLabel = currentGoaliePick === 1 ? '1st' : '2nd';
-    result.innerHTML = `${avatarHtml(winner.id, winner.name, 32)} <strong>${escHtml(winner.name)}</strong> — ${halfLabel} half goalie!`;
-    result.style.display = 'flex';
-
     if (currentGoaliePick === 1) {
       document.getElementById('wheel-next-btn').style.display = 'block';
     } else {
