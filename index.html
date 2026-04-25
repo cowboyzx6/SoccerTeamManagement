@@ -1714,6 +1714,8 @@
     <button class="btn btn-green btn-full" id="wheel-next-btn" onclick="nextGoaliePick()" style="display:none;margin-top:8px;">2nd Half Goalie &#8594;</button>
     <button class="btn btn-green btn-full" id="goalie-confirm-btn" onclick="confirmGoalies()" style="display:none;margin-top:8px;">Start Game &#8594;</button>
     <button class="btn btn-green btn-full" id="gk-assign-btn" onclick="confirmGkFromSpin()" style="display:none;margin-top:8px;">&#9989; Assign as GK &#8594;</button>
+    <button class="btn btn-blue btn-full" id="wheel-spin-again-btn" onclick="spinAgain()" style="display:none;margin-top:8px;">&#127920; Spin Again</button>
+    <button class="btn btn-gray btn-full" id="wheel-cancel-btn" onclick="cancelGoalieSpin()" style="display:none;margin-top:8px;">Cancel</button>
   </div>
 </div>
 
@@ -2702,6 +2704,8 @@ function resetWheelUI(title = '1st Half Goalie', subtitle = 'Spin the wheel to p
   document.getElementById('wheel-next-btn').style.display      = 'none';
   document.getElementById('goalie-confirm-btn').style.display  = 'none';
   document.getElementById('gk-assign-btn').style.display       = 'none';
+  document.getElementById('wheel-spin-again-btn').style.display = 'none';
+  document.getElementById('wheel-cancel-btn').style.display    = 'none';
 }
 
 function openGoaliePicker() {
@@ -2852,6 +2856,9 @@ function showWheelResult(winner) {
       document.getElementById('goalie-confirm-btn').style.display = 'block';
     }
   }
+
+  document.getElementById('wheel-spin-again-btn').style.display = 'block';
+  document.getElementById('wheel-cancel-btn').style.display     = 'block';
 }
 
 function nextGoaliePick() {
@@ -2860,6 +2867,23 @@ function nextGoaliePick() {
 
   resetWheelUI('2nd Half Goalie', 'Spin again to pick!');
   buildWheel();
+}
+
+function spinAgain() {
+  const title    = gkSpinMode
+    ? (gkSpinPhase === 1 ? '1st Half Goalie' : '2nd Half Goalie')
+    : (currentGoaliePick === 1 ? '1st Half Goalie' : '2nd Half Goalie');
+  resetWheelUI(title, 'Spin the wheel to pick!');
+  buildWheel();
+}
+
+function cancelGoalieSpin() {
+  closeModal('goalie-modal');
+  if (gkSpinMode) {
+    gkSpinMode = false;
+    showScreen('lineup-screen');
+    renderLineup();
+  }
 }
 
 function confirmGoalies() {
