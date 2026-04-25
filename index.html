@@ -2743,7 +2743,7 @@ function openGkSpin() {
   goalie1Id    = null;
   goalie2Id    = null;
 
-  wheelPlayers = lineupDraft.filter(p => p.onField).sort((a, b) => a.name.localeCompare(b.name));
+  wheelPlayers = [...lineupDraft].sort((a, b) => a.name.localeCompare(b.name));
 
   resetWheelUI();
   buildWheel();
