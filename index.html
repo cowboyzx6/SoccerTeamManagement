@@ -417,13 +417,12 @@
 
     /* Field panel (left 62%) */
     .field-panel {
-      flex: 1 1 62%;
+      flex: 0 0 62%;
       display: flex;
       flex-direction: column;
       padding: 8px;
       background: var(--bg-field-zone);
       border-right: 2px solid var(--accent-dark);
-      min-width: 340px;
     }
 
     .field-panel-header {
@@ -434,12 +433,12 @@
       flex-shrink: 0;
     }
 
-    /* Bench panel (right, fixed narrow width) */
+    /* Bench panel (right 38%) */
     .bench-panel {
-      flex: 0 0 230px;
+      flex: 1;
       display: flex;
       flex-direction: column;
-      padding: 8px 6px;
+      padding: 8px 10px;
       overflow-y: auto;
       overflow-x: hidden;
       min-width: 0;
