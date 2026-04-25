@@ -3161,8 +3161,9 @@ const GRACE_PERIOD = () => HALF_DURATION() / 3;
 
 function computeFairShare() {
   if (players.length === 0 || totalElapsed < GRACE_PERIOD()) return Infinity;
-  const fieldCount       = players.filter(p => p.onField && p.id !== activeGoalieId).length;
-  const nonGoaliePlayers = players.filter(p => p.id !== activeGoalieId);
+  const active           = players.filter(p => !p.leftEarly);
+  const fieldCount       = active.filter(p => p.onField && p.id !== activeGoalieId).length;
+  const nonGoaliePlayers = active.filter(p => p.id !== activeGoalieId);
   return nonGoaliePlayers.length > 0 ? (totalElapsed * fieldCount) / nonGoaliePlayers.length : 0;
 }
 
@@ -3203,7 +3204,7 @@ function setBenchSort(mode) {
 }
 
 function renderGame() {
-  const bench = players.filter(p => !p.onField).sort((a, b) =>
+  const bench = players.filter(p => !p.onField && !p.leftEarly).sort((a, b) =>
     benchSort === 'time'
       ? getPlayedTime(b) - getPlayedTime(a)
       : a.name.localeCompare(b.name)
@@ -3397,7 +3398,8 @@ function promptRemovePlayer(id) {
 }
 
 function confirmRemovePlayer() {
-  players = players.filter(p => p.id !== removePlayerId);
+  const p = players.find(p => p.id === removePlayerId);
+  if (p) p.leftEarly = true;
   subPlans = subPlans.filter(pl => pl.inId !== removePlayerId);
   if (planningBenchId === removePlayerId) planningBenchId = null;
   removePlayerId = null;
