@@ -2988,6 +2988,7 @@ function computeFairShare() {
 
 function getStatus(player, fairShare) {
   if (player.id === activeGoalieId) return 's-goalie';
+  if (fairShare === Infinity) return 's-green';
   const played = getPlayedTime(player);
   if (played < fairShare * 0.75) return 's-red';
   if (played > fairShare * 1.25) return 's-yellow';
