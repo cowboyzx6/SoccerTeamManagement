@@ -1453,7 +1453,7 @@
       <button class="btn-theme" id="theme-btn" onclick="toggleTheme()">&#9728;&#65039;</button>
       <div style="display:flex;gap:8px;">
         <button class="btn btn-gray" style="font-size:0.82rem;padding:6px 12px;" onclick="importGameReview()">&#128202; Review Game</button>
-        <button class="btn btn-gray" style="font-size:0.82rem;padding:6px 12px;" onclick="goToTeamSetup()">&#9881; Team Settings</button>
+        <button id="team-settings-btn" class="btn btn-gray" style="font-size:0.82rem;padding:6px 12px;" onclick="goToTeamSetup()">&#9881; Team Settings</button>
       </div>
     </div>
 
@@ -2353,14 +2353,17 @@ function renderGameDayCheckboxes(restoreChecked = false) {
   const empty   = document.getElementById('gameday-empty');
   const content = document.getElementById('gameday-content');
 
+  const settingsBtn = document.getElementById('team-settings-btn');
   if (!roster.length) {
-    empty.style.display   = 'block';
-    content.style.display = 'none';
+    empty.style.display          = 'block';
+    content.style.display        = 'none';
+    settingsBtn.style.display    = 'none';
     return;
   }
 
-  empty.style.display   = 'none';
-  content.style.display = 'block';
+  empty.style.display          = 'none';
+  content.style.display        = 'block';
+  settingsBtn.style.display    = '';
 
   const list   = document.getElementById('gameday-roster');
   const sorted = [...roster].sort((a, b) => a.name.localeCompare(b.name));
