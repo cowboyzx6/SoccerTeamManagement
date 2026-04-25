@@ -3172,7 +3172,7 @@ function renderGrid(gridId, list, zone, fairShare) {
     const isPlanning  = player.id === planningBenchId;
     const planClass   = plan ? ' has-plan' : (isPlanning ? ' planning-active' : '');
 
-    let sublabel = 'on bench';
+    let sublabel = '';
     if (plan) {
       const outPlayer = players.find(p => p.onField && p.position === plan.pos);
       sublabel = `→ ${plan.pos}${outPlayer ? ` · ${escHtml(outPlayer.name)} out` : ''}`;
