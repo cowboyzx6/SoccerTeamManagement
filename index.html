@@ -992,6 +992,38 @@
       font-weight: 600;
     }
 
+    /* Season summary stat cards */
+    .season-record-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .season-stat-card {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 12px 6px;
+      text-align: center;
+    }
+    .season-stat-num {
+      font-size: 1.6rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+    .season-stat-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+    .season-stat-card.s-wins   .season-stat-num { color: #66bb6a; }
+    .season-stat-card.s-losses .season-stat-num { color: #ef5350; }
+    .season-stat-card.s-gf     .season-stat-num { color: var(--accent); }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -1453,6 +1485,7 @@
       <button class="btn-theme" id="theme-btn" onclick="toggleTheme()">&#9728;&#65039;</button>
       <div style="display:flex;gap:8px;">
         <button class="btn btn-gray" style="font-size:0.82rem;padding:6px 12px;" onclick="importGameReview()">&#128202; Review Game</button>
+        <button class="btn btn-gray" style="font-size:0.82rem;padding:6px 12px;" onclick="showSeasonSummary()">&#128200; Season</button>
         <button id="team-settings-btn" class="btn btn-gray" style="font-size:0.82rem;padding:6px 12px;" onclick="goToTeamSetup()">&#9881; Team Settings</button>
       </div>
     </div>
@@ -1689,6 +1722,51 @@
       <tbody id="summary-body"></tbody>
     </table>
     <button class="btn btn-blue btn-full" onclick="goToSetup()">&#8592; New Game</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  SEASON SUMMARY SCREEN                                      -->
+<!-- ============================================================ -->
+<div id="season-summary-screen" class="screen">
+  <div class="summary-container">
+    <div class="summary-title" id="season-team-name">My Team</div>
+    <div class="summary-vs-line">Season Summary</div>
+    <div class="season-record-row">
+      <div class="season-stat-card s-wins">
+        <div class="season-stat-num" id="season-wins">0</div>
+        <div class="season-stat-label">Wins</div>
+      </div>
+      <div class="season-stat-card s-losses">
+        <div class="season-stat-num" id="season-losses">0</div>
+        <div class="season-stat-label">Losses</div>
+      </div>
+      <div class="season-stat-card">
+        <div class="season-stat-num" id="season-draws">0</div>
+        <div class="season-stat-label">Draws</div>
+      </div>
+      <div class="season-stat-card s-gf">
+        <div class="season-stat-num" id="season-gf">0</div>
+        <div class="season-stat-label">GF</div>
+      </div>
+      <div class="season-stat-card">
+        <div class="season-stat-num" id="season-ga">0</div>
+        <div class="season-stat-label">GA</div>
+      </div>
+    </div>
+    <div class="summary-meta" id="season-meta"></div>
+    <table>
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>GP</th>
+          <th>Goals</th>
+          <th>Total Time</th>
+        </tr>
+      </thead>
+      <tbody id="season-body"></tbody>
+    </table>
+    <button class="btn btn-blue btn-full" style="margin-top:16px;" onclick="goToSetup()">&#8592; Back</button>
   </div>
 </div>
 
@@ -2242,6 +2320,88 @@ function showGameReviewFromRecord(gameRecord, profileTeamName) {
     renderGoalsHtml(gameRecord.goals || [], opp);
 
   showScreen('summary-screen');
+}
+
+function showSeasonSummary() {
+  if (!gameHistory.length) {
+    alert('No games recorded yet.');
+    return;
+  }
+
+  let wins = 0, losses = 0, draws = 0, gf = 0, ga = 0;
+  const playerMap = {};
+
+  gameHistory.forEach(game => {
+    const us = game.ourScore || 0, them = game.theirScore || 0;
+    if (us > them) wins++;
+    else if (us < them) losses++;
+    else draws++;
+    gf += us;
+    ga += them;
+
+    (game.playerStats || []).forEach(ps => {
+      if (!playerMap[ps.id]) {
+        playerMap[ps.id] = { id: ps.id, name: ps.name, games: 0, seconds: 0, goals: 0, posSeconds: {} };
+      }
+      const e = playerMap[ps.id];
+      e.games++;
+      e.seconds += ps.secondsPlayed || 0;
+      Object.entries(ps.positionSeconds || {}).forEach(([pos, t]) => {
+        e.posSeconds[pos] = (e.posSeconds[pos] || 0) + t;
+      });
+    });
+
+    (game.goals || []).filter(g => g.team === 'us' && g.scorer).forEach(g => {
+      const found = Object.values(playerMap).find(p => p.name === g.scorer);
+      if (found) found.goals++;
+    });
+  });
+
+  roster.forEach(r => { if (playerMap[r.id]) playerMap[r.id].name = r.name; });
+
+  const sorted  = Object.values(playerMap).sort((a, b) => b.seconds - a.seconds);
+  const maxSecs = sorted.length ? sorted[0].seconds : 1;
+
+  document.getElementById('season-team-name').textContent = teamName;
+  document.getElementById('season-wins').textContent      = wins;
+  document.getElementById('season-losses').textContent    = losses;
+  document.getElementById('season-draws').textContent     = draws;
+  document.getElementById('season-gf').textContent        = gf;
+  document.getElementById('season-ga').textContent        = ga;
+  document.getElementById('season-meta').textContent      =
+    `${gameHistory.length} game${gameHistory.length !== 1 ? 's' : ''} · ${sorted.length} players`;
+
+  document.getElementById('season-body').innerHTML = sorted.map(p => {
+    const pct      = maxSecs > 0 ? Math.round((p.seconds / maxSecs) * 100) : 0;
+    const posChips = Object.entries(p.posSeconds)
+      .filter(([, t]) => t > 0)
+      .sort(([, a], [, b]) => b - a)
+      .map(([pos, t]) => `<span class="summary-pos-chip">${pos} <strong>${fmt(t)}</strong></span>`)
+      .join('');
+    const posHtml   = posChips ? `<div class="summary-pos-breakdown">${posChips}</div>` : '';
+    const goalsHtml = p.goals > 0 ? `<span style="color:#ffd54f">⚽ ${p.goals}</span>` : '—';
+    return `
+      <tr>
+        <td>
+          <div class="summary-player-cell">
+            <div class="summary-player-avatar">${avatarHtml(p.id, p.name, 30)}</div>
+            <div class="summary-player-info">
+              <div class="summary-player-name">${escHtml(p.name)}</div>
+              ${posHtml}
+            </div>
+          </div>
+        </td>
+        <td>${p.games}</td>
+        <td>${goalsHtml}</td>
+        <td class="total-col">
+          ${fmt(p.seconds)}
+          <div class="time-bar"><div class="time-bar-fill" style="width:${pct}%"></div></div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  showScreen('season-summary-screen');
 }
 
 // ─────────────────────────────────────────────────────────────
