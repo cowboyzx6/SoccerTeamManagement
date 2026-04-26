@@ -251,6 +251,107 @@
       margin-bottom: 12px;
     }
 
+    /* ===== GAMEDAY PLAYER TILES ===== */
+    .gameday-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .player-tile {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 14px 10px 12px;
+      border-radius: 12px;
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      cursor: pointer;
+      gap: 8px;
+      user-select: none;
+      -webkit-user-select: none;
+      opacity: 0.55;
+      transition: background 0.2s, border-color 0.2s, opacity 0.2s, transform 0.1s;
+    }
+
+    .player-tile.selected {
+      background: rgba(79, 195, 247, 0.08);
+      border-color: var(--accent);
+      opacity: 1;
+    }
+
+    [data-theme="light"] .player-tile.selected {
+      background: rgba(21, 101, 192, 0.08);
+    }
+
+    .player-tile:active { transform: scale(0.95); }
+
+    .player-tile .player-name-text {
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .tile-check {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--bg-deep);
+      font-size: 11px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.4);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .player-tile.selected .tile-check {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .attendance-counter {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .attendance-big {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .attendance-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      min-width: 40px;
+    }
+
+    .attendance-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
     /* ===== THEME TOGGLE ===== */
     .theme-toggle {
       display: flex;
@@ -413,9 +514,9 @@
       min-width: 0;
     }
 
-    /* Field panel (left 62%) */
+    /* Field panel (left 55%) */
     .field-panel {
-      flex: 0 0 62%;
+      flex: 0 0 55%;
       display: flex;
       flex-direction: column;
       padding: 8px;
@@ -507,10 +608,9 @@
     }
     .bench-sort-btn:not(.active):active { opacity: 0.7; }
 
-    /* Bench grid — 2 columns */
     .player-grid {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 6px;
       min-width: 0;
       width: 100%;
@@ -519,16 +619,16 @@
     /* Player cards (bench) */
     .player-card {
       border-radius: 10px;
-      padding: 7px 8px;
+      padding: 5px 6px;
       cursor: pointer;
       border: 2px solid transparent;
       transition: transform 0.1s;
       position: relative;
-      min-height: 56px;
+      min-height: 46px;
       display: flex;
       flex-direction: row;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       min-width: 0;
       width: 100%;
     }
@@ -703,11 +803,11 @@
     }
 
     .lineup-field-panel {
-      flex: 0 0 62%;
+      flex: 0 0 46%;
       display: flex;
       flex-direction: column;
       padding: 10px;
-      background: var(--bg-field-zone);
+      background: var(--bg-deep);
       border-right: 2px solid var(--accent-dark);
     }
 
@@ -742,28 +842,64 @@
     .lineup-unassigned-list {
       flex: 1;
       overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      align-content: start;
     }
 
     .lineup-player {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 5px;
       background: var(--border);
-      border-radius: 8px;
-      padding: 8px 10px;
+      border-radius: 10px;
+      padding: 10px 6px 8px;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.72rem;
       font-weight: 600;
       color: var(--text);
+      text-align: center;
+      line-height: 1.25;
+      word-break: break-word;
       transition: background 0.15s, transform 0.1s;
       border: 2px solid transparent;
     }
 
-    .lineup-player:active { transform: scale(0.97); }
+    .lineup-player:active { transform: scale(0.95); }
     .lineup-player.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(79,195,247,0.25); }
+
+    .lineup-player-name {
+      font-size: 0.72rem;
+      font-weight: 600;
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    /* Schematic tactical board for lineup */
+    #lineup-field-diagram {
+      background: linear-gradient(175deg, #0a1628 0%, #0d1e35 100%);
+      border-radius: 8px;
+      border: 1px solid rgba(79,195,247,0.12);
+    }
+    #lineup-field-diagram .field-lines { display: none; }
+
+    .formation-lines {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+
+    /* Slot overrides for schematic context */
+    #lineup-field-positions .pos-slot {
+      width: 76px;
+    }
+    #lineup-field-positions .slot-empty {
+      background: rgba(79,195,247,0.06);
+      border-color: rgba(79,195,247,0.25);
+    }
 
     .lineup-empty {
       padding: 12px;
@@ -1219,21 +1355,6 @@
       padding: 0 20px;
     }
 
-    .wheel-result {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--status-goalie-bg);
-      border: 1px solid #00acc1;
-      border-radius: 10px;
-      padding: 12px 16px;
-      margin-bottom: 12px;
-      font-size: 0.95rem;
-      color: var(--text);
-      font-weight: 600;
-    }
-
-    .wheel-result strong { color: #00acc1; }
 
     /* ===== FIELD DIAGRAM ===== */
     .field-diagram {
@@ -1377,28 +1498,34 @@
     /* bench button on pos-slot */
     .pos-bench-btn {
       position: absolute;
-      bottom: 2px;
-      right: 2px;
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.25);
-      font-size: 0.72rem;
-      color: rgba(255,255,255,0.75);
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.25);
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      border-radius: 0 0 6px 6px;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.65);
       cursor: pointer;
-      padding: 2px 5px;
-      border-radius: 3px;
+      padding: 3px 0;
       line-height: 1;
-      min-width: 22px;
-      min-height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 100%;
+      text-align: center;
+      display: block;
     }
 
-    .pos-bench-btn:active { color: #fff; background: rgba(255,255,255,0.28); }
+    .pos-bench-btn:active { color: #fff; background: rgba(255,255,255,0.18); }
 
     /* ===== SUB PLANNING ===== */
     /* Field slot with a bench player planned to come in */
     .pos-slot.planned-out { border-style: dashed; border-color: #ff9800 !important; }
+
+    /* Filled slot that's a valid swap target (bench player selected) */
+    .pos-slot.slot-target {
+      box-shadow: 0 0 0 2px rgba(79,195,247,0.45);
+      border-color: rgba(79,195,247,0.6) !important;
+    }
 
     /* Incoming player strip at bottom of field slot */
     .pos-incoming {
@@ -1508,15 +1635,16 @@
       </div>
 
       <div class="section-header" style="margin-top:16px;">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span class="section-title">Today's Lineup</span>
-          <button class="btn btn-gray" style="font-size:0.72rem;padding:6px 10px;" onclick="checkAllPlayers()">Check All</button>
-        </div>
-        <span class="badge" id="selected-count">0 checked</span>
+        <span class="section-title">Who Showed Up?</span>
+        <button class="btn btn-gray" id="check-all-btn" style="font-size:0.72rem;padding:6px 10px;" onclick="checkAllPlayers()">Select All</button>
       </div>
-      <p class="setup-note">Check the players who showed up.</p>
+      <div class="attendance-counter">
+        <span class="attendance-big" id="selected-count">0</span>
+        <span>/ <span id="total-count">0</span> attending</span>
+        <div class="attendance-bar"><div class="attendance-bar-fill" id="attendance-bar-fill"></div></div>
+      </div>
 
-      <div id="gameday-roster" class="roster-list"></div>
+      <div id="gameday-roster" class="gameday-grid"></div>
 
       <div class="half-duration-row">
         <span class="half-duration-label">Minutes per half</span>
@@ -1673,6 +1801,7 @@
         <div class="bench-sort-toggle">
           <button class="bench-sort-btn active" id="sort-name-btn" onclick="setBenchSort('name')">Name</button>
           <button class="bench-sort-btn" id="sort-time-btn" onclick="setBenchSort('time')">Time</button>
+          <button class="bench-sort-btn" id="sort-priority-btn" onclick="setBenchSort('priority')">Priority</button>
         </div>
         <button class="btn-late" onclick="openLateModal()">+ Late Arrival</button>
       </div>
@@ -1785,8 +1914,6 @@
       <div class="wheel-track" id="wheel-track"></div>
     </div>
 
-    <div class="wheel-result" id="wheel-result" style="display:none;"></div>
-
     <button class="btn btn-blue btn-full" id="wheel-spin-btn" onclick="spinWheel()">&#127920; Spin!</button>
     <button class="btn btn-orange btn-full" id="wheel-stop-btn" onclick="stopWheel()" style="display:none;margin-top:8px;">&#9995; Stop!</button>
     <button class="btn btn-green btn-full" id="wheel-next-btn" onclick="nextGoaliePick()" style="display:none;margin-top:8px;">2nd Half Goalie &#8594;</button>
@@ -1830,10 +1957,11 @@
 <!-- ============================================================ -->
 <div id="gk-picker-modal" class="overlay hidden">
   <div class="modal">
-    <h3>Pick a Goalkeeper</h3>
+    <h3>🧤 Pick a Goalkeeper</h3>
     <p style="color:var(--text-modal-p);font-size:0.85rem;margin-bottom:12px;">Tap a player to assign them to GK.</p>
     <div id="gk-picker-list" style="margin-bottom:16px;max-height:480px;overflow-y:auto;"></div>
-    <button class="btn btn-blue btn-full" style="margin-bottom:8px;" onclick="openGkSpin()">&#127920; Spin to Pick 1st Half Goalie</button>
+    <div style="border-top:1px solid var(--border);margin-bottom:16px;"></div>
+    <button class="btn btn-blue btn-full" style="margin-bottom:8px;" onclick="openGkSpin()">🎲 Spin to Pick 1st Half Goalie</button>
     <button class="btn btn-gray" style="width:100%;" onclick="skipGkPicker()">Skip — Assign Later</button>
   </div>
 </div>
@@ -1926,6 +2054,25 @@ const POSITIONS = {
 };
 const POSITION_ORDER = ['LF','CF','RF','LM','CM','RM','LD','RD','GK'];
 
+const FORMATION_SVG = `<svg class="formation-lines" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="rgba(79,195,247,0.18)" stroke-width="0.8" fill="none">
+    <line x1="22" y1="8"  x2="50" y2="8"/>
+    <line x1="50" y1="8"  x2="78" y2="8"/>
+    <line x1="16" y1="35" x2="50" y2="35"/>
+    <line x1="50" y1="35" x2="84" y2="35"/>
+    <line x1="30" y1="62" x2="70" y2="62"/>
+    <line x1="22" y1="8"  x2="16" y2="35"/>
+    <line x1="50" y1="8"  x2="50" y2="35"/>
+    <line x1="78" y1="8"  x2="84" y2="35"/>
+    <line x1="16" y1="35" x2="30" y2="62"/>
+    <line x1="50" y1="35" x2="30" y2="62"/>
+    <line x1="50" y1="35" x2="70" y2="62"/>
+    <line x1="84" y1="35" x2="70" y2="62"/>
+    <line x1="30" y1="62" x2="50" y2="87"/>
+    <line x1="70" y1="62" x2="50" y2="87"/>
+  </g>
+</svg>`;
+
 const FIELD_SVG = `<svg class="field-lines" viewBox="0 50 100 50" preserveAspectRatio="none">
   <line x1="3" y1="50" x2="3"  y2="98" stroke="rgba(255,255,255,0.22)" stroke-width="0.8"/>
   <line x1="97" y1="50" x2="97" y2="98" stroke="rgba(255,255,255,0.22)" stroke-width="0.8"/>
@@ -1971,7 +2118,8 @@ let goals             = [];  // [{ scorer: name|null, half: 1|2, team: 'us'|'the
 let gameHistory       = [];  // persisted across games
 
 // Lineup screen state
-let selectedLineupSlot = null; // 'LF' | 'CF' | ... | null
+let selectedLineupSlot   = null; // 'LF' | 'CF' | ... | null
+let selectedLineupPlayer = null; // player id | null
 
 const HALF_DURATION   = () => halfMinutes * 60;
 const FIELD_SIZE      = 9;
@@ -2352,7 +2500,9 @@ function showSeasonSummary() {
     });
 
     (game.goals || []).filter(g => g.team === 'us' && g.scorer).forEach(g => {
-      const found = Object.values(playerMap).find(p => p.name === g.scorer);
+      const found = g.scorerId != null
+        ? Object.values(playerMap).find(p => p.id === g.scorerId)
+        : Object.values(playerMap).find(p => p.name === g.scorer);
       if (found) found.goals++;
     });
   });
@@ -2496,16 +2646,15 @@ function renderTeamSetupRoster() {
   }
   const sorted = [...roster].sort((a, b) => a.name.localeCompare(b.name));
   list.innerHTML = sorted.map(p => `
-    <label class="roster-item" for="ts-${p.id}">
-      <div class="roster-avatar-btn" onclick="triggerPhotoUpload(${p.id}); event.preventDefault(); event.stopPropagation();">
+    <div class="roster-item">
+      <div class="roster-avatar-btn" onclick="triggerPhotoUpload(${p.id})">
         ${avatarHtml(p.id, p.name, 36)}
         <div class="avatar-overlay">Photo</div>
       </div>
-      <input type="checkbox" id="ts-${p.id}" style="display:none;">
       <span class="player-name-text">${escHtml(p.name)}</span>
-      <button class="btn-rename" onclick="openRenameModal(${p.id}); event.preventDefault(); event.stopPropagation();">&#9998;</button>
+      <button class="btn-rename" onclick="openRenameModal(${p.id}); event.stopPropagation();">&#9998;</button>
       <button class="btn-remove" onclick="removeRosterPlayer(${p.id}); event.stopPropagation();">&#10005;</button>
-    </label>
+    </div>
   `).join('');
 }
 
@@ -2515,28 +2664,33 @@ function renderGameDayCheckboxes(restoreChecked = false) {
 
   const settingsBtn = document.getElementById('team-settings-btn');
   if (!roster.length) {
-    empty.style.display          = 'block';
-    content.style.display        = 'none';
-    settingsBtn.style.display    = 'none';
+    empty.style.display       = 'block';
+    content.style.display     = 'none';
+    settingsBtn.style.display = 'none';
     return;
   }
 
-  empty.style.display          = 'none';
-  content.style.display        = 'block';
-  settingsBtn.style.display    = '';
+  empty.style.display       = 'none';
+  content.style.display     = 'block';
+  settingsBtn.style.display = '';
 
   const list   = document.getElementById('gameday-roster');
   const sorted = [...roster].sort((a, b) => a.name.localeCompare(b.name));
-  list.innerHTML = sorted.map(p => `
-    <label class="roster-item" for="cb-${p.id}">
-      <div style="pointer-events:none;">
-        ${avatarHtml(p.id, p.name, 36)}
-      </div>
-      <input type="checkbox" id="cb-${p.id}" onchange="updateCheckedCount()"
-        ${restoreChecked && savedChecked.has(p.id) ? 'checked' : ''}>
+  list.innerHTML = sorted.map(p => {
+    const sel = restoreChecked && savedChecked.has(p.id);
+    return `<div class="player-tile${sel ? ' selected' : ''}" id="tile-${p.id}" onclick="togglePlayerTile(${p.id})">
+      <div class="tile-check">&#10003;</div>
+      ${avatarHtml(p.id, p.name, 48)}
       <span class="player-name-text">${escHtml(p.name)}</span>
-    </label>
-  `).join('');
+    </div>`;
+  }).join('');
+  updateCheckedCount();
+}
+
+function togglePlayerTile(id) {
+  const tile = document.getElementById(`tile-${id}`);
+  if (!tile) return;
+  tile.classList.toggle('selected');
   updateCheckedCount();
 }
 
@@ -2617,13 +2771,23 @@ function closeRemoveRosterModal() {
 }
 
 function updateCheckedCount() {
-  const n = checkedPlayers().length;
-  document.getElementById('selected-count').textContent = `${n} checked`;
+  const n     = checkedPlayers().length;
+  const total = roster.length;
+  document.getElementById('selected-count').textContent = n;
+  const totalEl = document.getElementById('total-count');
+  if (totalEl) totalEl.textContent = total;
+  const fill = document.getElementById('attendance-bar-fill');
+  if (fill) fill.style.width = total ? `${(n / total) * 100}%` : '0%';
+  const btn = document.getElementById('check-all-btn');
+  if (btn) btn.textContent = (n === total && total > 0) ? 'Deselect All' : 'Select All';
   updateStartBtn();
 }
 
 function checkAllPlayers() {
-  document.querySelectorAll('#gameday-roster input[type="checkbox"]').forEach(cb => cb.checked = true);
+  const selectAll = checkedPlayers().length < roster.length;
+  document.querySelectorAll('#gameday-roster .player-tile').forEach(tile => {
+    tile.classList.toggle('selected', selectAll);
+  });
   updateCheckedCount();
 }
 
@@ -2635,8 +2799,8 @@ function updateStartBtn() {
 
 function checkedPlayers() {
   return roster.filter(p => {
-    const cb = document.getElementById(`cb-${p.id}`);
-    return cb && cb.checked;
+    const tile = document.getElementById(`tile-${p.id}`);
+    return tile && tile.classList.contains('selected');
   });
 }
 
@@ -2678,7 +2842,8 @@ function goToLineup() {
     position: null,
   }));
 
-  selectedLineupSlot = null;
+  selectedLineupSlot   = null;
+  selectedLineupPlayer = null;
   showGkPicker();
 }
 
@@ -2688,8 +2853,8 @@ function showGkPicker() {
   lineupDraft.forEach(p => {
     const btn = document.createElement('button');
     btn.className = 'btn btn-gray';
-    btn.style.cssText = 'width:100%;margin-bottom:8px;text-align:left;font-size:1rem;';
-    btn.textContent = p.name;
+    btn.style.cssText = 'width:100%;margin-bottom:8px;text-align:left;font-size:1rem;display:flex;align-items:center;gap:12px;padding:10px 14px;';
+    btn.innerHTML = `${avatarHtml(p.id, p.name, 36)}<span>${escHtml(p.name)}</span>`;
     btn.onclick = () => pickGk(p.id);
     list.appendChild(btn);
   });
@@ -2716,7 +2881,8 @@ function skipGkPicker() {
 }
 
 function goBackFromLineup() {
-  selectedLineupSlot = null;
+  selectedLineupSlot   = null;
+  selectedLineupPlayer = null;
   showScreen('setup-screen');
   renderGameDayCheckboxes(true);
 }
@@ -2739,7 +2905,11 @@ function renderLineupField() {
     const assigned = lineupDraft.find(p => p.position === pos);
 
     const slot = document.createElement('div');
-    slot.className = 'pos-slot ' + (assigned ? 'slot-filled' : (selectedLineupSlot === pos ? 'slot-sel-empty' : 'slot-empty'));
+    const slotClass = assigned ? 'slot-filled'
+      : selectedLineupSlot === pos ? 'slot-sel-empty'
+      : selectedLineupPlayer !== null ? 'slot-sel-empty'  // player selected — all empty slots glow
+      : 'slot-empty';
+    slot.className = 'pos-slot ' + slotClass;
     slot.style.left = coords.x + '%';
     slot.style.top  = coords.y + '%';
     slot.onclick = () => lineupSlotTap(pos);
@@ -2771,8 +2941,12 @@ function renderLineupPlayers() {
   if (selectedLineupSlot) {
     hint.textContent = `Slot ${selectedLineupSlot} selected — tap a player to assign them.`;
     hint.className   = 'lineup-hint active';
+  } else if (selectedLineupPlayer) {
+    const p = lineupDraft.find(p => p.id === selectedLineupPlayer);
+    hint.textContent = `${p ? p.name : 'Player'} selected — tap a position slot to place them.`;
+    hint.className   = 'lineup-hint active';
   } else {
-    hint.textContent = 'Tap a position slot on the field, then tap a player here to assign them.';
+    hint.textContent = 'Tap a position or a player to start assigning.';
     hint.className   = 'lineup-hint';
   }
 
@@ -2784,8 +2958,8 @@ function renderLineupPlayers() {
   list.innerHTML = '';
   unassigned.forEach(p => {
     const item = document.createElement('div');
-    item.className = 'lineup-player';
-    item.innerHTML = `${avatarHtml(p.id, p.name, 28)} ${escHtml(p.name)}`;
+    item.className = 'lineup-player' + (p.id === selectedLineupPlayer ? ' selected' : '');
+    item.innerHTML = `${avatarHtml(p.id, p.name, 44)}<span class="lineup-player-name">${escHtml(p.name)}</span>`;
     item.onclick = () => lineupPlayerTap(p.id);
     list.appendChild(item);
   });
@@ -2793,28 +2967,50 @@ function renderLineupPlayers() {
 
 function lineupSlotTap(pos) {
   const assigned = lineupDraft.find(p => p.position === pos);
+
   if (assigned) {
-    // Unassign — move back to bench and remove position
+    // Tap a filled slot → unassign that player
     assigned.position = null;
     assigned.onField  = false;
-    selectedLineupSlot = null;
+    selectedLineupSlot   = null;
+    selectedLineupPlayer = null;
+  } else if (selectedLineupPlayer !== null) {
+    // Player already selected → assign them to this slot
+    const player = lineupDraft.find(p => p.id === selectedLineupPlayer);
+    if (player) {
+      player.position = pos;
+      player.onField  = true;
+    }
+    selectedLineupPlayer = null;
+    selectedLineupSlot   = null;
   } else if (selectedLineupSlot === pos) {
-    // Deselect
+    // Tap the already-selected slot → deselect
     selectedLineupSlot = null;
   } else {
-    // Select this slot
+    // Select this empty slot
     selectedLineupSlot = pos;
   }
   renderLineup();
 }
 
 function lineupPlayerTap(id) {
-  if (!selectedLineupSlot) return;
-  const player = lineupDraft.find(p => p.id === id);
-  if (!player) return;
-  player.position = selectedLineupSlot;
-  player.onField  = true;
-  selectedLineupSlot = null;
+  if (selectedLineupSlot !== null) {
+    // Slot already selected → assign this player to it
+    const player = lineupDraft.find(p => p.id === id);
+    if (player) {
+      player.position = selectedLineupSlot;
+      player.onField  = true;
+    }
+    selectedLineupSlot   = null;
+    selectedLineupPlayer = null;
+  } else if (selectedLineupPlayer === id) {
+    // Tap the already-selected player → deselect
+    selectedLineupPlayer = null;
+  } else {
+    // Select this player
+    selectedLineupPlayer = id;
+    selectedLineupSlot   = null;
+  }
   renderLineup();
 }
 
@@ -2831,12 +3027,20 @@ function launchGame() {
   const fieldPlayers = lineupDraft.filter(p => p.onField);
   if (fieldPlayers.length < 1) return;
 
-  // If GK slot is filled, skip the wheel
   const gkPlayer = lineupDraft.find(p => p.position === 'GK');
   if (gkPlayer) {
-    goalie1Id = gkPlayer.id;
-    goalie2Id = gkPlayer.id;
-    startGameDirect();
+    goalie1Id         = gkPlayer.id;
+    goalie2Id         = gkPlayer.id;
+    currentGoaliePick = 2;
+    gkSpinMode        = false;
+    gkSpinWinner      = null;
+    wheelPlayers      = lineupDraft
+      .filter(p => p.onField && p.id !== goalie1Id)
+      .sort((a, b) => a.name.localeCompare(b.name));
+    if (!wheelPlayers.length) { startGameDirect(); return; }
+    resetWheelUI('2nd Half Goalie', `1st half: ${gkPlayer.name} · Spin to pick 2nd half goalie`);
+    buildWheel();
+    openModal('goalie-modal');
   } else {
     openGoaliePicker();
   }
@@ -2861,7 +3065,6 @@ let gkSpinPhase       = 1;
 function resetWheelUI(title = '1st Half Goalie', subtitle = 'Spin the wheel to pick!') {
   document.getElementById('goalie-wheel-title').textContent    = title;
   document.getElementById('goalie-wheel-subtitle').textContent = subtitle;
-  document.getElementById('wheel-result').style.display        = 'none';
   document.getElementById('wheel-spin-btn').style.display      = 'block';
   document.getElementById('wheel-stop-btn').style.display      = 'none';
   document.getElementById('wheel-next-btn').style.display      = 'none';
@@ -2998,8 +3201,6 @@ function stopWheel() {
 }
 
 function showWheelResult(winner) {
-  const result = document.getElementById('wheel-result');
-
   if (gkSpinMode) {
     gkSpinWinner = winner;
     const assignBtn = document.getElementById('gk-assign-btn');
@@ -3078,6 +3279,7 @@ function _initGame() {
   benchSort       = 'name';
   document.getElementById('sort-name-btn').classList.add('active');
   document.getElementById('sort-time-btn').classList.remove('active');
+  document.getElementById('sort-priority-btn').classList.remove('active');
 
   document.getElementById('half-pill').textContent   = 'HALF 1';
   document.getElementById('action-btn').textContent  = 'HALF';
@@ -3200,20 +3402,26 @@ function setBenchSort(mode) {
   benchSort = mode;
   document.getElementById('sort-name-btn').classList.toggle('active', mode === 'name');
   document.getElementById('sort-time-btn').classList.toggle('active', mode === 'time');
+  document.getElementById('sort-priority-btn').classList.toggle('active', mode === 'priority');
   renderGame();
 }
 
 function renderGame() {
-  const bench = players.filter(p => !p.onField && !p.leftEarly).sort((a, b) =>
-    benchSort === 'time'
-      ? getPlayedTime(b) - getPlayedTime(a)
-      : a.name.localeCompare(b.name)
-  );
+  const fairShare = computeFairShare();
+  const STATUS_PRI = { 's-red': 0, 's-green': 1, 's-yellow': 2, 's-goalie': 3 };
+  const bench = players.filter(p => !p.onField && !p.leftEarly).sort((a, b) => {
+    if (benchSort === 'time')     return getPlayedTime(b) - getPlayedTime(a);
+    if (benchSort === 'priority') {
+      const pa = STATUS_PRI[getStatus(a, fairShare)] ?? 1;
+      const pb = STATUS_PRI[getStatus(b, fairShare)] ?? 1;
+      return pa !== pb ? pa - pb : a.name.localeCompare(b.name);
+    }
+    return a.name.localeCompare(b.name);
+  });
 
   document.getElementById('field-count').textContent = `(${players.filter(p => p.onField).length})`;
   document.getElementById('bench-count').textContent = bench.length ? `(${bench.length})` : '';
 
-  const fairShare = computeFairShare();
   renderField(fairShare);
   renderGrid('bench-grid', bench, 'bench', fairShare);
 
@@ -3227,7 +3435,7 @@ function renderGame() {
   const hint = document.getElementById('sub-hint');
   if (planningBenchId !== null) {
     const p = players.find(p => p.id === planningBenchId);
-    hint.textContent = p ? `Tap a position slot to plan ${p.name}'s sub` : '';
+    hint.textContent = p ? `${p.name} selected — tap any field slot to swap in` : '';
     hint.className   = 'sub-hint active';
     document.getElementById('sub-status').textContent = '↓ select position';
   } else if (planningPosition !== null) {
@@ -3272,12 +3480,12 @@ function renderField(fairShare) {
     const incomingPlayer = plan ? players.find(p => p.id === plan.inId) : null;
 
     if (player) {
-      const hasPlan = !!plan;
-      slot.className = `pos-slot ${status}${isSelected ? ' selected' : ''}${hasPlan ? ' planned-out' : ''}`;
+      const hasPlan    = !!plan;
+      const isTarget   = planningBenchId !== null && !hasPlan;
+      slot.className = `pos-slot ${status}${isSelected ? ' selected' : ''}${hasPlan ? ' planned-out' : ''}${isTarget ? ' slot-target' : ''}`;
       slot.dataset.playerId = String(player.id);
 
-      // In planning mode: tap slot to create/replace a plan
-      // If slot already has a plan and no bench player is being assigned, tap cancels the plan
+      // Bench player selected → tap filled slot to queue a planned sub
       if (planningBenchId !== null) {
         slot.onclick = e => {
           if (e.target.closest('.pos-gk-btn, .pos-bench-btn')) return;
@@ -3316,8 +3524,8 @@ function renderField(fairShare) {
       `;
 
     } else {
-      // Empty slot — allow planning a sub into an open position or selecting the slot first
-      const emptyClass = planningPosition === pos ? ' slot-sel-empty' : '';
+      // Empty slot — glow when bench player selected or this slot is selected
+      const emptyClass = (planningPosition === pos || planningBenchId !== null) ? ' slot-sel-empty' : '';
       slot.className = 'pos-slot slot-empty' + emptyClass;
       slot.innerHTML = `
         <div class="pos-label">${pos}</div>
@@ -3399,9 +3607,22 @@ function promptRemovePlayer(id) {
 
 function confirmRemovePlayer() {
   const p = players.find(p => p.id === removePlayerId);
-  if (p) p.leftEarly = true;
+  if (p) {
+    if (p.onField) {
+      commitPositionTime(p);
+      if (p.subInAt !== null) {
+        p.totalPlayed += totalElapsed - p.subInAt;
+        p.subInAt = null;
+      }
+      p.onField  = false;
+      p.position = null;
+    }
+    p.leftEarly = true;
+  }
   subPlans = subPlans.filter(pl => pl.inId !== removePlayerId);
   if (planningBenchId === removePlayerId) planningBenchId = null;
+  if (selectedId      === removePlayerId) selectedId      = null;
+  if (activeGoalieId  === removePlayerId) activeGoalieId  = null;
   removePlayerId = null;
   closeRemovePlayerModal();
   renderGame();
@@ -3774,7 +3995,7 @@ function recordGoal(team) {
       btn.className = 'btn btn-gray';
       btn.style.cssText = 'width:100%;margin-bottom:6px;text-align:left;';
       btn.textContent = p.name;
-      btn.addEventListener('click', () => confirmGoal(p.name));
+      btn.addEventListener('click', () => confirmGoal(p.name, p.id));
       list.appendChild(btn);
     });
     document.getElementById('goal-scorer-section').style.display = 'block';
@@ -3793,15 +4014,24 @@ function adjustTheirScore(delta) {
 }
 
 function confirmTheirScore() {
-  scoreThem = parseInt(document.getElementById('goal-them-preview').textContent);
-  goals.push({ scorer: null, half: currentHalf, team: 'them' });
+  const newScore = parseInt(document.getElementById('goal-them-preview').textContent);
+  const delta    = newScore - scoreThem;
+  scoreThem = newScore;
+  if (delta > 0) {
+    for (let i = 0; i < delta; i++) goals.push({ scorer: null, half: currentHalf, team: 'them' });
+  } else if (delta < 0) {
+    let toRemove = -delta;
+    for (let i = goals.length - 1; i >= 0 && toRemove > 0; i--) {
+      if (goals[i].team === 'them') { goals.splice(i, 1); toRemove--; }
+    }
+  }
   renderScore();
   closeGoalModal();
 }
 
-function confirmGoal(scorerName) {
+function confirmGoal(scorerName, scorerId = null) {
   scoreUs++;
-  goals.push({ scorer: scorerName, half: currentHalf, team: 'us' });
+  goals.push({ scorer: scorerName, scorerId, half: currentHalf, team: 'us' });
   renderScore();
   closeGoalModal();
 }
@@ -3964,7 +4194,7 @@ function toggleTheme() {
 // ─────────────────────────────────────────────────────────────
 //  INIT
 // ─────────────────────────────────────────────────────────────
-document.getElementById('lineup-field-diagram').insertAdjacentHTML('afterbegin', FIELD_SVG);
+document.getElementById('lineup-field-diagram').insertAdjacentHTML('afterbegin', FORMATION_SVG);
 document.getElementById('game-field-diagram').insertAdjacentHTML('afterbegin', FIELD_SVG);
 applyTheme(localStorage.getItem('theme') || 'dark');
 loadPhotos();
