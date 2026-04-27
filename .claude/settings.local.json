@@ -5,7 +5,15 @@
       "Bash(git remote *)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(sed \"s/['\\\\\"]\\)$//\")",
+      "Bash(sed \"s/['\\\\\"]//g\")",
+      "Bash(grep -n \"^[[:space:]]*//.*\" \"C:\\\\Repos\\\\SoccerTeamManagement\\\\index.html\")",
+      "Bash(sed 's/^function //')",
+      "Bash(sed 's/\\(.*$//')",
+      "Bash(bash /c/Users/Lenny/.claude/statusline-command.sh)",
+      "Bash(where bun *)",
+      "mcp__plugin_claude-mem_mcp-search__search"
     ]
   }
 }
