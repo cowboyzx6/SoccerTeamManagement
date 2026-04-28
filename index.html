@@ -2089,9 +2089,11 @@ function saveSettings() {
 function loadSettings() {
   const raw = localStorage.getItem('soccerSettings');
   if (raw) {
-    const s = JSON.parse(raw);
-    if (s.teamName)    teamName    = s.teamName;
-    if (s.halfMinutes) halfMinutes = s.halfMinutes;
+    try {
+      const s = JSON.parse(raw);
+      if (s.teamName)    teamName    = s.teamName;
+      if (s.halfMinutes) halfMinutes = s.halfMinutes;
+    } catch { localStorage.removeItem('soccerSettings'); }
   }
   document.getElementById('team-name-input').value = teamName;
   document.getElementById('app-title-name').textContent = teamName;
@@ -2100,7 +2102,10 @@ function loadSettings() {
 
 function loadGameHistory() {
   const raw = localStorage.getItem('soccerGameHistory');
-  if (raw) gameHistory = JSON.parse(raw);
+  if (raw) {
+    try { gameHistory = JSON.parse(raw); }
+    catch { localStorage.removeItem('soccerGameHistory'); }
+  }
 }
 
 function saveGameHistory() {
@@ -2498,7 +2503,10 @@ const AVATAR_COLORS = ['#1565c0','#6a1b9a','#2e7d32','#c62828',
 
 function loadPhotos() {
   const saved = localStorage.getItem('playerPhotos');
-  if (saved) playerPhotos = JSON.parse(saved);
+  if (saved) {
+    try { playerPhotos = JSON.parse(saved); }
+    catch { localStorage.removeItem('playerPhotos'); }
+  }
 }
 
 function avatarColor(id) {
@@ -3873,13 +3881,14 @@ function startSecondHalf() {
   // Start 2nd half position timers after all position changes are settled
   players.filter(p => p.onField).forEach(p => startPositionTimer(p));
 
-  currentHalf     = 2;
-  halfClock       = HALF_DURATION();
-  halfActionIsEnd = true;
-  activeGoalieId  = goalie2Id || goalie1Id;
-  subPlans        = [];
-  planningBenchId = null;
-  selectedId      = null;
+  currentHalf      = 2;
+  halfClock        = HALF_DURATION();
+  halfActionIsEnd  = true;
+  activeGoalieId   = goalie2Id || goalie1Id;
+  subPlans         = [];
+  planningBenchId  = null;
+  planningPosition = null;
+  selectedId       = null;
 
   document.getElementById('half-pill').textContent  = 'HALF 2';
   document.getElementById('action-btn').textContent = 'END';
