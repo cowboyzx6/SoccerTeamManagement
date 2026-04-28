@@ -2032,6 +2032,7 @@ let halfClock         = 0;
 let currentHalf       = 1;
 let isRunning         = false;
 let intervalId        = null;
+let timerBase         = null; // { ts, halfClock, totalElapsed } — set on resume for drift correction
 let selectedId        = null; // field player selected to come off
 let subPlans          = [];   // [{ inId, pos }] — planned subs, no timer effect yet
 let planningBenchId   = null; // bench player currently being assigned a planned sub
@@ -2339,7 +2340,11 @@ document.getElementById('import-file-input').addEventListener('change', function
           profile.roster.forEach(p => {
             if (p.photo) playerPhotos[p.id] = p.photo;
           });
-          localStorage.setItem('playerPhotos', JSON.stringify(playerPhotos));
+          try {
+            localStorage.setItem('playerPhotos', JSON.stringify(playerPhotos));
+          } catch (e) {
+            alert('Storage full — some photos from the imported profile could not be saved.');
+          }
           saveRoster();
         }
 
@@ -2606,7 +2611,12 @@ function resizeAndStorePhoto(id, dataURL) {
     const sy = (img.height - min) / 2;
     ctx.drawImage(img, sx, sy, min, min, 0, 0, SIZE, SIZE);
     playerPhotos[id] = canvas.toDataURL('image/jpeg', 0.75);
-    localStorage.setItem('playerPhotos', JSON.stringify(playerPhotos));
+    try {
+      localStorage.setItem('playerPhotos', JSON.stringify(playerPhotos));
+    } catch (e) {
+      delete playerPhotos[id];
+      alert('Storage full — photo could not be saved. Try removing old game history.');
+    }
     renderRoster();
   };
   img.src = dataURL;
@@ -3301,6 +3311,7 @@ function pauseGame() {
   isRunning = false;
   clearInterval(intervalId);
   intervalId = null;
+  timerBase  = null;
   const btn = document.getElementById('pause-btn');
   btn.textContent  = '\u25B6 RESUME';
   btn.style.background = '#2e7d32';
@@ -3309,6 +3320,7 @@ function pauseGame() {
 function resumeGame() {
   if (intervalId) clearInterval(intervalId);
   isRunning = true;
+  timerBase = { ts: Date.now(), halfClock, totalElapsed };
   const btn = document.getElementById('pause-btn');
   btn.textContent  = '\u23F8 PAUSE';
   btn.style.background = '#e65100';
@@ -3317,11 +3329,18 @@ function resumeGame() {
 }
 
 function tick() {
-  if (halfClock > 0) {
-    halfClock--;
-    totalElapsed++;
-    if (totalElapsed % 30 === 0) saveActiveGame();
+  const secs        = timerBase ? Math.floor((Date.now() - timerBase.ts) / 1000) : 1;
+  const newHalf     = timerBase.halfClock - secs;
+  const newElapsed  = timerBase.totalElapsed + secs;
+
+  if (newHalf > 0) {
+    const prevBucket = Math.floor(totalElapsed / 30);
+    halfClock    = newHalf;
+    totalElapsed = newElapsed;
+    if (Math.floor(totalElapsed / 30) !== prevBucket) saveActiveGame();
   } else {
+    totalElapsed = timerBase.totalElapsed + timerBase.halfClock;
+    halfClock    = 0;
     pauseGame();
     halfActionIsEnd = currentHalf === 2;
     document.getElementById('action-btn').style.background = '#ef5350';
@@ -3618,6 +3637,7 @@ function confirmRemovePlayer() {
   removePlayerId = null;
   closeRemovePlayerModal();
   renderGame();
+  saveActiveGame();
 }
 
 function closeRemovePlayerModal() {
@@ -4110,6 +4130,7 @@ function showSummary() {
 }
 
 function goToSetup() {
+  clearActiveGame();
   showScreen('setup-screen');
   renderGameDayCheckboxes();
 }
