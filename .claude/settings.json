@@ -1,7 +1,4 @@
 {
-  "enabledPlugins": {
-    "claude-md-management@claude-plugins-official": true
-  },
   "permissions": {
     "allow": [
       "Bash(git status)",
@@ -16,5 +13,9 @@
       "Bash(python3 -m http.server*)",
       "mcp__plugin_claude-mem_mcp-search__search"
     ]
+  },
+  "enabledPlugins": {
+    "claude-md-management@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true
   }
 }
