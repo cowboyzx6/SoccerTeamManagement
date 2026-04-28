@@ -127,14 +127,6 @@
       color: var(--text-card-name);
     }
 
-    .badge {
-      background: var(--border);
-      color: var(--accent);
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
 
     .roster-list {
       background: var(--bg-card);
@@ -245,12 +237,6 @@
       opacity: 0.6;
     }
 
-    .setup-note {
-      color: var(--text-card-name);
-      font-size: 0.88rem;
-      margin-bottom: 12px;
-    }
-
     /* ===== GAMEDAY PLAYER TILES ===== */
     .gameday-grid {
       display: grid;
@@ -350,13 +336,6 @@
       border-radius: 4px;
       transition: width 0.3s ease;
       width: 0%;
-    }
-
-    /* ===== THEME TOGGLE ===== */
-    .theme-toggle {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 16px;
     }
 
     .btn-theme {
@@ -1074,26 +1053,6 @@
       font-weight: 700;
     }
 
-    .summary-goal-ball {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.95rem;
-      color: #ffd54f;
-    }
-
-    .summary-goal-half {
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 8px;
-      padding: 2px 8px;
-      min-width: 36px;
-      text-align: center;
-    }
 
     .summary-goal-empty {
       color: var(--text-muted);
@@ -1189,8 +1148,6 @@
     tr:last-child td { border-bottom: none; }
 
     .total-col { font-weight: 700; color: var(--text-card-time); }
-
-    .time-bar-cell { width: 80px; }
 
     .time-bar {
       height: 6px;
@@ -1576,29 +1533,6 @@
     }
     .btn-sub-now:active { opacity: 0.8; }
 
-    /* Unpositioned chips bar */
-    .unpositioned-bar {
-      display: flex;
-      gap: 5px;
-      padding: 5px 4px;
-      flex-shrink: 0;
-      flex-wrap: wrap;
-    }
-
-    .unpos-chip {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(30,58,95,0.9);
-      border: 1px solid var(--accent-dark);
-      border-radius: 6px;
-      padding: 4px 8px;
-      cursor: pointer;
-      font-size: 0.72rem;
-      color: var(--text);
-    }
-
-    .unpos-chip.selected { border-color: #fff; box-shadow: 0 0 0 2px rgba(255,255,255,0.3); }
   </style>
 </head>
 <body>

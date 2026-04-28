@@ -1,0 +1,15 @@
+{
+  "enabledPlugins": {
+    "claude-md-management@claude-plugins-official": true
+  },
+  "permissions": {
+    "allow": [
+      "Bash(gh repo *)",
+      "Bash(git remote *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "mcp__plugin_claude-mem_mcp-search__search"
+    ]
+  }
+}
