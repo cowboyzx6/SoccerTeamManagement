@@ -5,7 +5,15 @@
       "Bash(git remote *)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(time claude *)",
+      "Bash(curl *)",
+      "Bash(netstat -ano)",
+      "Bash(export PATH=\"$PATH:/c/Users/lenny/.bun/bin\")",
+      "Bash(npm run *)",
+      "PowerShell(Get-NetTCPConnection *)",
+      "Bash(/c/Users/lenny/.bun/bin/bun *)",
+      "Bash(bun plugin/scripts/worker-service.cjs start)"
     ]
   }
 }
