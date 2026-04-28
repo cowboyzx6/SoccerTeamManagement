@@ -1784,6 +1784,7 @@
       </thead>
       <tbody id="summary-body"></tbody>
     </table>
+    <button class="btn btn-gray btn-full" style="margin-bottom:8px;" onclick="exportProfile(true)">&#128228; Export Game JSON</button>
     <button class="btn btn-blue btn-full" onclick="goToSetup()">&#8592; New Game</button>
   </div>
 </div>
@@ -2110,6 +2111,54 @@ function loadGameHistory() {
 
 function saveGameHistory() {
   localStorage.setItem('soccerGameHistory', JSON.stringify(gameHistory));
+}
+
+function saveActiveGame() {
+  try {
+    localStorage.setItem('soccerActiveGame', JSON.stringify({
+      players, totalElapsed, halfClock, currentHalf, halfActionIsEnd,
+      goalie1Id, goalie2Id, activeGoalieId,
+      opponentName, scoreUs, scoreThem, goals,
+      halfMinutes, subPlans, planningBenchId, planningPosition
+    }));
+  } catch (e) {}
+}
+
+function clearActiveGame() {
+  localStorage.removeItem('soccerActiveGame');
+}
+
+function checkForActiveGame() {
+  const raw = localStorage.getItem('soccerActiveGame');
+  if (!raw) return;
+  let state;
+  try { state = JSON.parse(raw); } catch { clearActiveGame(); return; }
+  if (!state.players || !state.players.length) { clearActiveGame(); return; }
+  if (!confirm('A game was interrupted. Resume where you left off?')) { clearActiveGame(); return; }
+
+  players          = state.players         || [];
+  totalElapsed     = state.totalElapsed    || 0;
+  halfClock        = state.halfClock       || 0;
+  currentHalf      = state.currentHalf     || 1;
+  halfActionIsEnd  = state.halfActionIsEnd || false;
+  goalie1Id        = state.goalie1Id       ?? null;
+  goalie2Id        = state.goalie2Id       ?? null;
+  activeGoalieId   = state.activeGoalieId  ?? null;
+  opponentName     = state.opponentName    || '';
+  scoreUs          = state.scoreUs         || 0;
+  scoreThem        = state.scoreThem       || 0;
+  goals            = state.goals           || [];
+  halfMinutes      = state.halfMinutes     || 25;
+  subPlans         = state.subPlans        || [];
+  planningBenchId  = state.planningBenchId ?? null;
+  planningPosition = state.planningPosition ?? null;
+
+  showScreen('game-screen');
+  renderClock();
+  renderScore();
+  renderGame();
+  updateGoalBtn();
+  pauseGame();
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -3271,6 +3320,7 @@ function tick() {
   if (halfClock > 0) {
     halfClock--;
     totalElapsed++;
+    if (totalElapsed % 30 === 0) saveActiveGame();
   } else {
     pauseGame();
     halfActionIsEnd = currentHalf === 2;
@@ -3671,6 +3721,7 @@ function executeAllPlans() {
   subPlans        = [];
   planningBenchId = null;
   planningPosition = null;
+  saveActiveGame();
   selectedId      = null;
   renderGame();
 }
@@ -3899,6 +3950,7 @@ function startSecondHalf() {
 
   renderClock();
   renderGame();
+  saveActiveGame();
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -3970,6 +4022,7 @@ function confirmTheirScore() {
   }
   renderScore();
   closeGoalModal();
+  saveActiveGame();
 }
 
 function confirmGoal(scorerName, scorerId = null) {
@@ -3977,6 +4030,7 @@ function confirmGoal(scorerName, scorerId = null) {
   goals.push({ scorer: scorerName, scorerId, half: currentHalf, team: 'us' });
   renderScore();
   closeGoalModal();
+  saveActiveGame();
 }
 
 function endGame() {
@@ -3991,13 +4045,11 @@ function endGame() {
     }
   });
 
-  // Build game record, append to history, save, and auto-export
+  // Build game record, append to history, save
   const gameRecord = buildGameRecord();
   gameHistory.push(gameRecord);
   saveGameHistory();
-
-  // Auto-export full profile including this game
-  exportProfile(true);
+  clearActiveGame();
 
   showSummary();
 }
@@ -4144,6 +4196,11 @@ loadPhotos();
 loadSettings();
 loadGameHistory();
 loadRoster();
+checkForActiveGame();
+
+window.addEventListener('beforeunload', () => {
+  if (players.length > 0) saveActiveGame();
+});
 
 // ─────────────────────────────────────────────────────────────
 //  DELEGATED LISTENERS (attached once; survive re-renders)
