@@ -4,11 +4,16 @@
   },
   "permissions": {
     "allow": [
-      "Bash(gh repo *)",
+      "Bash(git status)",
+      "Bash(git log *)",
+      "Bash(git diff *)",
+      "Bash(git diff)",
       "Bash(git remote *)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
+      "Bash(gh repo *)",
+      "Bash(python3 -m http.server*)",
       "mcp__plugin_claude-mem_mcp-search__search"
     ]
   }
