@@ -2048,6 +2048,7 @@ let activeGoalieId    = null;
 // Team / game meta
 let teamName          = 'My Team';
 let opponentName      = '';
+let gameDate          = '';          // YYYY-MM-DD; set on gameday screen
 let scoreUs           = 0;
 let scoreThem         = 0;
 let goals             = [];  // [{ scorer: name|null, half: 1|2, team: 'us'|'them' }]
@@ -2120,7 +2121,8 @@ function saveActiveGame() {
       players, totalElapsed, halfClock, currentHalf, halfActionIsEnd,
       goalie1Id, goalie2Id, activeGoalieId,
       opponentName, scoreUs, scoreThem, goals,
-      halfMinutes, subPlans, planningBenchId, planningPosition
+      halfMinutes, subPlans, planningBenchId, planningPosition,
+      gameDate
     }));
   } catch (e) {}
 }
@@ -2153,6 +2155,7 @@ function checkForActiveGame() {
   subPlans         = state.subPlans        || [];
   planningBenchId  = state.planningBenchId ?? null;
   planningPosition = state.planningPosition ?? null;
+  gameDate         = state.gameDate        || new Date().toISOString().slice(0, 10);
 
   showScreen('game-screen');
   renderClock();
@@ -2167,7 +2170,7 @@ function checkForActiveGame() {
 // ─────────────────────────────────────────────────────────────
 function buildGameRecord() {
   return {
-    date:       new Date().toISOString().slice(0, 10),
+    date:       gameDate || new Date().toISOString().slice(0, 10),
     opponent:   opponentName,
     ourScore:   scoreUs,
     theirScore: scoreThem,
@@ -4131,6 +4134,7 @@ function showSummary() {
 
 function goToSetup() {
   clearActiveGame();
+  gameDate = '';
   showScreen('setup-screen');
   renderGameDayCheckboxes();
 }
