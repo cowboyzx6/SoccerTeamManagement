@@ -23,16 +23,19 @@
 ### 2. Team Name / Title
 Unchanged — ⚽ team name heading.
 
-### 3. Game Info Row (new)
-A single horizontal row with two fields:
+### 3. Game Info / Opponent Row (new, responsive)
+Uses CSS flexbox with `flex-wrap: wrap` so layout adapts to available width:
+
+- **Narrow screens (phones, ~< 600px):** Game # + Date on one row, Opponent input full-width below.
+- **Wide screens (tablets/iPad, ~≥ 600px):** All three fields in a single row — Game #, Date, Opponent — using `flex-wrap: nowrap`. Opponent input takes remaining space (`flex: 1`).
 
 | Field | Type | Behavior |
 |---|---|---|
-| Game # | Read-only label | `"Game " + (gameHistory.length + 1)` — computed at render time, not stored |
-| Date | `<input type="date">` | Defaults to today's local date (YYYY-MM-DD). Editable for after-the-fact entry. |
+| Game # | Read-only label/badge | `"Game " + (gameHistory.length + 1)` — computed at render time, not stored. Fixed width, no shrink. |
+| Date | `<input type="date">` | Defaults to today's local date (YYYY-MM-DD). Editable for after-the-fact entry. Fixed width, no shrink. |
+| Opponent | `<input type="text">` | Existing input, `flex: 1`, min-width ~120px so it never collapses to unusable size. |
 
-### 4. Opponent Input
-Unchanged — full-width text input, required to enable the start button.
+The breakpoint is implemented with a CSS media query (`@media (min-width: 600px)`) — no JavaScript needed.
 
 ### 5. Who Showed Up / Player Grid
 Unchanged.
