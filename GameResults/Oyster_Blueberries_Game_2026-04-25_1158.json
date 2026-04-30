@@ -1,0 +1,570 @@
+{
+  "teamName": "Oyster Blueberries",
+  "halfMinutes": 25,
+  "roster": [
+    {
+      "id": 1,
+      "name": "Sofia L.",
+      "photo": null
+    },
+    {
+      "id": 2,
+      "name": "Harriet B.",
+      "photo": null
+    },
+    {
+      "id": 3,
+      "name": "Eva N.",
+      "photo": null
+    },
+    {
+      "id": 4,
+      "name": "Elise G.",
+      "photo": null
+    },
+    {
+      "id": 5,
+      "name": "Emma B.",
+      "photo": null
+    },
+    {
+      "id": 6,
+      "name": "Anaya O.",
+      "photo": null
+    },
+    {
+      "id": 7,
+      "name": "Ziva I.",
+      "photo": null
+    },
+    {
+      "id": 8,
+      "name": "Sadie G.",
+      "photo": null
+    },
+    {
+      "id": 9,
+      "name": "Claire M.",
+      "photo": null
+    },
+    {
+      "id": 10,
+      "name": "Stephanie M.",
+      "photo": null
+    },
+    {
+      "id": 11,
+      "name": "Mylene H.",
+      "photo": null
+    },
+    {
+      "id": 12,
+      "name": "Anastasia C.",
+      "photo": null
+    },
+    {
+      "id": 13,
+      "name": "Jocelyn E.",
+      "photo": null
+    },
+    {
+      "id": 14,
+      "name": "Camilla C.",
+      "photo": null
+    },
+    {
+      "id": 15,
+      "name": "Penelope C.",
+      "photo": null
+    },
+    {
+      "id": 16,
+      "name": "Hazel S.",
+      "photo": null
+    },
+    {
+      "id": 17,
+      "name": "Noa S.",
+      "photo": null
+    },
+    {
+      "id": 18,
+      "name": "Victoria C.",
+      "photo": null
+    }
+  ],
+  "games": [
+    {
+      "date": "2026-04-25",
+      "opponent": "Mann",
+      "ourScore": 6,
+      "theirScore": 0,
+      "goals": [
+        {
+          "scorer": "Penelope C.",
+          "half": 1,
+          "team": "us"
+        },
+        {
+          "scorer": "Claire M.",
+          "half": 1,
+          "team": "us"
+        },
+        {
+          "scorer": "Claire M.",
+          "half": 1,
+          "team": "us"
+        },
+        {
+          "scorer": "Eva N.",
+          "half": 1,
+          "team": "us"
+        },
+        {
+          "scorer": "Eva N.",
+          "half": 1,
+          "team": "us"
+        },
+        {
+          "scorer": "Claire M.",
+          "half": 2,
+          "team": "us"
+        }
+      ],
+      "playerStats": [
+        {
+          "id": 6,
+          "name": "Anaya O.",
+          "minutesPlayed": 22.8,
+          "secondsPlayed": 1366,
+          "positionSeconds": {
+            "RF": 1366
+          },
+          "positionMinutes": {
+            "RF": 22.8
+          }
+        },
+        {
+          "id": 14,
+          "name": "Camilla C.",
+          "minutesPlayed": 38,
+          "secondsPlayed": 2282,
+          "positionSeconds": {
+            "GK": 1441,
+            "RF": 549,
+            "CM": 292
+          },
+          "positionMinutes": {
+            "GK": 24,
+            "RF": 9.2,
+            "CM": 4.9
+          }
+        },
+        {
+          "id": 9,
+          "name": "Claire M.",
+          "minutesPlayed": 29.3,
+          "secondsPlayed": 1755,
+          "positionSeconds": {
+            "LF": 914,
+            "LM": 549,
+            "RF": 292
+          },
+          "positionMinutes": {
+            "LF": 15.2,
+            "LM": 9.2,
+            "RF": 4.9
+          }
+        },
+        {
+          "id": 4,
+          "name": "Elise G.",
+          "minutesPlayed": 22.4,
+          "secondsPlayed": 1346,
+          "positionSeconds": {
+            "LM": 505,
+            "RD": 841
+          },
+          "positionMinutes": {
+            "LM": 8.4,
+            "RD": 14
+          }
+        },
+        {
+          "id": 15,
+          "name": "Penelope C.",
+          "minutesPlayed": 34.2,
+          "secondsPlayed": 2051,
+          "positionSeconds": {
+            "CF": 2051
+          },
+          "positionMinutes": {
+            "CF": 34.2
+          }
+        },
+        {
+          "id": 8,
+          "name": "Sadie G.",
+          "minutesPlayed": 24.7,
+          "secondsPlayed": 1484,
+          "positionSeconds": {
+            "LD": 505,
+            "LF": 527,
+            "CM": 452
+          },
+          "positionMinutes": {
+            "LD": 8.4,
+            "LF": 8.8,
+            "CM": 7.5
+          }
+        },
+        {
+          "id": 1,
+          "name": "Sofia L.",
+          "minutesPlayed": 22.4,
+          "secondsPlayed": 1346,
+          "positionSeconds": {
+            "RD": 505,
+            "LD": 841
+          },
+          "positionMinutes": {
+            "RD": 8.4,
+            "LD": 14
+          }
+        },
+        {
+          "id": 7,
+          "name": "Ziva I.",
+          "minutesPlayed": 29.5,
+          "secondsPlayed": 1767,
+          "positionSeconds": {
+            "RM": 496,
+            "RF": 527,
+            "LM": 744
+          },
+          "positionMinutes": {
+            "RM": 8.3,
+            "RF": 8.8,
+            "LM": 12.4
+          }
+        },
+        {
+          "id": 10,
+          "name": "Stephanie M.",
+          "minutesPlayed": 23.1,
+          "secondsPlayed": 1388,
+          "positionSeconds": {
+            "LM": 936,
+            "LD": 452
+          },
+          "positionMinutes": {
+            "LM": 15.6,
+            "LD": 7.5
+          }
+        },
+        {
+          "id": 16,
+          "name": "Hazel S.",
+          "minutesPlayed": 28,
+          "secondsPlayed": 1680,
+          "positionSeconds": {
+            "CM": 936,
+            "RM": 744
+          },
+          "positionMinutes": {
+            "CM": 15.6,
+            "RM": 12.4
+          }
+        },
+        {
+          "id": 18,
+          "name": "Victoria C.",
+          "minutesPlayed": 23.1,
+          "secondsPlayed": 1388,
+          "positionSeconds": {
+            "LD": 936,
+            "LF": 452
+          },
+          "positionMinutes": {
+            "LD": 15.6,
+            "LF": 7.5
+          }
+        },
+        {
+          "id": 3,
+          "name": "Eva N.",
+          "minutesPlayed": 29.6,
+          "secondsPlayed": 1777,
+          "positionSeconds": {
+            "RM": 936,
+            "LF": 841
+          },
+          "positionMinutes": {
+            "RM": 15.6,
+            "LF": 14
+          }
+        },
+        {
+          "id": 2,
+          "name": "Harriet B.",
+          "minutesPlayed": 23.1,
+          "secondsPlayed": 1388,
+          "positionSeconds": {
+            "RD": 1388
+          },
+          "positionMinutes": {
+            "RD": 23.1
+          }
+        },
+        {
+          "id": 12,
+          "name": "Anastasia C.",
+          "minutesPlayed": 21.6,
+          "secondsPlayed": 1293,
+          "positionSeconds": {
+            "GK": 1293
+          },
+          "positionMinutes": {
+            "GK": 21.6
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-04-25",
+      "opponent": "Mann",
+      "ourScore": 6,
+      "theirScore": 0,
+      "goals": [
+        {
+          "scorer": "Penelope C.",
+          "half": 1,
+          "team": "us"
+        },
+        {
+          "scorer": "Claire M.",
+          "half": 1,
+          "team": "us"
+        },
+        {
+          "scorer": "Claire M.",
+          "half": 1,
+          "team": "us"
+        },
+        {
+          "scorer": "Eva N.",
+          "half": 1,
+          "team": "us"
+        },
+        {
+          "scorer": "Eva N.",
+          "half": 1,
+          "team": "us"
+        },
+        {
+          "scorer": "Claire M.",
+          "half": 2,
+          "team": "us"
+        }
+      ],
+      "playerStats": [
+        {
+          "id": 6,
+          "name": "Anaya O.",
+          "minutesPlayed": 22.8,
+          "secondsPlayed": 1366,
+          "positionSeconds": {
+            "RF": 1366
+          },
+          "positionMinutes": {
+            "RF": 22.8
+          }
+        },
+        {
+          "id": 14,
+          "name": "Camilla C.",
+          "minutesPlayed": 38,
+          "secondsPlayed": 2282,
+          "positionSeconds": {
+            "GK": 1441,
+            "RF": 549,
+            "CM": 292
+          },
+          "positionMinutes": {
+            "GK": 24,
+            "RF": 9.2,
+            "CM": 4.9
+          }
+        },
+        {
+          "id": 9,
+          "name": "Claire M.",
+          "minutesPlayed": 29.3,
+          "secondsPlayed": 1755,
+          "positionSeconds": {
+            "LF": 914,
+            "LM": 549,
+            "RF": 292
+          },
+          "positionMinutes": {
+            "LF": 15.2,
+            "LM": 9.2,
+            "RF": 4.9
+          }
+        },
+        {
+          "id": 4,
+          "name": "Elise G.",
+          "minutesPlayed": 22.4,
+          "secondsPlayed": 1346,
+          "positionSeconds": {
+            "LM": 505,
+            "RD": 841
+          },
+          "positionMinutes": {
+            "LM": 8.4,
+            "RD": 14
+          }
+        },
+        {
+          "id": 15,
+          "name": "Penelope C.",
+          "minutesPlayed": 34.2,
+          "secondsPlayed": 2051,
+          "positionSeconds": {
+            "CF": 2051
+          },
+          "positionMinutes": {
+            "CF": 34.2
+          }
+        },
+        {
+          "id": 8,
+          "name": "Sadie G.",
+          "minutesPlayed": 24.7,
+          "secondsPlayed": 1484,
+          "positionSeconds": {
+            "LD": 505,
+            "LF": 527,
+            "CM": 452
+          },
+          "positionMinutes": {
+            "LD": 8.4,
+            "LF": 8.8,
+            "CM": 7.5
+          }
+        },
+        {
+          "id": 1,
+          "name": "Sofia L.",
+          "minutesPlayed": 22.4,
+          "secondsPlayed": 1346,
+          "positionSeconds": {
+            "RD": 505,
+            "LD": 841
+          },
+          "positionMinutes": {
+            "RD": 8.4,
+            "LD": 14
+          }
+        },
+        {
+          "id": 7,
+          "name": "Ziva I.",
+          "minutesPlayed": 29.5,
+          "secondsPlayed": 1767,
+          "positionSeconds": {
+            "RM": 496,
+            "RF": 527,
+            "LM": 744
+          },
+          "positionMinutes": {
+            "RM": 8.3,
+            "RF": 8.8,
+            "LM": 12.4
+          }
+        },
+        {
+          "id": 10,
+          "name": "Stephanie M.",
+          "minutesPlayed": 23.1,
+          "secondsPlayed": 1388,
+          "positionSeconds": {
+            "LM": 936,
+            "LD": 452
+          },
+          "positionMinutes": {
+            "LM": 15.6,
+            "LD": 7.5
+          }
+        },
+        {
+          "id": 16,
+          "name": "Hazel S.",
+          "minutesPlayed": 28,
+          "secondsPlayed": 1680,
+          "positionSeconds": {
+            "CM": 936,
+            "RM": 744
+          },
+          "positionMinutes": {
+            "CM": 15.6,
+            "RM": 12.4
+          }
+        },
+        {
+          "id": 18,
+          "name": "Victoria C.",
+          "minutesPlayed": 23.1,
+          "secondsPlayed": 1388,
+          "positionSeconds": {
+            "LD": 936,
+            "LF": 452
+          },
+          "positionMinutes": {
+            "LD": 15.6,
+            "LF": 7.5
+          }
+        },
+        {
+          "id": 3,
+          "name": "Eva N.",
+          "minutesPlayed": 29.6,
+          "secondsPlayed": 1777,
+          "positionSeconds": {
+            "RM": 936,
+            "LF": 841
+          },
+          "positionMinutes": {
+            "RM": 15.6,
+            "LF": 14
+          }
+        },
+        {
+          "id": 2,
+          "name": "Harriet B.",
+          "minutesPlayed": 23.1,
+          "secondsPlayed": 1388,
+          "positionSeconds": {
+            "RD": 1388
+          },
+          "positionMinutes": {
+            "RD": 23.1
+          }
+        },
+        {
+          "id": 12,
+          "name": "Anastasia C.",
+          "minutesPlayed": 21.6,
+          "secondsPlayed": 1293,
+          "positionSeconds": {
+            "GK": 1293
+          },
+          "positionMinutes": {
+            "GK": 21.6
+          }
+        }
+      ]
+    }
+  ]
+}

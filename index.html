@@ -1842,7 +1842,7 @@
       </thead>
       <tbody id="summary-body"></tbody>
     </table>
-    <button class="btn btn-gray btn-full" style="margin-bottom:8px;" onclick="exportProfile(true)">&#128228; Export Game JSON</button>
+    <button class="btn btn-gray btn-full" style="margin-bottom:8px;" onclick="exportProfile(false, true)">&#128228; Export Game JSON</button>
     <button class="btn btn-blue btn-full" onclick="goToSetup()">&#8592; New Game</button>
   </div>
 </div>
@@ -2265,11 +2265,11 @@ function buildProfile(includeGameRecord) {
   return profile;
 }
 
-function exportProfile(includeGameRecord = false) {
+function exportProfile(includeGameRecord = false, forceGameFilename = false) {
   const profile  = buildProfile(includeGameRecord);
   const safeName = (teamName || 'team').replace(/[^a-z0-9]/gi, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
   let filename;
-  if (includeGameRecord) {
+  if (includeGameRecord || forceGameFilename) {
     const now = new Date();
     const pad = n => String(n).padStart(2, '0');
     const dateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
