@@ -252,6 +252,44 @@
       opacity: 0.6;
     }
 
+    /* ===== GAME INFO ROW ===== */
+    .game-info-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+    .game-number-badge {
+      white-space: nowrap;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      flex-shrink: 0;
+    }
+    .game-date-input {
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      flex-shrink: 0;
+    }
+    .game-date-input:focus { border-color: var(--accent); }
+    /* On mobile: opponent takes its own row */
+    .game-info-row .text-input { flex: 1 1 100%; margin: 0; }
+    /* On tablet+: all three on one row */
+    @media (min-width: 600px) {
+      .game-info-row { flex-wrap: nowrap; }
+      .game-info-row .text-input { flex: 1 1 auto; min-width: 120px; }
+    }
+
     /* ===== GAMEDAY PLAYER TILES ===== */
     .gameday-grid {
       display: grid;
@@ -1582,8 +1620,10 @@
 
     <!-- Game day content: shown when roster exists -->
     <div id="gameday-content" style="display:none;">
-      <div class="add-row" style="margin-bottom:4px;">
-        <input class="text-input" type="text" id="opponent-input" placeholder="Today's opponent (required)..." maxlength="30" autocomplete="off" oninput="updateStartBtn()">
+      <div class="game-info-row">
+        <span class="game-number-badge" id="game-number-label">Game 1</span>
+        <input class="game-date-input" type="date" id="game-date-input" oninput="gameDate=this.value">
+        <input class="text-input" type="text" id="opponent-input" placeholder="Opponent (required)..." maxlength="30" autocomplete="off" oninput="updateStartBtn()">
       </div>
 
       <div class="section-header" style="margin-top:16px;">
@@ -2693,6 +2733,10 @@ function renderGameDayCheckboxes(restoreChecked = false) {
   empty.style.display   = 'none';
   content.style.display = 'block';
 
+  document.getElementById('game-number-label').textContent = `Game ${gameHistory.length + 1}`;
+  if (!gameDate) gameDate = new Date().toISOString().slice(0, 10);
+  document.getElementById('game-date-input').value = gameDate;
+
   const list   = document.getElementById('gameday-roster');
   const sorted = [...roster].sort((a, b) => a.name.localeCompare(b.name));
   list.innerHTML = sorted.map(p => {
@@ -2844,6 +2888,7 @@ function goToLineup() {
   // Capture game meta
   teamName     = document.getElementById('team-name-input').value.trim() || 'My Team';
   opponentName = document.getElementById('opponent-input').value.trim();
+  gameDate     = document.getElementById('game-date-input').value || new Date().toISOString().slice(0, 10);
   scoreUs      = 0;
   scoreThem    = 0;
   goals        = [];
