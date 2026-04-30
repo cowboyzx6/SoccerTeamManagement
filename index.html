@@ -202,6 +202,21 @@
     .text-input:focus { border-color: var(--accent); }
     .text-input::placeholder { color: var(--text-card-name); opacity: 1; }
 
+    .overflow-menu-item {
+      display: block;
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 10px 16px;
+      text-align: left;
+      font-size: 0.9rem;
+      color: var(--text);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .overflow-menu-item:hover { background: var(--border); }
+    .overflow-menu-item + .overflow-menu-item { border-top: 1px solid var(--border); }
+
     .btn {
       padding: 12px 20px;
       border-radius: 10px;
@@ -1544,10 +1559,13 @@
   <div class="setup-container">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
       <button class="btn-theme" id="theme-btn" onclick="toggleTheme()">&#9728;&#65039;</button>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-gray" style="font-size:0.82rem;padding:6px 12px;" onclick="importGameReview()">&#128202; Review Game</button>
-        <button class="btn btn-gray" style="font-size:0.82rem;padding:6px 12px;" onclick="showSeasonSummary()">&#128200; Season</button>
-        <button id="team-settings-btn" class="btn btn-gray" style="font-size:0.82rem;padding:6px 12px;" onclick="goToTeamSetup()">&#9881; Team Settings</button>
+      <div style="position:relative;">
+        <button id="overflow-menu-btn" class="btn btn-gray" style="font-size:0.82rem;padding:6px 14px;" onclick="toggleOverflowMenu()">&#8943;</button>
+        <div id="overflow-menu" style="display:none;position:absolute;right:0;top:calc(100% + 4px);background:var(--bg-card);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.2);z-index:100;min-width:160px;">
+          <button class="overflow-menu-item" onclick="importGameReview();closeOverflowMenu()">&#128202; Review Game</button>
+          <button class="overflow-menu-item" onclick="showSeasonSummary();closeOverflowMenu()">&#128200; Season</button>
+          <button class="overflow-menu-item" onclick="goToTeamSetup();closeOverflowMenu()">&#9881; Team Settings</button>
+        </div>
       </div>
     </div>
 
@@ -2666,17 +2684,14 @@ function renderGameDayCheckboxes(restoreChecked = false) {
   const empty   = document.getElementById('gameday-empty');
   const content = document.getElementById('gameday-content');
 
-  const settingsBtn = document.getElementById('team-settings-btn');
   if (!roster.length) {
-    empty.style.display       = 'block';
-    content.style.display     = 'none';
-    settingsBtn.style.display = 'none';
+    empty.style.display   = 'block';
+    content.style.display = 'none';
     return;
   }
 
-  empty.style.display       = 'none';
-  content.style.display     = 'block';
-  settingsBtn.style.display = '';
+  empty.style.display   = 'none';
+  content.style.display = 'block';
 
   const list   = document.getElementById('gameday-roster');
   const sorted = [...roster].sort((a, b) => a.name.localeCompare(b.name));
@@ -4131,6 +4146,24 @@ function showSummary() {
 
   showScreen('summary-screen');
 }
+
+function toggleOverflowMenu() {
+  const menu = document.getElementById('overflow-menu');
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+function closeOverflowMenu() {
+  document.getElementById('overflow-menu').style.display = 'none';
+}
+
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('overflow-menu');
+  if (!menu || menu.style.display === 'none') return;
+  const btn = document.getElementById('overflow-menu-btn');
+  if (!menu.contains(e.target) && e.target !== btn) {
+    menu.style.display = 'none';
+  }
+});
 
 function goToSetup() {
   clearActiveGame();
