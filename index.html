@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -1662,9 +1662,9 @@
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
       <button class="btn btn-gray" style="font-size:0.78rem;padding:6px 10px;" onclick="goBackFromTeamSetup()">&#8592; Back</button>
       <div style="display:flex;gap:8px;">
-        <button class="btn btn-gray" style="font-size:0.78rem;padding:6px 10px;" onclick="importLeagueCsv()">&#128203; League CSV</button>
-        <button class="btn btn-gray" style="font-size:0.78rem;padding:6px 10px;" onclick="importProfile()">&#128229; Load Profile</button>
-        <button class="btn btn-gray" style="font-size:0.78rem;padding:6px 10px;" onclick="exportProfile()">&#128228; Save Profile</button>
+        <button class="btn btn-gray" style="font-size:0.78rem;padding:6px 10px;" onclick="importLeagueCsv()">&#128203; Import League CSV</button>
+        <button class="btn btn-gray" style="font-size:0.78rem;padding:6px 10px;" onclick="importProfile()">&#128229; Restore Backup</button>
+        <button class="btn btn-gray" style="font-size:0.78rem;padding:6px 10px;" onclick="exportProfile()">&#128228; Backup Team</button>
       </div>
     </div>
 
@@ -1704,7 +1704,7 @@
 <div id="clear-data-modal" class="overlay hidden">
   <div class="modal">
     <h3>&#9888; Clear All Data?</h3>
-    <p style="color:var(--text-modal-p);margin-bottom:16px;">This will permanently delete your team name, entire roster, photos, and game history. The app will reset to a blank state.<br><br>Export your profile first if you want a backup.</p>
+    <p style="color:var(--text-modal-p);margin-bottom:16px;">This will permanently delete your team name, entire roster, photos, and game history. The app will reset to a blank state.<br><br>Use Backup Team first if you want a downloadable backup.</p>
     <div class="modal-btns">
       <button class="btn btn-red" onclick="executeClearData()">Yes, Clear Everything</button>
       <button class="btn btn-gray" onclick="closeClearDataModal()">Cancel</button>

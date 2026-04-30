@@ -108,7 +108,7 @@ There is no separate `review-screen` element. Game review imports are rendered t
 | Half time / second half | `handleHalfEnd`, `startSecondHalf`, `h1Snapshot`, `goalie2Id`, `activeGoalieId` |
 | End game / summary | `endGame`, `buildGameRecord`, `showSummary`, `renderGoalsHtml`, `saveGameHistory` |
 | Season summary | `showSeasonSummary`, `gameHistory`, `season-body` |
-| Import/export profile | `buildProfile`, `exportProfile`, `importProfile`, `importLeagueCsv`, `parseCsvRoster` |
+| Backup/restore/import | UI labels: `Backup Team`, `Restore Backup`, `Import League CSV`. Code targets: `buildProfile`, `exportProfile`, `importProfile`, `importLeagueCsv`, `parseCsvRoster` |
 | Game review import | `importGameReview`, `showGameReviewFromRecord`, `review-file-input` |
 | Photos / avatars | `loadPhotos`, `avatarHtml`, `avatarParts`, `triggerPhotoUpload`, `resizeAndStorePhoto`, `playerPhotos` |
 | Theme | `applyTheme`, `toggleTheme`, `[data-theme="light"]`, `theme-btn` |

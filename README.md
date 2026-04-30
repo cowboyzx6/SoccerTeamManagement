@@ -12,7 +12,7 @@ The app is currently implemented as a **single-file vanilla HTML/CSS/JavaScript 
 - Add, rename, and remove roster players.
 - Add optional player photos.
 - Import players from a league CSV using `player_first_name` and `player_last_name` columns.
-- Export and import a full team profile as JSON.
+- Use **Backup Team** to download a full team JSON backup, and **Restore Backup** to import it later.
 - Clear all locally stored data and reset the app.
 
 ### Game day setup
@@ -94,7 +94,7 @@ python3 -m http.server 8000
 11. Start the game.
 12. Use the field and bench panels to plan subs, execute subs, record goals, and track playing time.
 13. End the game to save it to local game history and view the summary.
-14. Use **Export Game JSON** or **Save Profile** when you want a backup file.
+14. Use **Export Game JSON** to download the completed game summary, or **Backup Team** to download a full team backup.
 
 ## Data Storage and Privacy
 
@@ -116,18 +116,18 @@ Important limitations:
 - Browser storage is not a real database.
 - Clearing browser site data will delete the roster, photos, game history, and active game state.
 - Player photos can consume browser storage quickly.
-- Use **Save Profile** regularly if the data matters.
+- Use **Backup Team** regularly if the data matters.
 - Keep exported JSON backups somewhere safe.
 
-## Import and Export Notes
+## Import, Backup, and Export Notes
 
-### Save Profile
+### Backup Team
 
-Exports the team profile, including roster, photos, settings, and saved game history.
+Downloads a JSON backup of the full team profile, including roster, photos, settings, and saved game history.
 
-### Load Profile
+### Restore Backup
 
-Imports a previously exported profile JSON file.
+Imports a previously downloaded team backup JSON file and restores its profile data.
 
 ### Export Game JSON
 
@@ -137,7 +137,7 @@ The summary-screen export uses the same profile-style JSON structure and include
 
 Loads a JSON file and displays the most recent game record found in the file without replacing the current team profile.
 
-### League CSV Import
+### Import League CSV
 
 The CSV importer expects these column names:
 

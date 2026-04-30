@@ -37,6 +37,16 @@ Then open `http://localhost:8000`.
 
 `PROJECT_MAP.md` is intentionally not imported with `@PROJECT_MAP.md`; read it on demand so it does not consume context in every session.
 
+## User-facing import/backup labels
+
+The Team Settings buttons use coach-friendly labels:
+
+- `Import League CSV` calls `importLeagueCsv()` and imports roster names from a league CSV.
+- `Restore Backup` calls `importProfile()` and imports a previously downloaded team JSON backup.
+- `Backup Team` calls `exportProfile()` and downloads the full team JSON backup.
+
+Avoid using the older labels `League CSV`, `Load Profile`, or `Save Profile` in user-facing docs or UI unless referring to historical versions.
+
 ## Architecture
 
 `index.html` contains:
