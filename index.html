@@ -2736,6 +2736,8 @@ function renderGameDayCheckboxes(restoreChecked = false) {
   document.getElementById('game-number-label').textContent = `Game ${gameHistory.length + 1}`;
   if (!gameDate) gameDate = new Date().toISOString().slice(0, 10);
   document.getElementById('game-date-input').value = gameDate;
+  const oppInput = document.getElementById('opponent-input');
+  if (oppInput && !oppInput.value && opponentName) oppInput.value = opponentName;
 
   const list   = document.getElementById('gameday-roster');
   const sorted = [...roster].sort((a, b) => a.name.localeCompare(b.name));
