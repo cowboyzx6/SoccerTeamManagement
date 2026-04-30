@@ -129,3 +129,14 @@ Cards on the bench are colored by playing-time balance relative to the per-game 
 - **Photos**: Canvas-resized to 120×120px (center crop), stored as JPEG base64 at 0.75 quality.
 - **Auto-export**: Game JSON automatically downloads after each half ends.
 - **Late arrivals**: Players can be added to bench mid-game via the game screen.
+
+
+## Token / context discipline
+
+- Do not read entire large files unless explicitly asked.
+- Use search first, then inspect small line ranges.
+- Prefer targeted edits over broad rewrites.
+- Do not paste full files into the conversation.
+- Do not dump full command output; summarize or limit output.
+- For index.html, locate relevant sections first and read nearby context only.
+- Show concise diffs and summaries, not full rewritten files.
