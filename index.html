@@ -3095,7 +3095,17 @@ function launchGame() {
 
   const gkPlayer = lineupDraft.find(p => p.position === 'GK');
   if (gkPlayer) {
+    const hasSecondHalfGoalie = goalie1Id === gkPlayer.id
+      && goalie2Id
+      && lineupDraft.some(p => p.id === goalie2Id);
+
     goalie1Id         = gkPlayer.id;
+
+    if (hasSecondHalfGoalie) {
+      startGameDirect();
+      return;
+    }
+
     goalie2Id         = gkPlayer.id;
     currentGoaliePick = 2;
     gkSpinMode        = false;
@@ -3257,8 +3267,10 @@ function stopWheel() {
   const playerIdx = ((nearestIdx % wheelPlayers.length) + wheelPlayers.length) % wheelPlayers.length;
   const winner    = wheelPlayers[playerIdx];
 
-  if (currentGoaliePick === 1) goalie1Id = winner.id;
-  else                         goalie2Id = winner.id;
+  if (!gkSpinMode) {
+    if (currentGoaliePick === 1) goalie1Id = winner.id;
+    else                         goalie2Id = winner.id;
+  }
 
   setTimeout(() => {
     track.style.transition = 'none';
