@@ -3447,20 +3447,26 @@ function getPlayedTime(player) {
   return player.totalPlayed;
 }
 
+function getRotationTime(player) {
+  const gkTime = (player.positionTime && player.positionTime.GK) || 0;
+  return Math.max(0, getPlayedTime(player) - gkTime);
+}
+
 const GRACE_PERIOD = () => HALF_DURATION() / 3;
 
 function computeFairShare() {
   if (players.length === 0 || totalElapsed < GRACE_PERIOD()) return Infinity;
   const active           = players.filter(p => !p.leftEarly);
-  const fieldCount       = active.filter(p => p.onField && p.id !== activeGoalieId).length;
   const nonGoaliePlayers = active.filter(p => p.id !== activeGoalieId);
-  return nonGoaliePlayers.length > 0 ? (totalElapsed * fieldCount) / nonGoaliePlayers.length : 0;
+  if (!nonGoaliePlayers.length) return Infinity;
+  const rotationTime = nonGoaliePlayers.reduce((sum, p) => sum + getRotationTime(p), 0);
+  return rotationTime / nonGoaliePlayers.length;
 }
 
 function getStatus(player, fairShare) {
   if (player.id === activeGoalieId) return 's-goalie';
   if (fairShare === Infinity) return 's-green';
-  const played = getPlayedTime(player);
+  const played = getRotationTime(player);
   if (played < fairShare * 0.75) return 's-red';
   if (played > fairShare * 1.25) return 's-yellow';
   return 's-green';
@@ -3498,11 +3504,17 @@ function renderGame() {
   const fairShare = computeFairShare();
   const STATUS_PRI = { 's-red': 0, 's-green': 1, 's-yellow': 2, 's-goalie': 3 };
   const bench = players.filter(p => !p.onField && !p.leftEarly).sort((a, b) => {
-    if (benchSort === 'time')     return getPlayedTime(b) - getPlayedTime(a);
+    if (benchSort === 'time') {
+      const ta = getPlayedTime(b) - getPlayedTime(a);
+      return ta !== 0 ? ta : a.name.localeCompare(b.name);
+    }
     if (benchSort === 'priority') {
       const pa = STATUS_PRI[getStatus(a, fairShare)] ?? 1;
       const pb = STATUS_PRI[getStatus(b, fairShare)] ?? 1;
-      return pa !== pb ? pa - pb : a.name.localeCompare(b.name);
+      if (pa !== pb) return pa - pb;
+      const ta = getRotationTime(a);
+      const tb = getRotationTime(b);
+      return ta !== tb ? ta - tb : a.name.localeCompare(b.name);
     }
     return a.name.localeCompare(b.name);
   });
