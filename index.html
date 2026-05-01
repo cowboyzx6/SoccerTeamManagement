@@ -2266,6 +2266,8 @@ function buildGameRecord() {
       name:          p.name,
       minutesPlayed: Math.round(p.totalPlayed / 60 * 10) / 10,
       secondsPlayed: p.totalPlayed,
+      firstHalfSeconds: Number.isFinite(p.h1Snapshot) ? p.h1Snapshot : p.totalPlayed,
+      secondHalfSeconds: Number.isFinite(p.h1Snapshot) ? Math.max(0, p.totalPlayed - p.h1Snapshot) : 0,
       positionSeconds: p.positionTime || {},
       positionMinutes: Object.fromEntries(
         Object.entries(p.positionTime || {}).map(([pos, s]) => [pos, Math.round(s / 60 * 10) / 10])
@@ -2511,6 +2513,9 @@ function showGameReviewFromRecord(gameRecord, profileTeamName) {
   const tbody = document.getElementById('summary-body');
   tbody.innerHTML = sorted.map(p => {
     const pct = maxTime > 0 ? Math.round((p.secondsPlayed / maxTime) * 100) : 0;
+    const hasHalfSplit = Number.isFinite(p.firstHalfSeconds) && Number.isFinite(p.secondHalfSeconds);
+    const firstHalf = hasHalfSplit ? fmt(p.firstHalfSeconds) : '&mdash;';
+    const secondHalf = hasHalfSplit ? fmt(p.secondHalfSeconds) : '&mdash;';
     const posChips = Object.entries(p.positionSeconds || {})
       .filter(([, t]) => t > 0)
       .sort(([, a], [, b]) => b - a)
@@ -2528,8 +2533,8 @@ function showGameReviewFromRecord(gameRecord, profileTeamName) {
             </div>
           </div>
         </td>
-        <td>—</td>
-        <td>—</td>
+        <td>${firstHalf}</td>
+        <td>${secondHalf}</td>
         <td class="total-col">
           ${fmt(p.secondsPlayed)}
           <div class="time-bar"><div class="time-bar-fill" style="width:${pct}%"></div></div>
@@ -4243,8 +4248,8 @@ function showSummary() {
 
   const tbody = document.getElementById('summary-body');
   tbody.innerHTML = sorted.map(p => {
-    const h1   = p.h1Snapshot !== null ? p.h1Snapshot : p.totalPlayed;
-    const h2   = p.h1Snapshot !== null ? Math.max(0, p.totalPlayed - p.h1Snapshot) : 0;
+    const h1   = Number.isFinite(p.h1Snapshot) ? p.h1Snapshot : p.totalPlayed;
+    const h2   = Number.isFinite(p.h1Snapshot) ? Math.max(0, p.totalPlayed - p.h1Snapshot) : 0;
     const pct  = maxTime > 0 ? Math.round((p.totalPlayed / maxTime) * 100) : 0;
     const posChips = Object.entries(p.positionTime || {})
       .filter(([, t]) => t > 0)
