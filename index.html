@@ -112,6 +112,31 @@
       font-size: 0.9rem;
     }
 
+    .setup-topbar {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .setup-topbar .app-title {
+      line-height: 1.1;
+    }
+
+    .setup-topbar .app-subtitle {
+      margin-bottom: 0;
+    }
+
+    .setup-title-block {
+      min-width: 0;
+    }
+
+    .setup-menu-wrap {
+      position: relative;
+      justify-self: end;
+    }
+
     .section-header {
       display: flex;
       justify-content: space-between;
@@ -395,12 +420,16 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       color: var(--text-muted);
-      padding: 6px 16px;
+      width: 42px;
+      padding: 6px 0;
       border-radius: 20px;
       font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .btn-theme:active { opacity: 0.7; }
@@ -1659,20 +1688,21 @@
 <!-- ============================================================ -->
 <div id="setup-screen" class="screen active">
   <div class="setup-container">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <div class="setup-topbar">
       <button class="btn-theme" id="theme-btn" onclick="toggleTheme()">&#9728;&#65039;</button>
-      <div style="position:relative;">
+      <div class="setup-title-block">
+        <div class="app-title">&#9917; <span id="app-title-name">My Team</span></div>
+        <div class="app-subtitle">Team Management</div>
+      </div>
+      <div class="setup-menu-wrap">
         <button id="overflow-menu-btn" class="btn btn-gray" style="font-size:0.82rem;padding:6px 14px;" onclick="toggleOverflowMenu()">&#8943;</button>
         <div id="overflow-menu" style="display:none;position:absolute;right:0;top:calc(100% + 4px);background:var(--bg-card);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.2);z-index:100;min-width:160px;">
           <button class="overflow-menu-item" onclick="importGameReview();closeOverflowMenu()">&#128202; Review Game</button>
-          <button class="overflow-menu-item" onclick="showSeasonSummary();closeOverflowMenu()">&#128200; Season</button>
+          <button class="overflow-menu-item" onclick="showSeasonSummary();closeOverflowMenu()">&#128200; Review Season</button>
           <button class="overflow-menu-item" onclick="goToTeamSetup();closeOverflowMenu()">&#9881; Team Settings</button>
         </div>
       </div>
     </div>
-
-    <div class="app-title">&#9917; <span id="app-title-name">My Team</span></div>
-    <div class="app-subtitle">Team Management</div>
 
     <!-- Empty state: shown when no roster configured -->
     <div id="gameday-empty" style="display:none;text-align:center;padding:48px 0 32px;">
