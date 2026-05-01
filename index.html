@@ -804,9 +804,9 @@
       flex-shrink: 0;
     }
 
-    .legend-dot.red    { background: #ef5350; }
-    .legend-dot.yellow { background: #ffb300; }
-    .legend-dot.green  { background: #66bb6a; }
+    .legend-dot.red    { background: #c62828; }
+    .legend-dot.yellow { background: #f57c00; }
+    .legend-dot.green  { background: #2e7d32; }
 
     /* ===== LINEUP SCREEN ===== */
     #lineup-screen.active { display: flex; flex-direction: column; height: 100vh; overflow: hidden; min-height: unset; }
@@ -1405,9 +1405,9 @@
 
     .pos-slot:active { transform: translate(-50%, -50%) scale(0.92); }
 
-    .pos-slot.s-green  { background: rgba(27,94,32,0.88);  border-color: #4caf50; }
-    .pos-slot.s-yellow { background: rgba(58,40,0,0.88);   border-color: #ff9800; }
-    .pos-slot.s-red    { background: rgba(58,15,15,0.88);  border-color: #f44336; }
+    .pos-slot.s-green  { background: rgba(27,94,32,0.88);  border-color: #2e7d32; }
+    .pos-slot.s-yellow { background: rgba(58,40,0,0.88);   border-color: #f57c00; }
+    .pos-slot.s-red    { background: rgba(58,15,15,0.88);  border-color: #c62828; }
     .pos-slot.s-goalie { background: rgba(13,45,45,0.88);  border-color: #00bcd4; }
 
     .pos-slot.selected {
@@ -1806,7 +1806,7 @@
       <div class="color-legend">
         <div class="legend-item">
           <div class="legend-dot red"></div>
-          <span>Needs on (&lt;75%)</span>
+          <span>Needs minutes (&lt;75%)</span>
         </div>
         <div class="legend-item">
           <div class="legend-dot green"></div>
@@ -1814,7 +1814,7 @@
         </div>
         <div class="legend-item">
           <div class="legend-dot yellow"></div>
-          <span>Needs off (&gt;125%)</span>
+          <span>Over target (&gt;125%)</span>
         </div>
       </div>
     </div>
