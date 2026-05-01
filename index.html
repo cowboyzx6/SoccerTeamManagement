@@ -1193,6 +1193,30 @@
       letter-spacing: 1px;
     }
 
+    .sortable-th {
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      padding: 0;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .sortable-th:active { opacity: 0.75; }
+
+    .sort-indicator {
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+      min-width: 8px;
+    }
+
+    .sortable-th.active .sort-indicator { color: var(--accent); }
+
     td {
       padding: 11px 14px;
       border-bottom: 1px solid var(--border);
@@ -1881,10 +1905,10 @@
     <table>
       <thead>
         <tr>
-          <th>Player</th>
-          <th>GP</th>
-          <th>Goals</th>
-          <th>Total Time</th>
+          <th><button class="sortable-th" id="season-sort-player" onclick="setSeasonSort('name')">Player <span class="sort-indicator"></span></button></th>
+          <th><button class="sortable-th" id="season-sort-gp" onclick="setSeasonSort('games')">GP <span class="sort-indicator"></span></button></th>
+          <th><button class="sortable-th" id="season-sort-goals" onclick="setSeasonSort('goals')">Goals <span class="sort-indicator"></span></button></th>
+          <th><button class="sortable-th" id="season-sort-time" onclick="setSeasonSort('seconds')">Total Time <span class="sort-indicator"></span></button></th>
         </tr>
       </thead>
       <tbody id="season-body"></tbody>
@@ -2112,6 +2136,8 @@ let scoreUs           = 0;
 let scoreThem         = 0;
 let goals             = [];  // [{ scorer: name|null, half: 1|2, team: 'us'|'them' }]
 let gameHistory       = [];  // persisted across games
+let seasonSortKey     = 'seconds';
+let seasonSortDir     = 'desc';
 
 // Lineup screen state
 let selectedLineupSlot   = null; // 'LF' | 'CF' | ... | null
@@ -2526,6 +2552,45 @@ function showGameReviewFromRecord(gameRecord, profileTeamName) {
   showScreen('summary-screen');
 }
 
+function setSeasonSort(key) {
+  if (seasonSortKey === key) {
+    seasonSortDir = seasonSortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    seasonSortKey = key;
+    seasonSortDir = key === 'name' ? 'asc' : 'desc';
+  }
+  showSeasonSummary();
+}
+
+function compareSeasonPlayers(a, b) {
+  if (seasonSortKey === 'name') {
+    const result = a.name.localeCompare(b.name);
+    return seasonSortDir === 'asc' ? result : -result;
+  }
+
+  const result = (a[seasonSortKey] || 0) - (b[seasonSortKey] || 0);
+  if (result !== 0) return seasonSortDir === 'asc' ? result : -result;
+  return a.name.localeCompare(b.name);
+}
+
+function updateSeasonSortHeaders() {
+  const map = {
+    name: 'season-sort-player',
+    games: 'season-sort-gp',
+    goals: 'season-sort-goals',
+    seconds: 'season-sort-time',
+  };
+
+  Object.entries(map).forEach(([key, id]) => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    const indicator = btn.querySelector('.sort-indicator');
+    const isActive = key === seasonSortKey;
+    btn.classList.toggle('active', isActive);
+    if (indicator) indicator.textContent = isActive ? (seasonSortDir === 'asc' ? '\u25B2' : '\u25BC') : '';
+  });
+}
+
 function showSeasonSummary() {
   if (!gameHistory.length) {
     alert('No games recorded yet.');
@@ -2565,8 +2630,9 @@ function showSeasonSummary() {
 
   roster.forEach(r => { if (playerMap[r.id]) playerMap[r.id].name = r.name; });
 
-  const sorted  = Object.values(playerMap).sort((a, b) => b.seconds - a.seconds);
-  const maxSecs = sorted.length ? sorted[0].seconds : 1;
+  const seasonPlayers = Object.values(playerMap);
+  const sorted  = seasonPlayers.sort(compareSeasonPlayers);
+  const maxSecs = seasonPlayers.length ? Math.max(...seasonPlayers.map(p => p.seconds)) : 1;
 
   document.getElementById('season-team-name').textContent = teamName;
   document.getElementById('season-wins').textContent      = wins;
@@ -2576,6 +2642,8 @@ function showSeasonSummary() {
   document.getElementById('season-ga').textContent        = ga;
   document.getElementById('season-meta').textContent      =
     `${gameHistory.length} game${gameHistory.length !== 1 ? 's' : ''} · ${sorted.length} players`;
+
+  updateSeasonSortHeaders();
 
   document.getElementById('season-body').innerHTML = sorted.map(p => {
     const pct      = maxSecs > 0 ? Math.round((p.seconds / maxSecs) * 100) : 0;
