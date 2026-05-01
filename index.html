@@ -1867,7 +1867,7 @@
       </thead>
       <tbody id="summary-body"></tbody>
     </table>
-    <button class="btn btn-gray btn-full" style="margin-bottom:8px;" onclick="exportProfile(false, true)">&#128228; Export Game JSON</button>
+    <button class="btn btn-gray btn-full" id="summary-export-btn" style="margin-bottom:8px;" onclick="exportProfile(false, true)">&#128228; Export JSON Backup</button>
     <button class="btn btn-blue btn-full" onclick="goToSetup()">&#8592; New Game</button>
   </div>
 </div>
@@ -2554,6 +2554,7 @@ function showGameReviewFromRecord(gameRecord, profileTeamName) {
   document.getElementById('summary-goals').innerHTML =
     renderGoalsHtml(gameRecord.goals || [], opp);
 
+  document.getElementById('summary-export-btn').style.display = 'none';
   showScreen('summary-screen');
 }
 
@@ -4289,6 +4290,7 @@ function showSummary() {
   document.getElementById('summary-goals').innerHTML =
     renderGoalsHtml(goals, opponentName || 'Opponent');
 
+  document.getElementById('summary-export-btn').style.display = '';
   showScreen('summary-screen');
 }
 
