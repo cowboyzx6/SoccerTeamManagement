@@ -1097,6 +1097,15 @@
         width: 100%;
         justify-content: flex-start;
       }
+
+      .season-summary-header {
+        flex-direction: row;
+      }
+
+      .season-summary-header .summary-actions {
+        width: auto;
+        justify-content: flex-end;
+      }
     }
 
     .summary-goals-title {
@@ -1210,6 +1219,11 @@
     }
 
     /* Season summary stat cards */
+    .season-summary-header .btn {
+      padding: 6px 9px;
+      font-size: 0.72rem;
+    }
+
     .season-record-row {
       display: flex;
       gap: 8px;
@@ -1952,8 +1966,15 @@
 <!-- ============================================================ -->
 <div id="season-summary-screen" class="screen">
   <div class="summary-container">
-    <div class="summary-title" id="season-team-name">My Team</div>
-    <div class="summary-vs-line">Season Summary</div>
+    <div class="summary-header season-summary-header">
+      <div class="summary-heading">
+        <div class="summary-title" id="season-team-name">My Team</div>
+        <div class="summary-vs-line">Season Summary</div>
+      </div>
+      <div class="summary-actions">
+        <button class="btn btn-gray" onclick="goToSetup()">&#8592; Back</button>
+      </div>
+    </div>
     <div class="season-record-row">
       <div class="season-stat-card s-wins">
         <div class="season-stat-num" id="season-wins">0</div>
@@ -1988,7 +2009,6 @@
       </thead>
       <tbody id="season-body"></tbody>
     </table>
-    <button class="btn btn-blue btn-full" style="margin-top:16px;" onclick="goToSetup()">&#8592; Back</button>
   </div>
 </div>
 
