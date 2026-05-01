@@ -2217,6 +2217,7 @@ function checkForActiveGame() {
   gameDate         = state.gameDate        || new Date().toISOString().slice(0, 10);
 
   showScreen('game-screen');
+  syncGamePhaseUi();
   renderClock();
   renderScore();
   renderGame();
@@ -3436,6 +3437,17 @@ function renderClock() {
   el.className   = 'clock-display';
   if (halfClock <= 60)       el.classList.add('urgent');
   else if (halfClock <= 300) el.classList.add('warn');
+}
+
+function syncGamePhaseUi() {
+  const halfPill = document.getElementById('half-pill');
+  const actionBtn = document.getElementById('action-btn');
+  const pauseBtn = document.getElementById('pause-btn');
+
+  halfPill.textContent = currentHalf === 2 ? 'HALF 2' : 'HALF 1';
+  actionBtn.textContent = currentHalf === 2 ? 'END' : 'HALF';
+  actionBtn.style.background = halfClock === 0 ? '#ef5350' : '#4527a0';
+  pauseBtn.style.display = halfClock === 0 ? 'none' : '';
 }
 
 // ─────────────────────────────────────────────────────────────
