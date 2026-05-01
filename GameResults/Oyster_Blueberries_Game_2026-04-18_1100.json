@@ -1,0 +1,106 @@
+{
+  "teamName": "Oyster Blueberries",
+  "halfMinutes": 25,
+  "roster": [
+    {
+      "id": 1,
+      "name": "Sofia L.",
+      "photo": null
+    },
+    {
+      "id": 2,
+      "name": "Harriet B.",
+      "photo": null
+    },
+    {
+      "id": 3,
+      "name": "Eva N.",
+      "photo": null
+    },
+    {
+      "id": 4,
+      "name": "Elise G.",
+      "photo": null
+    },
+    {
+      "id": 5,
+      "name": "Emma B.",
+      "photo": null
+    },
+    {
+      "id": 6,
+      "name": "Anaya O.",
+      "photo": null
+    },
+    {
+      "id": 7,
+      "name": "Ziva I.",
+      "photo": null
+    },
+    {
+      "id": 8,
+      "name": "Sadie G.",
+      "photo": null
+    },
+    {
+      "id": 9,
+      "name": "Claire M.",
+      "photo": null
+    },
+    {
+      "id": 10,
+      "name": "Stephanie M.",
+      "photo": null
+    },
+    {
+      "id": 11,
+      "name": "Mylene H.",
+      "photo": null
+    },
+    {
+      "id": 12,
+      "name": "Anastasia C.",
+      "photo": null
+    },
+    {
+      "id": 13,
+      "name": "Jocelyn E.",
+      "photo": null
+    },
+    {
+      "id": 14,
+      "name": "Camilla C.",
+      "photo": null
+    },
+    {
+      "id": 15,
+      "name": "Penelope C.",
+      "photo": null
+    },
+    {
+      "id": 16,
+      "name": "Hazel S.",
+      "photo": null
+    },
+    {
+      "id": 17,
+      "name": "Noa S.",
+      "photo": null
+    },
+    {
+      "id": 18,
+      "name": "Victoria C.",
+      "photo": null
+    }
+  ],
+  "games": [
+    {
+      "date": "2026-04-18",
+      "opponent": "LAMB Pandas",
+      "ourScore": 2,
+      "theirScore": 3,
+      "goals": [],
+      "playerStats": []
+    }
+  ]
+}
