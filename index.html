@@ -3460,11 +3460,6 @@ function getPlayedTime(player) {
   return player.totalPlayed;
 }
 
-function getRotationTime(player) {
-  const gkTime = (player.positionTime && player.positionTime.GK) || 0;
-  return Math.max(0, getPlayedTime(player) - gkTime);
-}
-
 const GRACE_PERIOD = () => HALF_DURATION() / 3;
 
 function computeFairShare() {
@@ -3472,14 +3467,14 @@ function computeFairShare() {
   const active           = players.filter(p => !p.leftEarly);
   const nonGoaliePlayers = active.filter(p => p.id !== activeGoalieId);
   if (!nonGoaliePlayers.length) return Infinity;
-  const rotationTime = nonGoaliePlayers.reduce((sum, p) => sum + getRotationTime(p), 0);
-  return rotationTime / nonGoaliePlayers.length;
+  const playedTime = nonGoaliePlayers.reduce((sum, p) => sum + getPlayedTime(p), 0);
+  return playedTime / nonGoaliePlayers.length;
 }
 
 function getStatus(player, fairShare) {
   if (player.id === activeGoalieId) return 's-goalie';
   if (fairShare === Infinity) return 's-green';
-  const played = getRotationTime(player);
+  const played = getPlayedTime(player);
   if (played < fairShare * 0.75) return 's-red';
   if (played > fairShare * 1.25) return 's-yellow';
   return 's-green';
@@ -3525,8 +3520,8 @@ function renderGame() {
       const pa = STATUS_PRI[getStatus(a, fairShare)] ?? 1;
       const pb = STATUS_PRI[getStatus(b, fairShare)] ?? 1;
       if (pa !== pb) return pa - pb;
-      const ta = getRotationTime(a);
-      const tb = getRotationTime(b);
+      const ta = getPlayedTime(a);
+      const tb = getPlayedTime(b);
       return ta !== tb ? ta - tb : a.name.localeCompare(b.name);
     }
     return a.name.localeCompare(b.name);
