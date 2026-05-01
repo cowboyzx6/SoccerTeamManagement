@@ -4001,29 +4001,22 @@ function startSecondHalf() {
       p.totalPlayed += totalElapsed - p.subInAt;
     }
     p.h1Snapshot = p.totalPlayed;
-    if (p.onField) {
-      p.subInAt = totalElapsed;
-    }
   });
 
-  // Swap GK position if a different 2nd half goalie was chosen
-  if (goalie2Id && goalie2Id !== goalie1Id) {
-    const oldGk = players.find(p => p.position === 'GK');
-    const newGk = players.find(p => p.id === goalie2Id);
-    if (oldGk && newGk && oldGk.id !== newGk.id) {
-      if (newGk.onField) {
-        const tmp      = newGk.position;
-        newGk.position = 'GK';
-        oldGk.position = tmp;
-      } else {
-        newGk.position = 'GK';
-        newGk.onField  = true;
-        newGk.subInAt  = totalElapsed;
-        oldGk.position = null;
-        oldGk.onField  = false;
-        oldGk.subInAt  = null;
-      }
-    }
+  const secondHalfGoalieId = goalie2Id || goalie1Id;
+
+  players.forEach(p => {
+    p.onField       = false;
+    p.subInAt       = null;
+    p.position      = null;
+    p.positionStart = null;
+  });
+
+  const secondHalfGoalie = players.find(p => p.id === secondHalfGoalieId);
+  if (secondHalfGoalie) {
+    secondHalfGoalie.onField  = true;
+    secondHalfGoalie.subInAt  = totalElapsed;
+    secondHalfGoalie.position = 'GK';
   }
 
   // Start 2nd half position timers after all position changes are settled
@@ -4032,7 +4025,7 @@ function startSecondHalf() {
   currentHalf      = 2;
   halfClock        = HALF_DURATION();
   halfActionIsEnd  = true;
-  activeGoalieId   = goalie2Id || goalie1Id;
+  activeGoalieId   = secondHalfGoalie ? secondHalfGoalie.id : null;
   subPlans         = [];
   planningBenchId  = null;
   planningPosition = null;
