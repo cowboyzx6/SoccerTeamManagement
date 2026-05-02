@@ -436,9 +436,10 @@
 
     /* ===== GAME SCREEN ===== */
     #game-screen {
-      height: calc(100vh - 50px);
-      height: calc(100dvh - 50px);
+      height: 100vh;
+      height: 100dvh;
       overflow: hidden;
+      overscroll-behavior: none;
     }
 
     #game-screen.active { display: flex; flex-direction: column; min-height: unset; }
@@ -845,9 +846,10 @@
     #lineup-screen.active {
       display: flex;
       flex-direction: column;
-      height: calc(100vh - 50px);
-      height: calc(100dvh - 50px);
+      height: 100vh;
+      height: 100dvh;
       overflow: hidden;
+      overscroll-behavior: none;
       min-height: unset;
     }
 
