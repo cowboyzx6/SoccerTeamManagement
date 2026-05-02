@@ -3330,10 +3330,15 @@ function launchGame() {
     currentGoaliePick = 2;
     gkSpinMode        = false;
     gkSpinWinner      = null;
-    wheelPlayers      = lineupDraft
-      .filter(p => p.onField && p.id !== goalie1Id)
-      .sort((a, b) => a.name.localeCompare(b.name));
-    if (!wheelPlayers.length) { startGameDirect(); return; }
+    wheelPlayers      = seasonFreshGoalieCandidates(
+      lineupDraft.filter(p => p.onField),
+      [goalie1Id]
+    );
+    if (!wheelPlayers.length) {
+      alert('No other players are eligible for the goalie spinner this season.');
+      showGkPicker(2);
+      return;
+    }
     resetWheelUI('2nd Half Goalie', `1st half: ${gkPlayer.name} · Spin to pick 2nd half goalie`);
     buildWheel();
     openModal('goalie-modal');
@@ -3358,6 +3363,21 @@ let gkSpinMode        = false;
 let gkSpinWinner      = null;
 let gkSpinPhase       = 1;
 
+function hasBeenGoalieThisSeason(playerId) {
+  return gameHistory.some(game =>
+    (game.playerStats || []).some(ps =>
+      String(ps.id) === String(playerId) && (ps.positionSeconds || {}).GK > 0
+    )
+  );
+}
+
+function seasonFreshGoalieCandidates(sourcePlayers, excludedIds = []) {
+  const excluded = new Set(excludedIds.map(id => String(id)));
+  return sourcePlayers
+    .filter(p => !excluded.has(String(p.id)) && !hasBeenGoalieThisSeason(p.id))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
 function resetWheelUI(title = '1st Half Goalie', subtitle = 'Spin the wheel to pick!') {
   document.getElementById('goalie-wheel-title').textContent    = title;
   document.getElementById('goalie-wheel-subtitle').textContent = subtitle;
@@ -3376,8 +3396,11 @@ function openGoaliePicker() {
   currentGoaliePick = 1;
   gkSpinMode        = false;
   gkSpinWinner      = null;
-  wheelPlayers      = lineupDraft.filter(p => p.onField)
-                                 .sort((a, b) => a.name.localeCompare(b.name));
+  wheelPlayers      = seasonFreshGoalieCandidates(lineupDraft.filter(p => p.onField));
+  if (!wheelPlayers.length) {
+    alert('Everyone in this lineup has already played goalie this season.');
+    return;
+  }
 
   resetWheelUI();
   buildWheel();
@@ -3394,11 +3417,10 @@ function openGkSpin() {
     const firstHalfGoalie = lineupDraft.find(p => p.id === goalie1Id);
     gkSpinPhase = 2;
     goalie2Id   = null;
-    wheelPlayers = lineupDraft
-      .filter(p => p.id !== goalie1Id)
-      .sort((a, b) => a.name.localeCompare(b.name));
+    wheelPlayers = seasonFreshGoalieCandidates(lineupDraft, [goalie1Id]);
 
     if (!wheelPlayers.length) {
+      alert('No other players are eligible for the goalie spinner this season.');
       showGkPicker(2);
       return;
     }
@@ -3411,7 +3433,12 @@ function openGkSpin() {
     gkSpinPhase = 1;
     goalie1Id   = null;
     goalie2Id   = null;
-    wheelPlayers = [...lineupDraft].sort((a, b) => a.name.localeCompare(b.name));
+    wheelPlayers = seasonFreshGoalieCandidates(lineupDraft);
+    if (!wheelPlayers.length) {
+      alert('Everyone in this lineup has already played goalie this season.');
+      showGkPicker(1);
+      return;
+    }
     resetWheelUI();
   }
 
@@ -3434,9 +3461,13 @@ function confirmGkFromSpin() {
     // Move to 2nd half pick (exclude 1st half goalie from wheel)
     gkSpinPhase  = 2;
     gkSpinWinner = null;
-    wheelPlayers = lineupDraft
-      .filter(p => p.id !== goalie1Id)
-      .sort((a, b) => a.name.localeCompare(b.name));
+    wheelPlayers = seasonFreshGoalieCandidates(lineupDraft, [goalie1Id]);
+    if (!wheelPlayers.length) {
+      closeModal('goalie-modal');
+      gkSpinMode = false;
+      showGkPicker(2);
+      return;
+    }
 
     resetWheelUI('2nd Half Goalie', 'Spin to pick!');
     buildWheel();
@@ -3539,6 +3570,10 @@ function showWheelResult(winner) {
 function nextGoaliePick() {
   currentGoaliePick = 2;
   wheelPlayers      = wheelPlayers.filter(p => p.id !== goalie1Id);
+  if (!wheelPlayers.length) {
+    alert('No other players are eligible for the goalie spinner this season.');
+    return;
+  }
 
   resetWheelUI('2nd Half Goalie', 'Spin again to pick!');
   buildWheel();
