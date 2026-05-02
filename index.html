@@ -1505,7 +1505,7 @@
       width: 84px;
       border: 2px solid rgba(255,255,255,0.25);
       border-radius: 8px;
-      padding: 4px 3px 24px;
+      padding: 0 3px 24px;
       cursor: pointer;
       text-align: center;
       transition: transform 0.1s;
@@ -1548,10 +1548,29 @@
     .pos-label {
       font-size: 0.72rem;
       font-weight: 800;
-      color: rgba(255,255,255,0.85);
+      color: #fff;
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin-bottom: 2px;
+      margin: 0 -3px 4px;
+      padding: 4px 3px 3px;
+      border-radius: 6px 6px 0 0;
+      background: rgba(255,183,77,0.88);
+      border-bottom: 1px solid rgba(255,236,179,0.45);
+      line-height: 1;
+      text-shadow: 0 1px 1px rgba(0,0,0,0.35);
+    }
+
+    .pos-slot.slot-empty .pos-label {
+      background: rgba(255,183,77,0.38);
+      color: #fff;
+    }
+
+    .pos-slot.s-green .pos-label,
+    .pos-slot.s-yellow .pos-label,
+    .pos-slot.s-red .pos-label,
+    .pos-slot.s-goalie .pos-label,
+    .pos-slot.slot-filled .pos-label {
+      background: rgba(255,183,77,0.9);
     }
 
     .pos-avatar {
