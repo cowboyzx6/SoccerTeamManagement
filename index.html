@@ -520,8 +520,12 @@
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      min-width: 60px;
+      min-width: 0;
+      max-width: 180px;
       text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .score-goal-btn {
@@ -3636,10 +3640,8 @@ function _initGame() {
   document.getElementById('pause-btn').style.display = '';
 
   // Score bar labels
-  const shortTeam = teamName.length > 10 ? teamName.slice(0, 10) + '…' : teamName;
-  const shortOpp  = opponentName.length > 10 ? opponentName.slice(0, 10) + '…' : opponentName;
-  document.getElementById('score-us-label').textContent   = shortTeam;
-  document.getElementById('score-them-label').textContent = shortOpp || 'Them';
+  document.getElementById('score-us-label').textContent   = teamName || 'My Team';
+  document.getElementById('score-them-label').textContent = opponentName || 'Opponent';
   renderScore();
 
   showScreen('game-screen');
