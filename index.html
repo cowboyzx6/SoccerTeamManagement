@@ -1170,11 +1170,20 @@
     }
 
     .summary-player-cell .summary-player-name {
+      display: flex;
+      align-items: center;
+      gap: 5px;
       font-weight: 700;
       color: var(--text-card-name);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    .summary-goalie-icon {
+      flex-shrink: 0;
+      font-size: 0.76rem;
+      line-height: 1;
     }
 
     .summary-goal-scorer {
@@ -2617,13 +2626,16 @@ function showGameReviewFromRecord(gameRecord, profileTeamName) {
       .map(([pos, t]) => `<span class="summary-pos-chip">${pos} <strong>${fmt(t)}</strong></span>`)
       .join('');
     const posHtml = posChips ? `<div class="summary-pos-breakdown">${posChips}</div>` : '';
+    const goalieIcon = (p.positionSeconds || {}).GK > 0
+      ? '<span class="summary-goalie-icon" title="Goalkeeper" aria-label="Goalkeeper">&#129508;</span>'
+      : '';
     return `
       <tr>
         <td>
           <div class="summary-player-cell">
             <div class="summary-player-avatar">${avatarHtml(p.id, p.name, 30)}</div>
             <div class="summary-player-info">
-              <div class="summary-player-name">${escHtml(p.name)}</div>
+              <div class="summary-player-name">${escHtml(p.name)}${goalieIcon}</div>
               ${posHtml}
             </div>
           </div>
