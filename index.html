@@ -2196,14 +2196,11 @@ const FORMATION_SVG = `<svg class="formation-lines" viewBox="0 0 100 100" preser
 </svg>`;
 
 const FIELD_SVG = `<svg class="field-lines" viewBox="0 50 100 50" preserveAspectRatio="none">
-  <line x1="3" y1="50" x2="3"  y2="98" stroke="rgba(255,255,255,0.22)" stroke-width="0.8"/>
-  <line x1="97" y1="50" x2="97" y2="98" stroke="rgba(255,255,255,0.22)" stroke-width="0.8"/>
-  <line x1="3" y1="98" x2="97" y2="98" stroke="rgba(255,255,255,0.22)" stroke-width="0.8"/>
-  <line x1="3" y1="50" x2="97" y2="50" stroke="rgba(255,255,255,0.3)" stroke-width="0.9"/>
-  <circle cx="50" cy="50" r="11" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.6"/>
-  <circle cx="50" cy="50" r="1.2" fill="rgba(255,255,255,0.28)"/>
-  <rect x="26" y="78" width="48" height="20" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.6"/>
-  <rect x="37" y="92" width="26" height="6" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.6"/>
+  <path d="M3 50 H97 V99.2 H3 Z" fill="none" stroke="#5b965b" stroke-width="8" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/>
+  <circle cx="50" cy="50" r="11" fill="none" stroke="#5b965b" stroke-width="8" vector-effect="non-scaling-stroke"/>
+  <circle cx="50" cy="50" r="1.2" fill="#5b965b"/>
+  <path d="M26 99.2 V78 H74 V99.2" fill="none" stroke="#5b965b" stroke-width="8" stroke-linecap="butt" vector-effect="non-scaling-stroke"/>
+  <path d="M37 99.2 V92 H63 V99.2" fill="none" stroke="#5b965b" stroke-width="8" stroke-linecap="butt" vector-effect="non-scaling-stroke"/>
   <circle cx="50" cy="86" r="1" fill="rgba(255,255,255,0.28)"/>
   <text x="50" y="54" text-anchor="middle" font-size="2.8" fill="rgba(255,255,255,0.18)" font-family="sans-serif" font-weight="bold" letter-spacing="0.5">MIDFIELD</text>
 </svg>`;
