@@ -934,6 +934,7 @@
 
     .lineup-player:active { transform: scale(0.95); }
     .lineup-player.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(79,195,247,0.25); }
+    .lineup-player.dragging { opacity: 0.65; }
 
     .lineup-player-name {
       font-size: 0.72rem;
@@ -3170,6 +3171,93 @@ function renderLineup() {
   updateLineupLaunchBtn();
 }
 
+let lineupPointerDrag = null;
+let suppressLineupClickUntil = 0;
+
+function handleLineupPointerDown(e) {
+  if (e.button !== undefined && e.button !== 0) return;
+
+  const item = e.target.closest('.pos-slot, .lineup-player');
+  if (!item) return;
+
+  const playerId = parseInt(item.dataset.playerId, 10);
+  const player = lineupDraft.find(p => p.id === playerId);
+  if (!player) return;
+
+  lineupPointerDrag = {
+    playerId,
+    sourceItem: item,
+    startX: e.clientX,
+    startY: e.clientY,
+    dragging: false,
+    overSlot: null,
+    preview: null
+  };
+}
+
+function handleLineupPointerMove(e) {
+  if (!lineupPointerDrag) return;
+
+  const dx = Math.abs(e.clientX - lineupPointerDrag.startX);
+  const dy = Math.abs(e.clientY - lineupPointerDrag.startY);
+  if (!lineupPointerDrag.dragging && Math.max(dx, dy) < 8) return;
+
+  e.preventDefault();
+  lineupPointerDrag.dragging = true;
+  lineupPointerDrag.sourceItem.classList.add('dragging');
+  if (!lineupPointerDrag.preview) {
+    const player = lineupDraft.find(p => p.id === lineupPointerDrag.playerId);
+    if (player) lineupPointerDrag.preview = createFieldDragPreview(player, player.position);
+  }
+  moveFieldDragPreview(lineupPointerDrag.preview, e.clientX, e.clientY);
+
+  const overSlot = document.elementFromPoint(e.clientX, e.clientY)?.closest('#lineup-field-positions .pos-slot');
+  if (lineupPointerDrag.overSlot && lineupPointerDrag.overSlot !== overSlot) {
+    lineupPointerDrag.overSlot.classList.remove('drag-over');
+  }
+
+  lineupPointerDrag.overSlot = overSlot && overSlot.dataset.position ? overSlot : null;
+  if (lineupPointerDrag.overSlot) lineupPointerDrag.overSlot.classList.add('drag-over');
+}
+
+function handleLineupPointerUp(e) {
+  if (!lineupPointerDrag) return;
+
+  const drag = lineupPointerDrag;
+  lineupPointerDrag = null;
+
+  drag.sourceItem.classList.remove('dragging');
+  if (drag.overSlot) drag.overSlot.classList.remove('drag-over');
+  removeFieldDragPreview(drag.preview);
+
+  if (!drag.dragging) return;
+  e.preventDefault();
+  suppressLineupClickUntil = Date.now() + 350;
+
+  if (drag.overSlot) {
+    moveLineupPlayerToPosition(drag.playerId, drag.overSlot.dataset.position);
+  }
+}
+
+function moveLineupPlayerToPosition(playerId, targetPos) {
+  const player = lineupDraft.find(p => p.id === playerId);
+  if (!player || !targetPos || player.position === targetPos) return;
+
+  const fromPos = player.position;
+  const target = lineupDraft.find(p => p.position === targetPos && p.id !== playerId);
+
+  if (target) {
+    target.position = fromPos || null;
+    target.onField = !!fromPos;
+  }
+
+  player.position = targetPos;
+  player.onField = true;
+  selectedLineupSlot = null;
+  selectedLineupPlayer = null;
+  renderLineup();
+}
+
 function renderLineupField() {
   const container = document.getElementById('lineup-field-positions');
   container.innerHTML = '';
@@ -3186,9 +3274,11 @@ function renderLineupField() {
     slot.className = 'pos-slot ' + slotClass;
     slot.style.left = coords.x + '%';
     slot.style.top  = coords.y + '%';
+    slot.dataset.position = pos;
     slot.onclick = () => lineupSlotTap(pos);
 
     if (assigned) {
+      slot.dataset.playerId = String(assigned.id);
       const [avatarBg, avatarContent] = avatarParts(assigned.id, assigned.name);
       slot.innerHTML = `
         <div class="pos-label">${pos}</div>
@@ -3233,6 +3323,7 @@ function renderLineupPlayers() {
   unassigned.forEach(p => {
     const item = document.createElement('div');
     item.className = 'lineup-player' + (p.id === selectedLineupPlayer ? ' selected' : '');
+    item.dataset.playerId = String(p.id);
     item.innerHTML = `${avatarHtml(p.id, p.name, 44)}<span class="lineup-player-name">${escHtml(p.name)}</span>`;
     item.onclick = () => lineupPlayerTap(p.id);
     list.appendChild(item);
@@ -3240,6 +3331,8 @@ function renderLineupPlayers() {
 }
 
 function lineupSlotTap(pos) {
+  if (Date.now() < suppressLineupClickUntil) return;
+
   const assigned = lineupDraft.find(p => p.position === pos);
 
   if (assigned) {
@@ -3268,6 +3361,8 @@ function lineupSlotTap(pos) {
 }
 
 function lineupPlayerTap(id) {
+  if (Date.now() < suppressLineupClickUntil) return;
+
   if (selectedLineupSlot !== null) {
     // Slot already selected → assign this player to it
     const player = lineupDraft.find(p => p.id === id);
@@ -4741,6 +4836,11 @@ document.getElementById('field-positions').addEventListener('pointerdown', handl
 window.addEventListener('pointermove', handleFieldSlotPointerMove, { passive: false });
 window.addEventListener('pointerup', handleFieldSlotPointerUp);
 window.addEventListener('pointercancel', handleFieldSlotPointerUp);
+
+document.getElementById('lineup-screen').addEventListener('pointerdown', handleLineupPointerDown);
+window.addEventListener('pointermove', handleLineupPointerMove, { passive: false });
+window.addEventListener('pointerup', handleLineupPointerUp);
+window.addEventListener('pointercancel', handleLineupPointerUp);
 
 document.getElementById('bench-grid').addEventListener('click', e => {
   const removeBtn = e.target.closest('.btn-remove-player');
