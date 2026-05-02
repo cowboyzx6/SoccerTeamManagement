@@ -65,8 +65,8 @@ All screens exist in the DOM. `showScreen(id)` switches screens by toggling `.ac
 
 - `setup-screen` — landing/game-day check-in UI
 - `team-setup-screen` — team name, roster, import/export, reset
-- `lineup-screen` — starting lineup assignment
-- `game-screen` — live clock, score, field, bench, substitutions
+- `lineup-screen` — starting lineup assignment using the same field diagram as live gameplay
+- `game-screen` — compact live header, clock, score, field, bench, substitutions
 - `summary-screen` — post-game summary and imported game review display
 - `season-summary-screen` — aggregate season stats
 
@@ -80,8 +80,8 @@ Important corrections:
 1. Load persisted data.
 2. Configure roster/team if needed.
 3. Select attending players on the game-day landing UI.
-4. Assign starting lineup.
-5. Pick goalie manually or by wheel.
+4. Assign starting lineup. Full 9-player lineups are not required; at least one assigned field player can start.
+5. Pick first-half and second-half goalies manually, by wheel, or explicitly reuse the first-half goalie.
 6. Run game clock.
 7. Plan or execute substitutions.
 8. Record goals.
@@ -134,6 +134,7 @@ When changing data that should survive refresh, update the relevant `save*()` fu
 - When moving a player off the field, commit position time before clearing `position`.
 - When putting a player on the field, set `subInAt`, `position`, and start position timing.
 - When changing goalie assignment, keep `activeGoalieId`, `goalie1Id`, and `goalie2Id` consistent with the current half.
+- Goalie spinner candidates should exclude players who already have positive `GK` time in `gameHistory` when possible; manual selection remains the override path.
 - After substitution changes, clear stale planning state where appropriate: `selectedId`, `planningBenchId`, `planningPosition`, related `subPlans`.
 - After game-state changes during a live game, call `saveActiveGame()` when persistence matters.
 - After changing score/goals, call `renderScore()` and save active game.
@@ -154,8 +155,8 @@ Use `PROJECT_MAP.md` for line ranges.
 
 - Attendance/check-in: `renderGameDayCheckboxes`, `togglePlayerTile`, `checkedPlayers`, `updateStartBtn`
 - Team setup: `renderTeamSetupRoster`, `addRosterPlayer`, `openRenameModal`, `removeRosterPlayer`
-- Lineup: `goToLineup`, `renderLineup`, `lineupSlotTap`, `lineupPlayerTap`, `launchGame`
-- Goalies: `showGkPicker`, `openGkSpin`, `openGoaliePicker`, `spinWheel`, `stopWheel`, `confirmGkFromSpin`
+- Lineup: `goToLineup`, `showGkPicker`, `renderLineup`, `lineupSlotTap`, `lineupPlayerTap`, `launchGame`
+- Goalies: `showGkPicker`, `openGkSpin`, `openGoaliePicker`, `seasonFreshGoalieCandidates`, `spinWheel`, `stopWheel`, `confirmGkFromSpin`
 - Game render: `renderGame`, `renderField`, `renderGrid`, `computeFairShare`, `getStatus`
 - Substitutions: `handleTap`, `createPlan`, `executeAllPlans`, `makeSub`, `moveFieldPlayerToBench`
 - Timer: `pauseGame`, `resumeGame`, `tick`, `renderClock`
@@ -172,6 +173,7 @@ LF, CF, RF, LM, CM, RM, LD, RD, GK
 ```
 
 Coordinates live in `POSITIONS`. Rendering order lives in `POSITION_ORDER`.
+Both the starting lineup screen and live game screen insert the shared `FIELD_SVG`.
 
 ## Debugging workflow
 

@@ -11,7 +11,7 @@ Purpose: quick navigation map for Claude Code and humans working on the single-f
 
 ## Project files
 
-- `index.html` — main PWA: HTML, CSS, and JavaScript in one file, currently 4340 lines.
+- `index.html` — main PWA: HTML, CSS, and JavaScript in one file, currently 4593 lines.
 - `manifest.json` — PWA metadata.
 - `sw.js` — service worker/offline caching.
 
@@ -29,65 +29,65 @@ There is no separate `review-screen` element. Game review imports are rendered t
 | 92-254 | Setup screen | Setup/team screens, roster list, buttons, text inputs, overflow menu |
 | 255-292 | Game info row | Game number/date/opponent inputs and responsive layout |
 | 293-407 | Gameday player tiles | Attendance tiles, selected check mark, attendance counter/bar, theme button |
-| 408-455 | Game screen layout | Game screen container, header, half pill, game clock |
-| 456-809 | Score/game panels/bench cards | Score bar, game body, field/bench panels, player cards, avatars, legends |
-| 810-962 | Lineup screen | Lineup layout, unassigned player list, field board, lineup actions |
-| 963-1004 | Modals | Overlay/modal generic styles and modal button rows |
-| 1005-1279 | Summary screens | Game/season summary tables, stat cards, time bars, chips |
-| 1280-1315 | Goalie styles | Goalie status, GK badges/buttons |
-| 1316-1368 | Goalie wheel | Wheel container, fades, track, items |
-| 1369-1529 | Field diagram | Field diagram, position slots, pos labels/avatar/time, GK/bench slot buttons |
-| 1530-1589 | Sub planning | Planned sub indicators, incoming player strip, Sub Now button |
+| 437-573 | Game screen layout | Game screen container, compact header, half pill, game clock, score labels/buttons |
+| 574-842 | Game panels/bench cards | Game body, field/bench panels, player cards, avatars, legends |
+| 843-971 | Lineup screen | Lineup layout, unassigned player list, shared field board, lineup actions |
+| 972-1013 | Modals | Overlay/modal generic styles and modal button rows |
+| 1014-1374 | Summary screens | Game/season summary tables, stat cards, time bars, chips, review goalie icon |
+| 1375-1410 | Goalie styles | Goalie status, GK badges/buttons |
+| 1411-1463 | Goalie wheel | Wheel container, fades, track, items |
+| 1464-1624 | Field diagram | Shared field diagram, position slots, pos labels/avatar/time, GK/bench slot buttons |
+| 1625-1687 | Sub planning | Planned sub indicators, incoming player strip, Sub Now button |
 
 ## HTML / DOM map in `index.html`
 
 | Lines | Section | What lives here |
 |---:|---|---|
-| 1594-1657 | Game day screen / setup-screen | Landing screen. Contains theme button, overflow menu, no-roster empty state, gameday attendance content. |
-| 1658-1701 | Team setup screen | Team settings, roster management, import/export inputs, clear data button. |
-| 1702-1715 | Clear data confirm modal | Reset confirmation dialog. |
-| 1716-1750 | Lineup screen | Starting lineup assignment field + unassigned players. |
-| 1751-1824 | Game screen | Live clock, score bar, field panel, bench panel, planned subs. |
-| 1825-1850 | Summary screen | Post-game summary and manual Export Game JSON button. |
-| 1851-1895 | Season summary screen | Aggregate season record/stats table. |
-| 1896-1920 | Goalie wheel modal | Spin wheel controls and goalie confirm buttons. |
-| 1921-1934 | Remove from roster modal | Permanent roster removal. |
-| 1935-1948 | Rename player modal | Player rename input. |
-| 1949-1962 | GK picker modal | Manual GK picker plus spin option. |
-| 1963-1973 | Late arrival modal | Add not-present roster player to active game bench. |
-| 1974-1987 | Remove player from game modal | Mark player as left/removed from active game. |
-| 1988-2020 | Goal modal | Our goal/opponent goal and scorer/score adjustment UI. |
-| 2021-2035 | Half time / end game modal | Half-time summary and end-game confirmation. |
-| 2036-4340 | Script block | All app logic. |
+| 1688-1752 | Game day screen / setup-screen | Landing screen. Contains theme button, overflow menu, no-roster empty state, gameday attendance content. |
+| 1753-1796 | Team setup screen | Team settings, roster management, import/export inputs, clear data button. |
+| 1797-1810 | Clear data confirm modal | Reset confirmation dialog. |
+| 1811-1845 | Lineup screen | Starting lineup assignment field + unassigned players. |
+| 1846-1919 | Game screen | Compact live header, score area, field panel, bench panel, planned subs. |
+| 1920-1951 | Summary screen | Post-game summary and manual Export Game JSON button. |
+| 1952-2002 | Season summary screen | Aggregate season record/stats table with top-right back button. |
+| 2003-2027 | Goalie wheel modal | Spin wheel controls and goalie confirm buttons. |
+| 2028-2041 | Remove from roster modal | Permanent roster removal. |
+| 2042-2055 | Rename player modal | Player rename input. |
+| 2056-2069 | GK picker modal | Two-step manual GK picker plus spin option. |
+| 2070-2080 | Late arrival modal | Add not-present roster player to active game bench. |
+| 2081-2094 | Remove player from game modal | Mark player as left/removed from active game. |
+| 2095-2127 | Goal modal | Our goal/opponent goal and scorer/score adjustment UI. |
+| 2128-2142 | Half time / end game modal | Half-time summary and end-game confirmation. |
+| 2143-4593 | Script block | All app logic. |
 
 ## JavaScript map in `index.html`
 
 | Lines | Section | What lives here |
 |---:|---|---|
-| 2039-2081 | POSITIONS | Field coordinates, position order, formation SVG, field SVG. |
-| 2082-2121 | STATE | Global state for roster, active players, timer, planned subs, goalies, score, history, lineup draft. |
-| 2122-2130 | HALF DURATION STEPPER | Minutes-per-half stepper. |
-| 2131-2225 | TEAM NAME / SETTINGS | Team name, settings/history persistence, active game save/resume. |
-| 2226-2294 | IMPORT / EXPORT PROFILE | Build/export profile and game record JSON. |
-| 2295-2428 | LEAGUE CSV IMPORT | League CSV file reader and parser. |
-| 2429-2610 | GAME REVIEW (import a past game JSON for read-only display) | Import past exported game JSON and render it read-only through summary-screen. |
-| 2611-2685 | PHOTOS | Player photo load, avatar HTML, upload, resize/crop/store. |
-| 2686-2879 | ROSTER MANAGEMENT (Setup Screen) | Roster CRUD, attendance tiles, select all, start button enablement. |
-| 2880-2955 | GAME START / LINEUP | Build lineup draft from attending players, GK picker entry, navigation back to gameday. |
-| 2956-3114 | LINEUP RENDERING | Render lineup field/unassigned players, slot/player tap assignment, launch button. |
-| 3115-3367 | GOALIE WHEEL | Manual/spin goalie workflow, wheel animation, winner assignment, start game setup. |
-| 3368-3427 | TIMER | Start/pause/resume/tick clock, render clock warning/urgent classes. |
-| 3428-3669 | GAME RENDER | Compute fair share, status colors, render field/bench, sort bench, hints, goal button. |
-| 3670-3711 | REMOVE PLAYER FROM GAME | Mark a player as leftEarly and preserve played/position time. |
-| 3712-3871 | SUBSTITUTION | Tap handling, planned subs, executeAllPlans, immediate makeSub, move field player to bench, active goalie assignment. |
-| 3872-3920 | LATE ARRIVAL | Add roster players who were not in active game to bench mid-game. |
-| 3921-4040 | HALF TIME / END GAME | Half-time modal, first-half snapshots, GK switch for second half, endGame persistence. |
-| 4041-4141 | SCORE / GOALS | Goal modal, score updates, scorer tracking, opponent score adjustment. |
-| 4142-4261 | SUMMARY | Game summary render, season summary, navigation, overflow menu, clear data. |
-| 4262-4276 | UTILITIES | showScreen, open/close modal, escHtml. |
-| 4277-4296 | THEME | Dark/light theme persistence. |
-| 4297-4312 | INIT | Insert SVGs, load theme/photos/settings/history/roster, active game resume, beforeunload save. |
-| 4313-4340 | DELEGATED LISTENERS (attached once; survive re-renders) | Delegated click handlers for field/bench buttons and service worker registration. |
+| 2148-2168 | POSITIONS | Field coordinates, position order, shared field SVG. |
+| 2169-2211 | STATE | Global state for roster, active players, timer, planned subs, goalies, score, history, lineup draft. |
+| 2212-2220 | HALF DURATION STEPPER | Minutes-per-half stepper. |
+| 2221-2316 | TEAM NAME / SETTINGS | Team name, settings/history persistence, active game save/resume. |
+| 2317-2387 | IMPORT / EXPORT PROFILE | Build/export profile and game record JSON. |
+| 2388-2521 | LEAGUE CSV IMPORT | League CSV file reader and parser. |
+| 2522-2752 | GAME REVIEW + SEASON SUMMARY | Import past game JSON, render review summary with GK marker, season sorting/summary. |
+| 2753-2827 | PHOTOS | Player photo load, avatar HTML, upload, resize/crop/store. |
+| 2828-3021 | ROSTER MANAGEMENT (Setup Screen) | Roster CRUD, attendance tiles, select all, start button enablement. |
+| 3022-3133 | GAME START / LINEUP | Build lineup draft, two-step GK picker entry, navigation back to gameday. |
+| 3134-3306 | LINEUP RENDERING | Render lineup field/unassigned players, slot/player tap assignment, launch button for short lineups. |
+| 3307-3609 | GOALIE WHEEL + GAME INIT | Season-fresh goalie candidates, manual/spin goalie workflow, wheel animation, start game setup. |
+| 3610-3680 | TIMER | Start/pause/resume/tick clock, render clock warning/urgent classes. |
+| 3681-3929 | GAME RENDER | Compute fair share, status colors, render field/bench, sort bench, hints, goal button. |
+| 3930-3971 | REMOVE PLAYER FROM GAME | Mark a player as leftEarly and preserve played/position time. |
+| 3972-4131 | SUBSTITUTION | Tap handling, planned subs, executeAllPlans, immediate makeSub, move field player to bench, active goalie assignment. |
+| 4132-4180 | LATE ARRIVAL | Add roster players who were not in active game to bench mid-game. |
+| 4181-4293 | HALF TIME / END GAME | Half-time modal, first-half snapshots, GK switch for second half, endGame persistence. |
+| 4294-4372 | SCORE / GOALS | Goal modal, score updates, scorer tracking, opponent score adjustment. |
+| 4373-4515 | SUMMARY / NAV / CLEAR DATA | End game, summary render, navigation, overflow menu, clear data. |
+| 4516-4530 | UTILITIES | showScreen, open/close modal, escHtml. |
+| 4531-4550 | THEME | Dark/light theme persistence. |
+| 4551-4566 | INIT | Insert shared SVGs, load theme/photos/settings/history/roster, active game resume, beforeunload save. |
+| 4567-4593 | DELEGATED LISTENERS (attached once; survive re-renders) | Delegated click handlers for field/bench buttons and service worker registration. |
 
 ## Common bug targets
 
@@ -95,11 +95,11 @@ There is no separate `review-screen` element. Game review imports are rendered t
 |---|---|
 | Attendance / who showed up / start button | `renderGameDayCheckboxes`, `togglePlayerTile`, `checkedPlayers`, `updateStartBtn`, `#gameday-roster`, `#start-btn` |
 | Team setup / roster add/remove/rename | `renderTeamSetupRoster`, `addRosterPlayer`, `openRenameModal`, `removeRosterPlayer`, `#roster-list` |
-| Lineup assignment | `renderLineup`, `renderLineupField`, `lineupSlotTap`, `lineupPlayerTap`, `updateLineupLaunchBtn`, `lineupDraft` |
-| Goalkeeper picker/wheel | `showGkPicker`, `openGkSpin`, `openGoaliePicker`, `spinWheel`, `stopWheel`, `confirmGkFromSpin`, `confirmGoalies` |
+| Lineup assignment / short-handed starts | `renderLineup`, `renderLineupField`, `lineupSlotTap`, `lineupPlayerTap`, `updateLineupLaunchBtn`, `lineupDraft` |
+| Goalkeeper picker/wheel | `showGkPicker`, `openGkSpin`, `openGoaliePicker`, `seasonFreshGoalieCandidates`, `spinWheel`, `stopWheel`, `confirmGkFromSpin`, `confirmGoalies` |
 | Timer / clock / pause | `togglePause`, `pauseGame`, `resumeGame`, `tick`, `renderClock`, `halfClock`, `totalElapsed`, `timerBase` |
 | Bench sorting / card colors | `computeFairShare`, `getStatus`, `setBenchSort`, `renderGame`, `renderGrid`, `benchSort` |
-| Field diagram / position slots | `POSITIONS`, `renderField`, `.pos-slot`, `#field-positions`, `moveFieldPlayerToBench`, delegated field listener |
+| Field diagram / position slots | `POSITIONS`, `FIELD_SVG`, `renderField`, `.pos-slot`, `#field-positions`, `moveFieldPlayerToBench`, delegated field listener |
 | Planned substitutions | `handleTap`, `createPlan`, `cancelPlanForPos`, `executeAllPlans`, `subPlans`, `planningBenchId`, `planningPosition` |
 | Immediate substitution | `handleTap`, `makeSub`, `selectedId`, `activeGoalieId` |
 | Late arrivals | `openLateModal`, `confirmLateArrival`, `#late-player-list` |

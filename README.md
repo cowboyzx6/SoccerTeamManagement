@@ -21,13 +21,17 @@ The app is currently implemented as a **single-file vanilla HTML/CSS/JavaScript 
 - Enter the opponent name.
 - Set the game date.
 - Adjust minutes per half.
-- Assign a starting lineup on a visual 3-3-2 + GK field diagram.
-- Pick a goalkeeper manually or use the goalie wheel spinner.
+- Assign a starting lineup on the same visual field used during live gameplay.
+- Start with any number of assigned field players, including short-handed games with fewer than 9 players.
+- Pick separate first-half and second-half goalkeepers manually, by spinner, or by explicitly reusing the first-half goalkeeper.
+- The goalie spinner avoids players who have already logged GK time in saved season history when possible.
 
 ### Live game tracking
 
 - Countdown clock for each half.
 - Pause and resume the game timer.
+- Show the compact game header with half, clock, score, goal button, and controls on one row when space allows.
+- Show actual team and opponent names in the score area.
 - Track field players, bench players, and active goalkeeper.
 - Track total playing time per player.
 - Track position-specific time for LF, CF, RF, LM, CM, RM, LD, RD, and GK.
@@ -46,7 +50,7 @@ The app is currently implemented as a **single-file vanilla HTML/CSS/JavaScript 
 - Show position breakdown chips for each player.
 - Save completed games into local season history.
 - Show a season summary with wins, losses, draws, goals for, goals against, games played, player goals, and total playing time.
-- Import a previously exported JSON file through **Review Game** to view a saved game summary.
+- Import a previously exported JSON file through **Review Game** to view a saved game summary, including a glove marker beside players who played GK.
 
 ### Other features
 
@@ -89,8 +93,8 @@ python3 -m http.server 8000
 6. Enter the opponent and game date.
 7. Set the half length.
 8. Choose **Set Starting Lineup**.
-9. Assign players to positions on the field diagram.
-10. Pick or spin for the goalkeeper.
+9. Assign players to positions on the field diagram. Assign all players who should start; the app no longer requires a full 9-player lineup.
+10. Pick or spin for the first-half and second-half goalkeepers.
 11. Start the game.
 12. Use the field and bench panels to plan subs, execute subs, record goals, and track playing time.
 13. End the game to save it to local game history and view the summary.
@@ -182,8 +186,8 @@ The main screens are:
 
 - `setup-screen` — main landing/game-day screen.
 - `team-setup-screen` — roster and team settings.
-- `lineup-screen` — starting lineup assignment.
-- `game-screen` — live game tracking.
+- `lineup-screen` — starting lineup assignment using the shared field diagram.
+- `game-screen` — live game tracking with compact header, score, field, bench, substitutions, and goals.
 - `summary-screen` — completed game summary and game review display.
 - `season-summary-screen` — aggregate season statistics.
 
