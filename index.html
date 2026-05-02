@@ -2079,12 +2079,12 @@
 <!-- ============================================================ -->
 <div id="gk-picker-modal" class="overlay hidden">
   <div class="modal">
-    <h3>🧤 Pick a Goalkeeper</h3>
-    <p style="color:var(--text-modal-p);font-size:0.85rem;margin-bottom:12px;">Tap a player to assign them to GK.</p>
+    <h3 id="gk-picker-title">🧤 Pick a Goalkeeper</h3>
+    <p id="gk-picker-subtitle" style="color:var(--text-modal-p);font-size:0.85rem;margin-bottom:12px;">Tap a player to assign them to GK.</p>
     <div id="gk-picker-list" style="margin-bottom:16px;max-height:480px;overflow-y:auto;"></div>
     <div style="border-top:1px solid var(--border);margin-bottom:16px;"></div>
-    <button class="btn btn-blue btn-full" style="margin-bottom:8px;" onclick="openGkSpin()">🎲 Spin to Pick 1st Half Goalie</button>
-    <button class="btn btn-gray" style="width:100%;" onclick="skipGkPicker()">Skip — Assign Later</button>
+    <button class="btn btn-blue btn-full" id="gk-picker-spin-btn" style="margin-bottom:8px;" onclick="openGkSpin()">🎲 Spin to Pick 1st Half Goalie</button>
+    <button class="btn btn-gray" id="gk-picker-skip-btn" style="width:100%;" onclick="skipGkPicker()">Skip — Assign Later</button>
   </div>
 </div>
 
@@ -2231,6 +2231,7 @@ let halfMinutes       = 25;
 let goalie1Id         = null;
 let goalie2Id         = null;
 let activeGoalieId    = null;
+let gkPickerPhase     = 1;
 
 // Team / game meta
 let teamName          = 'My Team';
@@ -3077,6 +3078,9 @@ function goToLineup() {
   scoreUs      = 0;
   scoreThem    = 0;
   goals        = [];
+  goalie1Id    = null;
+  goalie2Id    = null;
+  activeGoalieId = null;
 
   // Update lineup header with team name
   document.getElementById('lineup-header-title').textContent = `${teamName} — Starting Lineup`;
@@ -3096,10 +3100,33 @@ function goToLineup() {
   showGkPicker();
 }
 
-function showGkPicker() {
+function showGkPicker(phase = 1) {
+  gkPickerPhase = phase;
+  const isSecondHalf = gkPickerPhase === 2;
+  const firstHalfGoalie = lineupDraft.find(p => p.id === goalie1Id);
+
+  document.getElementById('gk-picker-title').textContent =
+    isSecondHalf ? '🧤 Pick 2nd Half Goalie' : '🧤 Pick 1st Half Goalie';
+  document.getElementById('gk-picker-subtitle').textContent = isSecondHalf
+    ? `1st half: ${firstHalfGoalie ? firstHalfGoalie.name : 'Selected goalie'}. Tap a player or spin for the 2nd half.`
+    : 'Tap a player to assign them to GK for the 1st half.';
+  const pickerPlayers = isSecondHalf
+    ? lineupDraft.filter(p => p.id !== goalie1Id)
+    : lineupDraft;
+
+  document.getElementById('gk-picker-spin-btn').style.display =
+    isSecondHalf && pickerPlayers.length === 0 ? 'none' : 'block';
+  document.getElementById('gk-picker-spin-btn').textContent = isSecondHalf
+    ? '🎲 Spin to Pick 2nd Half Goalie'
+    : '🎲 Spin to Pick 1st Half Goalie';
+  document.getElementById('gk-picker-skip-btn').textContent = isSecondHalf
+    ? 'Use 1st Half Goalie for 2nd Half'
+    : 'Skip — Assign Later';
+
   const list = document.getElementById('gk-picker-list');
   list.innerHTML = '';
-  lineupDraft.forEach(p => {
+
+  pickerPlayers.forEach(p => {
     const btn = document.createElement('button');
     btn.className = 'btn btn-gray';
     btn.style.cssText = 'width:100%;margin-bottom:8px;text-align:left;font-size:1rem;display:flex;align-items:center;gap:12px;padding:10px 14px;';
@@ -3111,19 +3138,29 @@ function showGkPicker() {
 }
 
 function pickGk(playerId) {
-  // Assign the chosen player to GK slot
-  lineupDraft.forEach(p => {
-    if (p.id === playerId) {
-      p.onField   = true;
-      p.position  = 'GK';
-    }
-  });
+  if (gkPickerPhase === 1) {
+    goalie1Id = playerId;
+    goalie2Id = null;
+    lineupDraft.forEach(p => {
+      if (p.id === playerId) {
+        p.onField   = true;
+        p.position  = 'GK';
+      } else if (p.position === 'GK') {
+        p.position = null;
+      }
+    });
+    showGkPicker(2);
+    return;
+  }
+
+  goalie2Id = playerId;
   closeModal('gk-picker-modal');
   showScreen('lineup-screen');
   renderLineup();
 }
 
 function skipGkPicker() {
+  if (gkPickerPhase === 2) goalie2Id = goalie1Id;
   closeModal('gk-picker-modal');
   showScreen('lineup-screen');
   renderLineup();
@@ -3289,7 +3326,7 @@ function launchGame() {
       return;
     }
 
-    goalie2Id         = gkPlayer.id;
+    goalie2Id         = null;
     currentGoaliePick = 2;
     gkSpinMode        = false;
     gkSpinWinner      = null;
@@ -3351,14 +3388,33 @@ function openGkSpin() {
   // Close the manual picker, open the wheel in GK-assign mode
   closeModal('gk-picker-modal');
   gkSpinMode   = true;
-  gkSpinPhase  = 1;
   gkSpinWinner = null;
-  goalie1Id    = null;
-  goalie2Id    = null;
 
-  wheelPlayers = [...lineupDraft].sort((a, b) => a.name.localeCompare(b.name));
+  if (gkPickerPhase === 2 && goalie1Id) {
+    const firstHalfGoalie = lineupDraft.find(p => p.id === goalie1Id);
+    gkSpinPhase = 2;
+    goalie2Id   = null;
+    wheelPlayers = lineupDraft
+      .filter(p => p.id !== goalie1Id)
+      .sort((a, b) => a.name.localeCompare(b.name));
 
-  resetWheelUI();
+    if (!wheelPlayers.length) {
+      showGkPicker(2);
+      return;
+    }
+
+    resetWheelUI(
+      '2nd Half Goalie',
+      `1st half: ${firstHalfGoalie ? firstHalfGoalie.name : 'Selected goalie'} · Spin to pick 2nd half goalie`
+    );
+  } else {
+    gkSpinPhase = 1;
+    goalie1Id   = null;
+    goalie2Id   = null;
+    wheelPlayers = [...lineupDraft].sort((a, b) => a.name.localeCompare(b.name));
+    resetWheelUI();
+  }
+
   buildWheel();
   openModal('goalie-modal');
 }
