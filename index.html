@@ -1618,25 +1618,6 @@
       font-style: italic;
     }
 
-    /* GK button on pos-slot */
-    .pos-gk-btn {
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      background: none;
-      border: none;
-      font-size: 0.45rem;
-      font-weight: 800;
-      color: rgba(0,172,193,0.35);
-      cursor: pointer;
-      padding: 2px;
-      border-radius: 2px;
-      line-height: 1;
-    }
-
-    .pos-gk-btn.is-gk { color: #00bcd4; }
-    .pos-gk-btn:active { color: #00bcd4; background: rgba(0,172,193,0.2); }
-
     /* bench button on pos-slot */
     .pos-bench-btn {
       position: absolute;
@@ -3997,7 +3978,7 @@ function removeFieldDragPreview(preview) {
 
 function handleFieldSlotPointerDown(e) {
   if (e.button !== undefined && e.button !== 0) return;
-  if (e.target.closest('.pos-gk-btn, .pos-bench-btn')) return;
+  if (e.target.closest('.pos-bench-btn')) return;
 
   const slot = e.target.closest('.pos-slot');
   if (!slot || !slot.dataset.playerId || planningBenchId !== null) return;
@@ -4093,17 +4074,17 @@ function renderField(fairShare) {
       // Bench player selected → tap filled slot to queue a planned sub
       if (planningBenchId !== null) {
         slot.onclick = e => {
-          if (e.target.closest('.pos-gk-btn, .pos-bench-btn')) return;
+          if (e.target.closest('.pos-bench-btn')) return;
           createPlan(planningBenchId, pos);
         };
       } else if (hasPlan) {
         slot.onclick = e => {
-          if (e.target.closest('.pos-gk-btn, .pos-bench-btn')) return;
+          if (e.target.closest('.pos-bench-btn')) return;
           cancelPlanForPos(pos);
         };
       } else {
         slot.onclick = e => {
-          if (e.target.closest('.pos-gk-btn, .pos-bench-btn')) return;
+          if (e.target.closest('.pos-bench-btn')) return;
           handleTap(player.id, 'field');
         };
       }
@@ -4114,17 +4095,12 @@ function renderField(fairShare) {
         ? `<div class="pos-incoming">&#8593; ${escHtml(incomingPlayer.name)}</div>`
         : '';
 
-      const gkBtnHtml = pos === 'GK'
-        ? `<button class="pos-gk-btn${player.id === activeGoalieId ? ' is-gk' : ''}" title="Active goalie">🧤</button>`
-        : '';
-
       slot.innerHTML = `
         <div class="pos-label">${pos}</div>
         <div class="pos-avatar" style="${avatarBg}">${avatarContent}</div>
         <div class="pos-name">${escHtml(player.name)}</div>
         <div class="pos-time">${fmt(getPlayedTime(player))}</div>
         ${incomingHtml}
-        ${gkBtnHtml}
         <button class="pos-bench-btn" title="Move to bench">\u2193</button>
       `;
 
@@ -4872,11 +4848,6 @@ document.getElementById('field-positions').addEventListener('click', e => {
   if (Date.now() < suppressFieldClickUntil) {
     e.stopImmediatePropagation();
     e.preventDefault();
-    return;
-  }
-  const gkBtn = e.target.closest('.pos-gk-btn');
-  if (gkBtn) {
-    assignGoalie(parseInt(gkBtn.closest('[data-player-id]').dataset.playerId));
     return;
   }
   const benchBtn = e.target.closest('.pos-bench-btn');
