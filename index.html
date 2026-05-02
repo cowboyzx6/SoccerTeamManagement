@@ -956,6 +956,7 @@
 
     .lineup-panel-actions {
       margin-top: auto;
+      margin-bottom: 50px;
       padding-top: 10px;
       display: flex;
       flex-direction: column;
@@ -1469,6 +1470,8 @@
     .field-diagram {
       position: relative;
       flex: 1;
+      margin-bottom: 50px;
+      min-height: 0;
       background: linear-gradient(175deg, #1e6b1e, #176117);
       border-radius: 10px;
       overflow: hidden;
@@ -2226,6 +2229,7 @@ let goalie1Id         = null;
 let goalie2Id         = null;
 let activeGoalieId    = null;
 let gkPickerPhase     = 1;
+let goaliePickerSkipped = false;
 
 // Team / game meta
 let teamName          = 'My Team';
@@ -3075,6 +3079,7 @@ function goToLineup() {
   goalie1Id    = null;
   goalie2Id    = null;
   activeGoalieId = null;
+  goaliePickerSkipped = false;
 
   // Update lineup header with team name
   document.getElementById('lineup-header-title').textContent = `${teamName} — Starting Lineup`;
@@ -3132,6 +3137,7 @@ function showGkPicker(phase = 1) {
 }
 
 function pickGk(playerId) {
+  goaliePickerSkipped = false;
   if (gkPickerPhase === 1) {
     goalie1Id = playerId;
     goalie2Id = null;
@@ -3155,6 +3161,7 @@ function pickGk(playerId) {
 
 function skipGkPicker() {
   if (gkPickerPhase === 2) goalie2Id = goalie1Id;
+  else goaliePickerSkipped = true;
   closeModal('gk-picker-modal');
   showScreen('lineup-screen');
   renderLineup();
@@ -3434,6 +3441,11 @@ function launchGame() {
     resetWheelUI('2nd Half Goalie', `1st half: ${gkPlayer.name} · Spin to pick 2nd half goalie`);
     buildWheel();
     openModal('goalie-modal');
+  } else if (goaliePickerSkipped) {
+    goalie1Id = null;
+    goalie2Id = null;
+    activeGoalieId = null;
+    startGameDirect();
   } else {
     openGoaliePicker();
   }
