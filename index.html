@@ -1495,6 +1495,7 @@
       text-align: center;
       transition: transform 0.1s;
       background: rgba(0,0,0,0.55);
+      touch-action: manipulation;
     }
 
     .pos-slot:active { transform: translate(-50%, -50%) scale(0.92); }
@@ -1630,6 +1631,36 @@
     .pos-slot.slot-target {
       box-shadow: 0 0 0 2px rgba(79,195,247,0.45);
       border-color: rgba(79,195,247,0.6) !important;
+    }
+
+    .pos-slot.dragging {
+      opacity: 0.65;
+    }
+
+    .pos-slot.drag-over {
+      border-color: #fff !important;
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.35), 0 0 18px rgba(79,195,247,0.45);
+      transform: translate(-50%, -50%) scale(1.06);
+    }
+
+    .field-drag-preview {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 2000;
+      width: 92px;
+      border: 2px solid #fff;
+      border-radius: 8px;
+      padding: 5px 4px 8px;
+      text-align: center;
+      background: rgba(13,31,51,0.95);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.35), 0 0 0 3px rgba(79,195,247,0.3);
+      pointer-events: none;
+      transform: translate(-50%, -115%) scale(1.06);
+    }
+
+    .field-drag-preview .pos-name {
+      white-space: nowrap;
     }
 
     /* Incoming player strip at bottom of field slot */
@@ -3795,6 +3826,96 @@ function renderGame() {
   updateGoalBtn();
 }
 
+let fieldPointerDrag = null;
+let suppressFieldClickUntil = 0;
+
+function createFieldDragPreview(player, position) {
+  const [avatarBg, avatarContent] = avatarParts(player.id, player.name);
+  const preview = document.createElement('div');
+  preview.className = 'field-drag-preview';
+  preview.innerHTML = `
+    <div class="pos-label">${position || ''}</div>
+    <div class="pos-avatar" style="${avatarBg}">${avatarContent}</div>
+    <div class="pos-name">${escHtml(player.name)}</div>
+  `;
+  document.body.appendChild(preview);
+  return preview;
+}
+
+function moveFieldDragPreview(preview, x, y) {
+  if (!preview) return;
+  preview.style.left = x + 'px';
+  preview.style.top = y + 'px';
+}
+
+function removeFieldDragPreview(preview) {
+  if (preview) preview.remove();
+}
+
+function handleFieldSlotPointerDown(e) {
+  if (e.button !== undefined && e.button !== 0) return;
+  if (e.target.closest('.pos-gk-btn, .pos-bench-btn')) return;
+
+  const slot = e.target.closest('.pos-slot');
+  if (!slot || !slot.dataset.playerId || planningBenchId !== null) return;
+  const player = players.find(p => p.id === parseInt(slot.dataset.playerId, 10));
+  if (!player) return;
+
+  fieldPointerDrag = {
+    playerId: player.id,
+    sourceSlot: slot,
+    startX: e.clientX,
+    startY: e.clientY,
+    dragging: false,
+    overSlot: null,
+    preview: null
+  };
+}
+
+function handleFieldSlotPointerMove(e) {
+  if (!fieldPointerDrag) return;
+
+  const dx = Math.abs(e.clientX - fieldPointerDrag.startX);
+  const dy = Math.abs(e.clientY - fieldPointerDrag.startY);
+  if (!fieldPointerDrag.dragging && Math.max(dx, dy) < 8) return;
+
+  e.preventDefault();
+  fieldPointerDrag.dragging = true;
+  fieldPointerDrag.sourceSlot.classList.add('dragging');
+  if (!fieldPointerDrag.preview) {
+    const player = players.find(p => p.id === fieldPointerDrag.playerId);
+    if (player) fieldPointerDrag.preview = createFieldDragPreview(player, player.position);
+  }
+  moveFieldDragPreview(fieldPointerDrag.preview, e.clientX, e.clientY);
+
+  const overSlot = document.elementFromPoint(e.clientX, e.clientY)?.closest('.pos-slot');
+  if (fieldPointerDrag.overSlot && fieldPointerDrag.overSlot !== overSlot) {
+    fieldPointerDrag.overSlot.classList.remove('drag-over');
+  }
+
+  fieldPointerDrag.overSlot = overSlot && overSlot.dataset.position ? overSlot : null;
+  if (fieldPointerDrag.overSlot) fieldPointerDrag.overSlot.classList.add('drag-over');
+}
+
+function handleFieldSlotPointerUp(e) {
+  if (!fieldPointerDrag) return;
+
+  const drag = fieldPointerDrag;
+  fieldPointerDrag = null;
+
+  drag.sourceSlot.classList.remove('dragging');
+  if (drag.overSlot) drag.overSlot.classList.remove('drag-over');
+  removeFieldDragPreview(drag.preview);
+
+  if (!drag.dragging) return;
+  e.preventDefault();
+  suppressFieldClickUntil = Date.now() + 350;
+
+  if (drag.overSlot) {
+    moveFieldPlayerToPosition(drag.playerId, drag.overSlot.dataset.position);
+  }
+}
+
 function renderField(fairShare) {
   const container     = document.getElementById('field-positions');
   container.innerHTML = '';
@@ -3809,6 +3930,7 @@ function renderField(fairShare) {
     const slot = document.createElement('div');
     slot.style.left = coords.x + '%';
     slot.style.top  = coords.y + '%';
+    slot.dataset.position = pos;
 
     // Check for planned incoming player for this position
     const plan         = subPlans.find(pl => pl.pos === pos);
@@ -4082,6 +4204,38 @@ function moveFieldPlayerToBench(id) {
   player.position  = null;
   if (selectedId === id) selectedId = null;
   if (activeGoalieId === id) activeGoalieId = null;
+  renderGame();
+}
+
+function moveFieldPlayerToPosition(fromId, targetPos) {
+  const from = players.find(p => p.id === fromId);
+  if (!from || !from.onField || !targetPos || from.position === targetPos) return;
+
+  const fromPos = from.position;
+  const target = players.find(p => p.onField && p.position === targetPos);
+
+  commitPositionTime(from);
+  if (target) commitPositionTime(target);
+
+  from.position = targetPos;
+  startPositionTimer(from);
+
+  if (target) {
+    target.position = fromPos;
+    startPositionTimer(target);
+  }
+
+  if (targetPos === 'GK') {
+    setActiveGoalie(from.id);
+  } else if (fromPos === 'GK') {
+    if (target) setActiveGoalie(target.id);
+    else activeGoalieId = null;
+  }
+
+  selectedId = null;
+  planningBenchId = null;
+  planningPosition = null;
+  saveActiveGame();
   renderGame();
 }
 
@@ -4567,6 +4721,11 @@ window.addEventListener('beforeunload', () => {
 //  DELEGATED LISTENERS (attached once; survive re-renders)
 // ─────────────────────────────────────────────────────────────
 document.getElementById('field-positions').addEventListener('click', e => {
+  if (Date.now() < suppressFieldClickUntil) {
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    return;
+  }
   const gkBtn = e.target.closest('.pos-gk-btn');
   if (gkBtn) {
     assignGoalie(parseInt(gkBtn.closest('[data-player-id]').dataset.playerId));
@@ -4576,7 +4735,12 @@ document.getElementById('field-positions').addEventListener('click', e => {
   if (benchBtn) {
     moveFieldPlayerToBench(parseInt(benchBtn.closest('[data-player-id]').dataset.playerId));
   }
-});
+}, true);
+
+document.getElementById('field-positions').addEventListener('pointerdown', handleFieldSlotPointerDown);
+window.addEventListener('pointermove', handleFieldSlotPointerMove, { passive: false });
+window.addEventListener('pointerup', handleFieldSlotPointerUp);
+window.addEventListener('pointercancel', handleFieldSlotPointerUp);
 
 document.getElementById('bench-grid').addEventListener('click', e => {
   const removeBtn = e.target.closest('.btn-remove-player');
