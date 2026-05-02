@@ -436,7 +436,8 @@
 
     /* ===== GAME SCREEN ===== */
     #game-screen {
-      height: 100vh;
+      height: calc(100vh - 50px);
+      height: calc(100dvh - 50px);
       overflow: hidden;
     }
 
@@ -841,7 +842,14 @@
     .legend-dot.green  { background: #2e7d32; }
 
     /* ===== LINEUP SCREEN ===== */
-    #lineup-screen.active { display: flex; flex-direction: column; height: 100vh; overflow: hidden; min-height: unset; }
+    #lineup-screen.active {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 50px);
+      height: calc(100dvh - 50px);
+      overflow: hidden;
+      min-height: unset;
+    }
 
     .lineup-header {
       background: var(--bg-deep);
@@ -956,7 +964,6 @@
 
     .lineup-panel-actions {
       margin-top: auto;
-      margin-bottom: 50px;
       padding-top: 10px;
       display: flex;
       flex-direction: column;
@@ -1470,7 +1477,6 @@
     .field-diagram {
       position: relative;
       flex: 1;
-      margin-bottom: 50px;
       min-height: 0;
       background: linear-gradient(175deg, #1e6b1e, #176117);
       border-radius: 10px;
