@@ -930,6 +930,9 @@
       word-break: break-word;
       transition: background 0.15s, transform 0.1s;
       border: 2px solid transparent;
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     .lineup-player:active { transform: scale(0.95); }
@@ -1496,7 +1499,9 @@
       text-align: center;
       transition: transform 0.1s;
       background: rgba(0,0,0,0.55);
-      touch-action: manipulation;
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     .pos-slot:active { transform: translate(-50%, -50%) scale(0.92); }
@@ -3187,16 +3192,19 @@ function handleLineupPointerDown(e) {
   lineupPointerDrag = {
     playerId,
     sourceItem: item,
+    pointerId: e.pointerId,
     startX: e.clientX,
     startY: e.clientY,
     dragging: false,
     overSlot: null,
     preview: null
   };
+  item.setPointerCapture?.(e.pointerId);
 }
 
 function handleLineupPointerMove(e) {
   if (!lineupPointerDrag) return;
+  if (e.pointerId !== undefined && e.pointerId !== lineupPointerDrag.pointerId) return;
 
   const dx = Math.abs(e.clientX - lineupPointerDrag.startX);
   const dy = Math.abs(e.clientY - lineupPointerDrag.startY);
@@ -3222,11 +3230,13 @@ function handleLineupPointerMove(e) {
 
 function handleLineupPointerUp(e) {
   if (!lineupPointerDrag) return;
+  if (e.pointerId !== undefined && e.pointerId !== lineupPointerDrag.pointerId) return;
 
   const drag = lineupPointerDrag;
   lineupPointerDrag = null;
 
   drag.sourceItem.classList.remove('dragging');
+  drag.sourceItem.releasePointerCapture?.(drag.pointerId);
   if (drag.overSlot) drag.overSlot.classList.remove('drag-over');
   removeFieldDragPreview(drag.preview);
 
@@ -3959,16 +3969,19 @@ function handleFieldSlotPointerDown(e) {
   fieldPointerDrag = {
     playerId: player.id,
     sourceSlot: slot,
+    pointerId: e.pointerId,
     startX: e.clientX,
     startY: e.clientY,
     dragging: false,
     overSlot: null,
     preview: null
   };
+  slot.setPointerCapture?.(e.pointerId);
 }
 
 function handleFieldSlotPointerMove(e) {
   if (!fieldPointerDrag) return;
+  if (e.pointerId !== undefined && e.pointerId !== fieldPointerDrag.pointerId) return;
 
   const dx = Math.abs(e.clientX - fieldPointerDrag.startX);
   const dy = Math.abs(e.clientY - fieldPointerDrag.startY);
@@ -3994,11 +4007,13 @@ function handleFieldSlotPointerMove(e) {
 
 function handleFieldSlotPointerUp(e) {
   if (!fieldPointerDrag) return;
+  if (e.pointerId !== undefined && e.pointerId !== fieldPointerDrag.pointerId) return;
 
   const drag = fieldPointerDrag;
   fieldPointerDrag = null;
 
   drag.sourceSlot.classList.remove('dragging');
+  drag.sourceSlot.releasePointerCapture?.(drag.pointerId);
   if (drag.overSlot) drag.overSlot.classList.remove('drag-over');
   removeFieldDragPreview(drag.preview);
 
