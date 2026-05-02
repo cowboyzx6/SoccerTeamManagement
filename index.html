@@ -3303,10 +3303,9 @@ function lineupPlayerTap(id) {
 function updateLineupLaunchBtn() {
   const btn = document.getElementById('launch-btn');
   const posCount = lineupDraft.filter(p => p.position).length;
-  const required  = Math.min(FIELD_SIZE, lineupDraft.length);
-  const ready = posCount >= required;
+  const ready = posCount >= 1;
   btn.disabled    = !ready;
-  btn.textContent = ready ? 'Start Game \u2192' : `Assign ${required - posCount} more player(s)`;
+  btn.textContent = ready ? 'Start Game \u2192' : 'Assign at least 1 player';
 }
 
 function launchGame() {
