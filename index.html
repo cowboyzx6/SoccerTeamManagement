@@ -1529,8 +1529,8 @@
     }
 
     .pos-slot.slot-filled {
-      background: rgba(21,101,192,0.75);
-      border-color: #4fc3f7;
+      background: rgba(13,45,45,0.88);
+      border-color: #00bcd4;
     }
 
     .pos-slot.slot-empty {
@@ -3432,6 +3432,12 @@ function launchGame() {
       return;
     }
 
+    if (goaliePickerSkipped) {
+      goalie2Id = goalie1Id;
+      startGameDirect();
+      return;
+    }
+
     goalie2Id         = null;
     currentGoaliePick = 2;
     gkSpinMode        = false;
@@ -3446,6 +3452,8 @@ function launchGame() {
       return;
     }
     resetWheelUI('2nd Half Goalie', `1st half: ${gkPlayer.name} · Spin to pick 2nd half goalie`);
+    document.getElementById('goalie-confirm-btn').textContent = 'Use 1st Half Goalie →';
+    document.getElementById('goalie-confirm-btn').style.display = 'block';
     buildWheel();
     openModal('goalie-modal');
   } else if (goaliePickerSkipped) {
@@ -3495,6 +3503,7 @@ function resetWheelUI(title = '1st Half Goalie', subtitle = 'Spin the wheel to p
   document.getElementById('wheel-spin-btn').style.display      = 'block';
   document.getElementById('wheel-stop-btn').style.display      = 'none';
   document.getElementById('wheel-next-btn').style.display      = 'none';
+  document.getElementById('goalie-confirm-btn').textContent    = 'Start Game →';
   document.getElementById('goalie-confirm-btn').style.display  = 'none';
   document.getElementById('gk-assign-btn').style.display       = 'none';
   document.getElementById('wheel-spin-again-btn').style.display = 'none';
@@ -3708,6 +3717,9 @@ function cancelGoalieSpin() {
 }
 
 function confirmGoalies() {
+  if (currentGoaliePick === 2 && goalie1Id && !goalie2Id) {
+    goalie2Id = goalie1Id;
+  }
   closeModal('goalie-modal');
   startGameDirect();
 }
@@ -4068,7 +4080,7 @@ function renderField(fairShare) {
     if (player) {
       const hasPlan    = !!plan;
       const isTarget   = planningBenchId !== null && !hasPlan;
-      slot.className = `pos-slot ${status}${isSelected ? ' selected' : ''}${hasPlan ? ' planned-out' : ''}${isTarget ? ' slot-target' : ''}`;
+      slot.className = `pos-slot slot-filled ${status}${isSelected ? ' selected' : ''}${hasPlan ? ' planned-out' : ''}${isTarget ? ' slot-target' : ''}`;
       slot.dataset.playerId = String(player.id);
 
       // Bench player selected → tap filled slot to queue a planned sub
