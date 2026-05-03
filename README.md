@@ -141,6 +141,26 @@ The summary-screen export uses the same profile-style JSON structure and include
 
 Loads a JSON file and displays the most recent game record found in the file without replacing the current team profile.
 
+## App Versioning
+
+The overflow menu includes **About**, which shows the current app version.
+
+Versions use this format:
+
+```text
+1.YYDDD.N
+```
+
+- `YY` is the two-digit year.
+- `DDD` is the day number of the year.
+- `N` is the next versioned update number for that day.
+
+The version is stored in `APP_VERSION` in `index.html` and is included as `appVersion` in JSON exports. A tracked pre-commit hook runs `scripts/Update-AppVersion.ps1` to stamp the version automatically before each commit. The first versioned commit on a day ends in `.1`, the second ends in `.2`, and so on. On a fresh clone, enable the hook with:
+
+```bash
+git config core.hooksPath .githooks
+```
+
 ### Import League CSV
 
 The CSV importer expects these column names:

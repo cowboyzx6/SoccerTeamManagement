@@ -1749,6 +1749,7 @@
           <button class="overflow-menu-item" onclick="importGameReview();closeOverflowMenu()">&#128202; Review Game</button>
           <button class="overflow-menu-item" onclick="showSeasonSummary();closeOverflowMenu()">&#128200; Review Season</button>
           <button class="overflow-menu-item" onclick="goToTeamSetup();closeOverflowMenu()">&#9881; Team Settings</button>
+          <button class="overflow-menu-item" onclick="openAboutModal();closeOverflowMenu()">&#8505; About</button>
         </div>
       </div>
     </div>
@@ -1851,6 +1852,23 @@
     <div class="modal-btns">
       <button class="btn btn-red" onclick="executeClearData()">Yes, Clear Everything</button>
       <button class="btn btn-gray" onclick="closeClearDataModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  ABOUT MODAL                                                -->
+<!-- ============================================================ -->
+<div id="about-modal" class="overlay hidden">
+  <div class="modal">
+    <h3>About</h3>
+    <p style="color:var(--text-modal-p);margin-bottom:10px;">Soccer Team Management</p>
+    <div style="display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:16px;background:var(--bg-soft);">
+      <span style="color:var(--text-muted);font-size:0.85rem;font-weight:700;">Version</span>
+      <span id="about-version" style="color:var(--text-main);font-size:1rem;font-weight:800;">v0.0.0</span>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-gray" onclick="closeModal('about-modal')">Close</button>
     </div>
   </div>
 </div>
@@ -2201,6 +2219,7 @@ const POSITIONS = {
   GK: {x:50, y:87}
 };
 const POSITION_ORDER = ['LF','CF','RF','LM','CM','RM','LD','RD','GK'];
+const APP_VERSION = '1.26123.1';
 
 const FIELD_SVG = `<svg class="field-lines" viewBox="0 50 100 50" preserveAspectRatio="none">
   <path d="M3 50 H97 V99.2 H3 Z" fill="none" stroke="#5b965b" stroke-width="8" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/>
@@ -2387,6 +2406,7 @@ function buildGameRecord() {
 
 function buildProfile(includeGameRecord) {
   const profile = {
+    appVersion: APP_VERSION,
     teamName,
     halfMinutes,
     roster: roster.map(p => ({
@@ -4746,6 +4766,11 @@ function toggleOverflowMenu() {
 
 function closeOverflowMenu() {
   document.getElementById('overflow-menu').style.display = 'none';
+}
+
+function openAboutModal() {
+  document.getElementById('about-version').textContent = `v${APP_VERSION}`;
+  openModal('about-modal');
 }
 
 document.addEventListener('click', function(e) {
