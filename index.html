@@ -162,17 +162,30 @@
     }
 
     .roster-item {
+      position: relative;
       display: flex;
       align-items: center;
       padding: 13px 16px;
       border-bottom: 1px solid var(--border);
       gap: 12px;
-      transition: background 0.15s;
+      transition: background 0.18s, box-shadow 0.18s, transform 0.1s;
       cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .roster-item:last-child { border-bottom: none; }
-    .roster-item:active { background: var(--border); }
+    .roster-item:active {
+      background: var(--border);
+      transform: scale(0.99);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .roster-item:hover {
+        background: rgba(79,195,247,0.10);
+        box-shadow: inset 3px 0 0 var(--accent);
+      }
+    }
 
     .roster-item input[type="checkbox"] {
       width: 22px;
@@ -257,26 +270,70 @@
     .overflow-menu-item + .overflow-menu-item { border-top: 1px solid var(--border); }
 
     .btn {
+      position: relative;
       padding: 12px 20px;
       border-radius: 10px;
-      border: none;
+      border: 1px solid transparent;
       font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
-      transition: opacity 0.15s, transform 0.1s;
+      line-height: 1.15;
+      text-align: center;
+      box-shadow: 0 7px 16px rgba(0,0,0,0.16);
+      transition: background 0.18s, border-color 0.18s, box-shadow 0.18s, color 0.18s, filter 0.18s, opacity 0.15s, transform 0.1s;
       white-space: nowrap;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .btn:active { opacity: 0.75; transform: scale(0.97); }
+    .btn:active {
+      box-shadow: 0 3px 8px rgba(0,0,0,0.18);
+      opacity: 0.86;
+      transform: translateY(1px) scale(0.98);
+    }
 
-    .btn-blue   { background: #1565c0; color: #fff; }
-    .btn-green  { background: #2e7d32; color: #fff; }
-    .btn-orange { background: #e65100; color: #fff; }
-    .btn-purple { background: #4527a0; color: #fff; }
-    .btn-red    { background: #b71c1c; color: #fff; }
-    .btn-gray   { background: var(--btn-gray-bg); color: var(--btn-gray-text); }
+    .btn:focus-visible {
+      outline: 3px solid rgba(79,195,247,0.42);
+      outline-offset: 2px;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .btn:not(:disabled):hover {
+        filter: brightness(1.08);
+        box-shadow: 0 10px 22px rgba(0,0,0,0.22);
+        transform: translateY(-1px);
+      }
+    }
+
+    .btn:not(:disabled):active {
+      box-shadow: 0 3px 8px rgba(0,0,0,0.18);
+      opacity: 0.86;
+      transform: translateY(1px) scale(0.98);
+    }
+
+    .btn-blue   { background: linear-gradient(180deg, #1976d2, #0d47a1); color: #fff; }
+    .btn-green  { background: linear-gradient(180deg, #43a047, #1b5e20); color: #fff; }
+    .btn-orange { background: linear-gradient(180deg, #f57c00, #bf360c); color: #fff; }
+    .btn-purple { background: linear-gradient(180deg, #5e35b1, #311b92); color: #fff; }
+    .btn-red    { background: linear-gradient(180deg, #d32f2f, #8e0000); color: #fff; }
+    .btn-gray   {
+      background: var(--btn-gray-bg);
+      border-color: var(--border);
+      color: var(--btn-gray-text);
+      box-shadow: 0 5px 14px rgba(0,0,0,0.12);
+    }
+
+    .btn-compact {
+      min-height: 38px;
+      padding: 8px 12px;
+      font-size: 0.78rem;
+    }
 
     .btn-full {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
       width: 100%;
       padding: 16px;
       font-size: 1.15rem;
@@ -289,6 +346,85 @@
       cursor: not-allowed;
       transform: none;
       opacity: 0.6;
+      box-shadow: none;
+    }
+
+    .setup-actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .setup-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+      min-width: 0;
+    }
+
+    .setup-actions .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex: 0 1 auto;
+    }
+
+    .setup-actions-bar > .btn,
+    .setup-danger-zone .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .setup-danger-zone {
+      margin-top: 32px;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+
+    .setup-danger-zone .btn {
+      width: 100%;
+      min-height: 46px;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 520px) {
+      .setup-actions-bar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .setup-actions-bar > .btn,
+      .setup-actions .btn {
+        width: 100%;
+      }
+
+      .setup-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .setup-actions .btn:first-child {
+        grid-column: 1 / -1;
+      }
+
+      .add-row {
+        flex-wrap: wrap;
+      }
+
+      .add-row .text-input {
+        min-width: 100%;
+      }
+
+      .add-row .btn {
+        width: 100%;
+      }
     }
 
     /* ===== GAME INFO ROW ===== */
@@ -351,12 +487,16 @@
       user-select: none;
       -webkit-user-select: none;
       opacity: 0.55;
-      transition: background 0.2s, border-color 0.2s, opacity 0.2s, transform 0.1s;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.10);
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, opacity 0.2s, transform 0.1s;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .player-tile.selected {
       background: rgba(79, 195, 247, 0.08);
       border-color: var(--accent);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.16), 0 0 0 3px rgba(79,195,247,0.22);
       opacity: 1;
     }
 
@@ -364,7 +504,21 @@
       background: rgba(21, 101, 192, 0.08);
     }
 
-    .player-tile:active { transform: scale(0.95); }
+    .player-tile:active { transform: translateY(1px) scale(0.96); }
+
+    @media (hover: hover) and (pointer: fine) {
+      .player-tile:hover {
+        border-color: var(--accent);
+        box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+        opacity: 0.82;
+        transform: translateY(-1px);
+      }
+
+      .player-tile.selected:hover {
+        opacity: 1;
+        transform: translateY(-2px);
+      }
+    }
 
     .player-tile .player-name-text {
       font-size: 0.9rem;
@@ -702,7 +856,8 @@
       padding: 5px 6px;
       cursor: pointer;
       border: 2px solid transparent;
-      transition: transform 0.1s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+      transition: border-color 0.18s, box-shadow 0.18s, filter 0.18s, transform 0.1s;
       position: relative;
       min-height: 46px;
       display: flex;
@@ -711,9 +866,22 @@
       gap: 5px;
       min-width: 0;
       width: 100%;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .player-card:active { transform: scale(0.95); }
+    .player-card:active {
+      box-shadow: 0 2px 7px rgba(0,0,0,0.16);
+      transform: translateY(1px) scale(0.96);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .player-card:hover {
+        filter: brightness(1.08);
+        box-shadow: 0 8px 18px rgba(0,0,0,0.22);
+        transform: translateY(-1px);
+      }
+    }
 
     /* Status colors */
     .s-green  { background: var(--status-green-bg);  border-color: #2e7d32; }
@@ -723,7 +891,7 @@
     /* Selected to come off */
     .player-card.selected {
       border-color: var(--accent) !important;
-      box-shadow: 0 0 0 3px rgba(79,195,247,0.25);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.20), 0 0 0 3px rgba(79,195,247,0.25);
       transform: scale(1.04);
     }
 
@@ -1709,13 +1877,14 @@
     /* Bench card: being actively selected for planning */
     .player-card.planning-active {
       border-color: #4fc3f7 !important;
-      box-shadow: 0 0 0 3px rgba(79,195,247,0.35);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.20), 0 0 0 3px rgba(79,195,247,0.35);
     }
 
     /* Bench card: has a confirmed plan */
     .player-card.has-plan {
       border-color: #ff9800 !important;
       background: rgba(80,55,0,0.92) !important;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.22), 0 0 0 3px rgba(255,152,0,0.22);
     }
     .player-card.has-plan .p-name {
       color: #fff;
@@ -1817,12 +1986,12 @@
 <!-- ============================================================ -->
 <div id="team-setup-screen" class="screen">
   <div class="setup-container">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <button class="btn btn-gray" style="font-size:0.78rem;padding:6px 10px;" onclick="goBackFromTeamSetup()">&#8592; Back</button>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-gray" style="font-size:0.78rem;padding:6px 10px;" onclick="importLeagueCsv()">&#128203; Import League CSV</button>
-        <button class="btn btn-gray" style="font-size:0.78rem;padding:6px 10px;" onclick="importProfile()">&#128229; Restore Backup</button>
-        <button class="btn btn-gray" style="font-size:0.78rem;padding:6px 10px;" onclick="exportProfile()">&#128228; Backup Team</button>
+    <div class="setup-actions-bar">
+      <button class="btn btn-gray btn-compact" onclick="goBackFromTeamSetup()">&#8592; Back</button>
+      <div class="setup-actions">
+        <button class="btn btn-gray btn-compact" onclick="importLeagueCsv()">&#128203; Import League CSV</button>
+        <button class="btn btn-gray btn-compact" onclick="importProfile()">&#128229; Restore Backup</button>
+        <button class="btn btn-gray btn-compact" onclick="exportProfile()">&#128228; Backup Team</button>
       </div>
     </div>
 
@@ -1850,8 +2019,8 @@
       <button class="btn btn-blue" id="add-player-btn" onclick="addRosterPlayer()" disabled>Add</button>
     </div>
 
-    <div style="margin-top:32px;border-top:1px solid var(--border);padding-top:16px;">
-      <button class="btn btn-red" style="width:100%;font-size:0.85rem;" onclick="confirmClearData()">&#9888; Clear All Data &amp; Reset</button>
+    <div class="setup-danger-zone">
+      <button class="btn btn-red" onclick="confirmClearData()">&#9888; Clear All Data &amp; Reset</button>
     </div>
   </div>
 </div>
