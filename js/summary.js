@@ -2,8 +2,7 @@ import { state } from './state.js';
 import { clearActiveGame } from './persistence.js';
 import { avatarHtml, renderGameDayCheckboxes, renderTeamSetupRoster } from './roster.js';
 import { closeModal, escHtml, openModal, showScreen } from './utils.js';
-
-const APP_VERSION = '1.26123.2';
+import { APP_VERSION } from './version.js';
 
 function fmt(secs) {
   const m = Math.floor(secs / 60).toString().padStart(2, '0');

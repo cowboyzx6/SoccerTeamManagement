@@ -1,7 +1,6 @@
 import { state } from './state.js';
 import { showScreen } from './utils.js';
-
-const APP_VERSION = '1.26123.2';
+import { APP_VERSION } from './version.js';
 
 export function saveSettings() {
   localStorage.setItem('soccerSettings', JSON.stringify({

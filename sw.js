@@ -1,5 +1,18 @@
-const CACHE = 'stm-v4';
-const ASSETS = ['./', './index.html', './css/styles.css', './js/app.js'];
+const CACHE = 'stm-v5';
+const ASSETS = [
+  './',
+  './index.html',
+  './css/styles.css',
+  './js/app.js',
+  './js/game.js',
+  './js/lineup.js',
+  './js/persistence.js',
+  './js/roster.js',
+  './js/state.js',
+  './js/summary.js',
+  './js/utils.js',
+  './js/version.js',
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));

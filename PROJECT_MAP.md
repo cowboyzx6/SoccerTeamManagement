@@ -78,6 +78,7 @@ There is no separate `review-screen` element. Game review imports are rendered t
 | File | Responsibility | Key exports |
 |---|---|---|
 | `js/state.js` | State singleton + constants | `state`, `POSITIONS`, `POSITION_ORDER`, `FIELD_SVG` |
+| `js/version.js` | Shared app version | `APP_VERSION` |
 | `js/utils.js` | DOM helpers + theme | `escHtml`, `showScreen`, `openModal`, `closeModal`, `applyTheme`, `toggleTheme` |
 | `js/persistence.js` | localStorage + import/export | `saveSettings`, `loadSettings`, `saveRoster`, `loadRoster`, `saveActiveGame`, `loadGameHistory`, `exportProfile`, `importProfile`, `importLeagueCsv`, `buildGameRecord` |
 | `js/roster.js` | Roster, attendance, photos | `renderTeamSetupRoster`, `renderGameDayCheckboxes`, `togglePlayerTile`, `renderRoster`, `avatarHtml`, `changeHalfMinutes` |
@@ -109,7 +110,7 @@ There is no separate `review-screen` element. Game review imports are rendered t
 | Game review import | `importGameReview`, `showGameReviewFromRecord`, `review-file-input` |
 | Photos / avatars | `loadPhotos`, `avatarHtml`, `avatarParts`, `triggerPhotoUpload`, `resizeAndStorePhoto`, `playerPhotos` |
 | Theme | `applyTheme`, `toggleTheme`, `[data-theme="light"]`, `theme-btn` |
-| About/version | `APP_VERSION`, `openAboutModal`, `about-modal`, `about-version`, `scripts/Update-AppVersion.ps1` |
+| About/version | `js/version.js`, `APP_VERSION`, `openAboutModal`, `about-modal`, `about-version`, `scripts/Update-AppVersion.ps1` |
 | Resume interrupted game | `saveActiveGame`, `checkForActiveGame`, `soccerActiveGame` |
 | Service worker / PWA | `navigator.serviceWorker.register`, `manifest.json`, `sw.js` |
 
@@ -256,7 +257,7 @@ There is no separate `review-screen` element. Game review imports are rendered t
 - `scoreUs`, `scoreThem`, `goals` - scoring state.
 - `gameDate`, `opponentName`, `teamName`, `halfMinutes` - game/team metadata.
 - `seasonSortKey`, `seasonSortAsc` - season summary sorting state.
-- `APP_VERSION` - exported app version shown in About and included in JSON exports.
+- `APP_VERSION` - exported from `js/version.js`; shown in About and included in JSON exports.
 
 ## Targeted PowerShell snippets for Claude Code
 

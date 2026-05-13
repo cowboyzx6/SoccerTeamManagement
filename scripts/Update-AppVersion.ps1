@@ -5,7 +5,7 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot '..')
-$indexPath = Join-Path $repoRoot 'index.html'
+$versionPath = Join-Path $repoRoot 'js/version.js'
 
 $now = Get-Date
 $year = $now.ToString('yy')
@@ -14,19 +14,19 @@ $datePart = "$year$dayOfYear"
 $versionPrefix = "1.$datePart."
 
 $sameDayVersions = @()
-$commits = git -C $repoRoot log --format=%H -- index.html
+$commits = git -C $repoRoot log --format=%H -- js/version.js
 
 if ($LASTEXITCODE -ne 0) {
   throw 'Unable to read Git history for app version.'
 }
 
 foreach ($commit in $commits) {
-  $committedHtml = git -C $repoRoot show "$commit`:index.html" 2>$null
+  $committedVersionFile = git -C $repoRoot show "$commit`:js/version.js" 2>$null
   if ($LASTEXITCODE -ne 0) {
     continue
   }
 
-  $match = [regex]::Match(($committedHtml -join "`n"), "const APP_VERSION = '1\.$datePart\.(\d+)';")
+  $match = [regex]::Match(($committedVersionFile -join "`n"), "APP_VERSION = '1\.$datePart\.(\d+)';")
   if ($match.Success) {
     $sameDayVersions += [int]$match.Groups[1].Value
   }
@@ -39,18 +39,18 @@ if ($sameDayVersions.Count -gt 0) {
 
 $version = "$versionPrefix$nextVersionNumber"
 
-$html = Get-Content -LiteralPath $indexPath -Raw
+$versionFile = Get-Content -LiteralPath $versionPath -Raw
 $versionPattern = "const APP_VERSION = '[^']+';"
 
-if (-not [regex]::IsMatch($html, $versionPattern)) {
-  throw 'Could not find APP_VERSION in index.html.'
+if (-not [regex]::IsMatch($versionFile, $versionPattern)) {
+  throw 'Could not find APP_VERSION in js/version.js.'
 }
 
-$updated = $html -replace $versionPattern, "const APP_VERSION = '$version';"
-Set-Content -LiteralPath $indexPath -Value $updated -NoNewline
+$updated = $versionFile -replace $versionPattern, "const APP_VERSION = '$version';"
+Set-Content -LiteralPath $versionPath -Value $updated -NoNewline
 
 if (-not $NoStage) {
-  git -C $repoRoot add index.html
+  git -C $repoRoot add js/version.js
 }
 
 Write-Host "Stamped app version $version"

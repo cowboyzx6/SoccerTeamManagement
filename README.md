@@ -155,7 +155,7 @@ Versions use this format:
 - `DDD` is the day number of the year.
 - `N` is the next versioned update number for that day.
 
-The version is stored in `APP_VERSION` in `index.html` and is included as `appVersion` in JSON exports. A tracked pre-commit hook runs `scripts/Update-AppVersion.ps1` to stamp the version automatically before each commit. The first versioned commit on a day ends in `.1`, the second ends in `.2`, and so on. On a fresh clone, enable the hook with:
+The version is stored in `APP_VERSION` in `js/version.js` and is shown in About plus included as `appVersion` in JSON exports. A tracked pre-commit hook runs `scripts/Update-AppVersion.ps1` to stamp the version automatically before each commit. The first versioned commit on a day ends in `.1`, the second ends in `.2`, and so on. On a fresh clone, enable the hook with:
 
 ```bash
 git config core.hooksPath .githooks
