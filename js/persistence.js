@@ -1,0 +1,335 @@
+import { state } from './state.js';
+import { showScreen } from './utils.js';
+
+const APP_VERSION = '1.26123.2';
+
+export function saveSettings() {
+  localStorage.setItem('soccerSettings', JSON.stringify({
+    teamName: state.teamName,
+    halfMinutes: state.halfMinutes
+  }));
+}
+
+export function loadSettings() {
+  const raw = localStorage.getItem('soccerSettings');
+  if (raw) {
+    try {
+      const s = JSON.parse(raw);
+      if (s.teamName)    state.teamName    = s.teamName;
+      if (s.halfMinutes) state.halfMinutes = s.halfMinutes;
+    } catch { localStorage.removeItem('soccerSettings'); }
+  }
+  document.getElementById('team-name-input').value = state.teamName;
+  document.getElementById('app-title-name').textContent = state.teamName;
+  document.getElementById('half-minutes-display').textContent = `${state.halfMinutes} min`;
+}
+
+export function loadGameHistory() {
+  const raw = localStorage.getItem('soccerGameHistory');
+  if (raw) {
+    try { state.gameHistory = JSON.parse(raw); }
+    catch { localStorage.removeItem('soccerGameHistory'); }
+  }
+}
+
+export function saveGameHistory() {
+  localStorage.setItem('soccerGameHistory', JSON.stringify(state.gameHistory));
+}
+
+export function saveActiveGame() {
+  try {
+    localStorage.setItem('soccerActiveGame', JSON.stringify({
+      players: state.players,
+      totalElapsed: state.totalElapsed,
+      halfClock: state.halfClock,
+      currentHalf: state.currentHalf,
+      halfActionIsEnd: state.halfActionIsEnd,
+      goalie1Id: state.goalie1Id,
+      goalie2Id: state.goalie2Id,
+      activeGoalieId: state.activeGoalieId,
+      opponentName: state.opponentName,
+      scoreUs: state.scoreUs,
+      scoreThem: state.scoreThem,
+      goals: state.goals,
+      halfMinutes: state.halfMinutes,
+      subPlans: state.subPlans,
+      planningBenchId: state.planningBenchId,
+      planningPosition: state.planningPosition,
+      gameDate: state.gameDate
+    }));
+  } catch (e) {}
+}
+
+export function clearActiveGame() {
+  localStorage.removeItem('soccerActiveGame');
+}
+
+export function checkForActiveGame() {
+  const raw = localStorage.getItem('soccerActiveGame');
+  if (!raw) return;
+  let saved;
+  try { saved = JSON.parse(raw); } catch { clearActiveGame(); return; }
+  if (!saved.players || !saved.players.length) { clearActiveGame(); return; }
+  if (!confirm('A game was interrupted. Resume where you left off?')) { clearActiveGame(); return; }
+
+  state.players          = saved.players         || [];
+  state.totalElapsed     = saved.totalElapsed    || 0;
+  state.halfClock        = saved.halfClock       || 0;
+  state.currentHalf      = saved.currentHalf     || 1;
+  state.halfActionIsEnd  = saved.halfActionIsEnd || false;
+  state.goalie1Id        = saved.goalie1Id       ?? null;
+  state.goalie2Id        = saved.goalie2Id       ?? null;
+  state.activeGoalieId   = saved.activeGoalieId  ?? null;
+  state.opponentName     = saved.opponentName    || '';
+  state.scoreUs          = saved.scoreUs         || 0;
+  state.scoreThem        = saved.scoreThem       || 0;
+  state.goals            = saved.goals           || [];
+  state.halfMinutes      = saved.halfMinutes     || 25;
+  state.subPlans         = saved.subPlans        || [];
+  state.planningBenchId  = saved.planningBenchId ?? null;
+  state.planningPosition = saved.planningPosition ?? null;
+  state.gameDate         = saved.gameDate        || new Date().toISOString().slice(0, 10);
+
+  showScreen('game-screen');
+  window.syncGamePhaseUi();
+  window.renderClock();
+  window.renderScore();
+  window.renderGame();
+  window.updateGoalBtn();
+  window.pauseGame();
+}
+
+export function buildGameRecord() {
+  return {
+    date:       state.gameDate || new Date().toISOString().slice(0, 10),
+    opponent:   state.opponentName,
+    ourScore:   state.scoreUs,
+    theirScore: state.scoreThem,
+    goals: state.goals,
+    playerStats: state.players.map(p => ({
+      id:            p.id,
+      name:          p.name,
+      minutesPlayed: Math.round(p.totalPlayed / 60 * 10) / 10,
+      secondsPlayed: p.totalPlayed,
+      firstHalfSeconds: Number.isFinite(p.h1Snapshot) ? p.h1Snapshot : p.totalPlayed,
+      secondHalfSeconds: Number.isFinite(p.h1Snapshot) ? Math.max(0, p.totalPlayed - p.h1Snapshot) : 0,
+      positionSeconds: p.positionTime || {},
+      positionMinutes: Object.fromEntries(
+        Object.entries(p.positionTime || {}).map(([pos, s]) => [pos, Math.round(s / 60 * 10) / 10])
+      ),
+    })),
+  };
+}
+
+export function buildProfile(includeGameRecord) {
+  const profile = {
+    appVersion: APP_VERSION,
+    teamName: state.teamName,
+    halfMinutes: state.halfMinutes,
+    roster: state.roster.map(p => ({
+      id:    p.id,
+      name:  p.name,
+      photo: state.playerPhotos[p.id] || null,
+    })),
+    games: [...state.gameHistory],
+  };
+
+  if (includeGameRecord) {
+    profile.games.push(buildGameRecord());
+  }
+
+  return profile;
+}
+
+export function exportProfile(includeGameRecord = false, forceGameFilename = false) {
+  const profile  = buildProfile(includeGameRecord);
+  const safeName = (state.teamName || 'team').replace(/[^a-z0-9]/gi, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
+  let filename;
+  if (includeGameRecord || forceGameFilename) {
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const latestGame = profile.games[profile.games.length - 1] || {};
+    const gameNumber = profile.games.length || 1;
+    const dateStr = latestGame.date || `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    const timeStr = `${pad(now.getHours())}${pad(now.getMinutes())}`;
+    filename = `${safeName}_Game_${gameNumber}_${dateStr}_${timeStr}.json`;
+  } else {
+    filename = `${safeName}-profile.json`;
+  }
+
+  const blob = new Blob([JSON.stringify(profile, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+export function importProfile() {
+  document.getElementById('import-file-input').click();
+}
+
+export function importLeagueCsv() {
+  document.getElementById('csv-file-input').click();
+}
+
+document.getElementById('csv-file-input').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => parseCsvRoster(ev.target.result);
+  reader.readAsText(file);
+  this.value = '';
+});
+
+export function parseCsvRoster(text) {
+  const lines = text.trim().split(/\r?\n/);
+  if (lines.length < 2) { alert('CSV appears empty.'); return; }
+
+  const headers = parseCsvLine(lines[0]).map(h => h.trim().toLowerCase());
+  const firstIdx = headers.indexOf('player_first_name');
+  const lastIdx  = headers.indexOf('player_last_name');
+
+  if (firstIdx === -1 || lastIdx === -1) {
+    alert('Could not find player_first_name / player_last_name columns in this CSV.');
+    return;
+  }
+
+  const imported = [];
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
+    const cols = parseCsvLine(lines[i]);
+    const first = (cols[firstIdx] || '').trim();
+    const last  = (cols[lastIdx]  || '').trim();
+    if (!first) continue;
+    const name = last ? `${first} ${last[0].toUpperCase()}.` : first;
+    imported.push(name);
+  }
+
+  if (!imported.length) { alert('No players found in CSV.'); return; }
+
+  const existing = state.roster.map(p => p.name.toLowerCase());
+  const newNames  = imported.filter(n => !existing.includes(n.toLowerCase()));
+  const dupNames  = imported.filter(n =>  existing.includes(n.toLowerCase()));
+
+  const msg = [
+    `Found ${imported.length} player(s) in CSV.`,
+    newNames.length  ? `${newNames.length} will be added.`    : '',
+    dupNames.length  ? `${dupNames.length} already exist and will be skipped.` : '',
+  ].filter(Boolean).join('\n');
+
+  if (!newNames.length) {
+    alert('All players in the CSV already exist in your roster. Nothing to add.');
+    return;
+  }
+
+  if (confirm(`${msg}\n\nProceed?`)) {
+    newNames.forEach(name => {
+      state.roster.push({ id: state.nextId++, name });
+    });
+    saveRoster();
+    window.renderTeamSetupRoster();
+    window.renderGameDayCheckboxes();
+  }
+}
+
+function parseCsvLine(line) {
+  const result = [];
+  let cur = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQuotes && line[i+1] === '"') { cur += '"'; i++; }
+      else inQuotes = !inQuotes;
+    } else if (ch === ',' && !inQuotes) {
+      result.push(cur); cur = '';
+    } else {
+      cur += ch;
+    }
+  }
+  result.push(cur);
+  return result;
+}
+
+document.getElementById('import-file-input').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const profile = JSON.parse(ev.target.result);
+
+        if (profile.teamName)    state.teamName    = profile.teamName;
+        if (profile.halfMinutes) state.halfMinutes = profile.halfMinutes;
+        if (Array.isArray(profile.games)) state.gameHistory = profile.games;
+
+        if (Array.isArray(profile.roster)) {
+          state.roster = profile.roster.map(p => ({ id: p.id, name: p.name }));
+          state.nextId = state.roster.length ? Math.max(...state.roster.map(p => p.id)) + 1 : 1;
+          profile.roster.forEach(p => {
+            if (p.photo) state.playerPhotos[p.id] = p.photo;
+          });
+          try {
+            localStorage.setItem('playerPhotos', JSON.stringify(state.playerPhotos));
+          } catch (e) {
+            alert('Storage full \u2014 some photos from the imported profile could not be saved.');
+          }
+          saveRoster();
+        }
+
+        saveSettings();
+        saveGameHistory();
+
+        document.getElementById('team-name-input').value = state.teamName;
+        document.getElementById('app-title-name').textContent = state.teamName;
+        document.getElementById('half-minutes-display').textContent = `${state.halfMinutes} min`;
+        window.renderRoster();
+        window.updateStartBtn();
+      } catch {
+        alert('Invalid profile file.');
+      }
+    };
+    reader.readAsText(file);
+    this.value = '';
+  });
+
+export function importGameReview() {
+  document.getElementById('review-file-input').click();
+}
+
+document.getElementById('review-file-input').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const profile = JSON.parse(ev.target.result);
+      if (!Array.isArray(profile.games) || profile.games.length === 0) {
+        alert('No game records found in this file.');
+        return;
+      }
+      const gameRecord = profile.games[profile.games.length - 1];
+      window.showGameReviewFromRecord(gameRecord, profile.teamName || state.teamName);
+    } catch {
+      alert('Invalid game file.');
+    }
+  };
+  reader.readAsText(file);
+  this.value = '';
+});
+
+export function loadRoster() {
+  const saved = localStorage.getItem('soccerRoster');
+  if (saved) {
+    state.roster = JSON.parse(saved);
+    state.nextId  = state.roster.length ? Math.max(...state.roster.map(p => p.id)) + 1 : 1;
+  }
+  window.renderTeamSetupRoster();
+  window.renderGameDayCheckboxes();
+}
+
+export function saveRoster() {
+  localStorage.setItem('soccerRoster', JSON.stringify(state.roster));
+}

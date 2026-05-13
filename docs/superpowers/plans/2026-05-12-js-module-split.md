@@ -288,13 +288,13 @@ git commit -m "Extract utilities and theme to js/utils.js"
 - Create: `js/persistence.js`
 - Modify: `index.html`
 
-- [ ] **Step 1: Find persistence functions in index.html**
+- [x] **Step 1: Find persistence functions in index.html**
 
 ```powershell
 Select-String -Path .\index.html -Pattern "^function save|^function load|^function exportProfile|^function importProfile|^function importLeagueCsv|^function parseCsvRoster|^function importGameReview|^function buildProfile|^function buildGameRecord|^function checkForActiveGame" -n
 ```
 
-- [ ] **Step 2: Create `js/persistence.js`**
+- [x] **Step 2: Create `js/persistence.js`**
 
 Copy all matched functions verbatim, adding `export` to each. Add imports for their dependencies:
 
@@ -321,7 +321,7 @@ export function buildGameRecord() { /* paste verbatim */ }
 
 If any of these call functions not yet extracted (e.g., `renderTeamSetupRoster`, `renderGameDayCheckboxes`), those calls remain valid — they'll be defined in index.html's script block until extracted in later tasks.
 
-- [ ] **Step 3: Add import to index.html's script block**
+- [x] **Step 3: Add import to index.html's script block**
 
 ```js
 import { saveSettings, loadSettings, saveRoster, loadRoster, saveActiveGame,
@@ -330,9 +330,9 @@ import { saveSettings, loadSettings, saveRoster, loadRoster, saveActiveGame,
   buildGameRecord } from './js/persistence.js';
 ```
 
-- [ ] **Step 4: Remove moved functions from index.html**
+- [x] **Step 4: Remove moved functions from index.html**
 
-- [ ] **Step 5: Verify**
+- [x] **Step 5: Verify**
 
 Open `http://localhost:8000`. Check:
 - Reload page — roster and team name persist (localStorage load works)
@@ -340,7 +340,7 @@ Open `http://localhost:8000`. Check:
 - Export backup (Backup Team button) — file downloads correctly
 - No console errors
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add js/persistence.js index.html
