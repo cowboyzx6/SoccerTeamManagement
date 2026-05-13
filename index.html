@@ -2392,26 +2392,12 @@
 <!--  SCRIPT                                                      -->
 <!-- ============================================================ -->
 <script type="module">
-// ─────────────────────────────────────────────────────────────
-//  POSITIONS
-// ─────────────────────────────────────────────────────────────
-const POSITIONS = {
-  LF: {x:22, y:8},  CF: {x:50, y:8},  RF: {x:78, y:8},
-  LM: {x:16, y:35}, CM: {x:50, y:35}, RM: {x:84, y:35},
-  LD: {x:30, y:62}, RD: {x:70, y:62},
-  GK: {x:50, y:87}
-};
-const POSITION_ORDER = ['LF','CF','RF','LM','CM','RM','LD','RD','GK'];
-const APP_VERSION = '1.26123.2';
+import { FIELD_SVG, POSITIONS, POSITION_ORDER } from './js/state.js';
 
-const FIELD_SVG = `<svg class="field-lines" viewBox="0 50 100 50" preserveAspectRatio="none">
-  <path d="M3 50 H97 V99.2 H3 Z" fill="none" stroke="#5b965b" stroke-width="8" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/>
-  <circle cx="50" cy="50" r="11" fill="none" stroke="#5b965b" stroke-width="8" vector-effect="non-scaling-stroke"/>
-  <circle cx="50" cy="50" r="1.2" fill="#5b965b"/>
-  <path d="M26 99.2 V86 H74 V99.2" fill="none" stroke="#5b965b" stroke-width="8" stroke-linecap="butt" vector-effect="non-scaling-stroke"/>
-  <path d="M37 99.2 V92 H63 V99.2" fill="none" stroke="#5b965b" stroke-width="8" stroke-linecap="butt" vector-effect="non-scaling-stroke"/>
-  <text x="50" y="54" text-anchor="middle" font-size="2.8" fill="rgba(255,255,255,0.18)" font-family="sans-serif" font-weight="bold" letter-spacing="0.5">MIDFIELD</text>
-</svg>`;
+// ─────────────────────────────────────────────────────────────
+//  CONSTANTS
+// ─────────────────────────────────────────────────────────────
+const APP_VERSION = '1.26123.2';
 
 // ─────────────────────────────────────────────────────────────
 //  STATE
@@ -5046,6 +5032,72 @@ function toggleTheme() {
   localStorage.setItem('theme', next);
   applyTheme(next);
 }
+
+// Transitional bridge: inline HTML handlers cannot see module-scoped functions.
+// Remove this as handlers move to addEventListener wiring in app.js.
+Object.assign(window, {
+  addRosterPlayer,
+  adjustTheirScore,
+  cancelGoalieSpin,
+  changeHalfMinutes,
+  checkAllPlayers,
+  closeClearDataModal,
+  closeGoalModal,
+  closeHalfModal,
+  closeLateModal,
+  closeModal,
+  closeOverflowMenu,
+  closeRemovePlayerModal,
+  closeRemoveRosterModal,
+  closeRenameModal,
+  confirmClearData,
+  confirmGkFromSpin,
+  confirmGoal,
+  confirmGoalies,
+  confirmHalfAction,
+  confirmRemovePlayer,
+  confirmRemoveRosterPlayer,
+  confirmRename,
+  confirmTheirScore,
+  endGame,
+  executeAllPlans,
+  executeClearData,
+  exportProfile,
+  goBackFromLineup,
+  goBackFromTeamSetup,
+  goToLineup,
+  goToSetup,
+  goToTeamSetup,
+  handleHalfEnd,
+  importGameReview,
+  importLeagueCsv,
+  importProfile,
+  launchGame,
+  nextGoaliePick,
+  onTeamNameInput,
+  openAboutModal,
+  openGkSpin,
+  openGoalModal,
+  openLateModal,
+  openRenameModal,
+  pickGk,
+  recordGoal,
+  removeRosterPlayer,
+  saveTeamName,
+  setBenchSort,
+  setSeasonSort,
+  showSeasonSummary,
+  skipGkPicker,
+  spinAgain,
+  spinWheel,
+  stopWheel,
+  toggleOverflowMenu,
+  togglePause,
+  togglePlayerTile,
+  toggleTheme,
+  triggerPhotoUpload,
+  updateStartBtn,
+});
 
 // ─────────────────────────────────────────────────────────────
 //  INIT
