@@ -1,0 +1,28 @@
+export function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+export function openModal(id)  { document.getElementById(id).classList.remove('hidden'); }
+export function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+export function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+export function applyTheme(theme) {
+  if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.getElementById('theme-btn').textContent = '\uD83C\uDF19';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    document.getElementById('theme-btn').textContent = '\u2600\uFE0F';
+  }
+}
+
+export function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  localStorage.setItem('theme', next);
+  applyTheme(next);
+}

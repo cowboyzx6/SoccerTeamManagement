@@ -2393,6 +2393,7 @@
 <!-- ============================================================ -->
 <script type="module">
 import { FIELD_SVG, POSITIONS, POSITION_ORDER, state } from './js/state.js';
+import { applyTheme, closeModal, escHtml, openModal, showScreen, toggleTheme } from './js/utils.js';
 
 // ─────────────────────────────────────────────────────────────
 //  CONSTANTS
@@ -4981,38 +4982,9 @@ function executeClearData() {
 // ─────────────────────────────────────────────────────────────
 //  UTILITIES
 // ─────────────────────────────────────────────────────────────
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-function openModal(id)  { document.getElementById(id).classList.remove('hidden'); }
-function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-function escHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
 // ─────────────────────────────────────────────────────────────
 //  THEME
 // ─────────────────────────────────────────────────────────────
-function applyTheme(theme) {
-  if (theme === 'light') {
-    document.documentElement.setAttribute('data-theme', 'light');
-    document.getElementById('theme-btn').textContent = '\uD83C\uDF19';
-  } else {
-    document.documentElement.removeAttribute('data-theme');
-    document.getElementById('theme-btn').textContent = '\u2600\uFE0F';
-  }
-}
-
-function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'light' ? 'dark' : 'light';
-  localStorage.setItem('theme', next);
-  applyTheme(next);
-}
-
 // Transitional bridge: inline HTML handlers cannot see module-scoped functions.
 // Remove this as handlers move to addEventListener wiring in app.js.
 Object.assign(window, {

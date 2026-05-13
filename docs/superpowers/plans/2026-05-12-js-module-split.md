@@ -32,7 +32,7 @@
 **Files:**
 - Modify: `index.html` (the `<script>` tag near line 2143)
 
-- [ ] **Step 1: Find the opening script tag**
+- [x] **Step 1: Find the opening script tag**
 
 ```powershell
 Select-String -Path .\index.html -Pattern "^<script>" -n
@@ -40,7 +40,7 @@ Select-String -Path .\index.html -Pattern "^<script>" -n
 
 Expected: one match near line 2143.
 
-- [ ] **Step 2: Change `<script>` to `<script type="module">`**
+- [x] **Step 2: Change `<script>` to `<script type="module">`**
 
 Edit `index.html`: change the opening script tag from:
 ```html
@@ -51,7 +51,7 @@ to:
 <script type="module">
 ```
 
-- [ ] **Step 3: Start local server and verify app works**
+- [x] **Step 3: Start local server and verify app works**
 
 ```powershell
 python3 -m http.server 8000
@@ -64,7 +64,7 @@ Open `http://localhost:8000` in browser. Check:
 
 ES modules require HTTP — `file://` will fail with CORS errors.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git add index.html
@@ -79,13 +79,13 @@ git commit -m "Enable ES module mode on index.html script block"
 - Create: `js/state.js`
 - Modify: `index.html`
 
-- [ ] **Step 1: Create `js/` directory**
+- [x] **Step 1: Create `js/` directory**
 
 ```powershell
 mkdir js
 ```
 
-- [ ] **Step 2: Find the exact state variable declarations**
+- [x] **Step 2: Find the exact state variable declarations**
 
 ```powershell
 Select-String -Path .\index.html -Pattern "^let roster|^let players|^let gameHistory|^let playerPhotos|^let subPlans|^let planningBenchId|^let planningPosition|^let selectedId|^let lineupDraft|^let goalie|^let totalElapsed|^let halfClock|^let timerBase|^let isRunning|^let scoreUs|^let scoreThem|^let goals|^let gameDate|^let opponentName|^let teamName|^let halfMinutes" -n
@@ -93,7 +93,7 @@ Select-String -Path .\index.html -Pattern "^let roster|^let players|^let gameHis
 
 Note all line numbers and their initial values.
 
-- [ ] **Step 3: Find the POSITIONS and FIELD_SVG declarations**
+- [x] **Step 3: Find the POSITIONS and FIELD_SVG declarations**
 
 ```powershell
 Select-String -Path .\index.html -Pattern "^const POSITIONS|^const POSITION_ORDER|^const FIELD_SVG" -n
@@ -101,7 +101,7 @@ Select-String -Path .\index.html -Pattern "^const POSITIONS|^const POSITION_ORDE
 
 Note their line numbers.
 
-- [ ] **Step 4: Create `js/state.js`**
+- [x] **Step 4: Create `js/state.js`**
 
 Create `js/state.js`. The state object properties and their initial values must match exactly what you found in Step 2. The constant values (POSITIONS, POSITION_ORDER, FIELD_SVG) are copied verbatim from index.html.
 
@@ -142,7 +142,7 @@ export const POSITION_ORDER = [ /* ... paste from index.html ... */ ];
 export const FIELD_SVG = `/* ... paste from index.html ... */`;
 ```
 
-- [ ] **Step 5: Add import at the top of index.html's script block**
+- [x] **Step 5: Add import at the top of index.html's script block**
 
 Immediately after `<script type="module">`, add:
 
@@ -150,11 +150,11 @@ Immediately after `<script type="module">`, add:
 import { state, POSITIONS, POSITION_ORDER, FIELD_SVG } from './js/state.js';
 ```
 
-- [ ] **Step 6: Remove the moved declarations from index.html**
+- [x] **Step 6: Remove the moved declarations from index.html**
 
 Delete the `let roster = []`, `let players = []`, etc. declarations and the `const POSITIONS`, `const POSITION_ORDER`, `const FIELD_SVG` blocks from index.html's script block.
 
-- [ ] **Step 7: Find-replace bare state variable names with `state.` prefix**
+- [x] **Step 7: Find-replace bare state variable names with `state.` prefix**
 
 Run each replacement in order. Use a text editor's find-replace with whole-word matching where possible. Variables to prefix:
 
@@ -186,7 +186,7 @@ halfMinutes    → state.halfMinutes
 
 **Do NOT replace** POSITIONS, POSITION_ORDER, FIELD_SVG — these are imported as named constants, not under `state.`.
 
-- [ ] **Step 8: Verify the app still works**
+- [x] **Step 8: Verify the app still works**
 
 Open `http://localhost:8000`. Check:
 - Attendance screen loads
@@ -194,7 +194,7 @@ Open `http://localhost:8000`. Check:
 - Start a game and verify the clock runs
 - Check console for errors
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```powershell
 git add js/state.js index.html
@@ -209,7 +209,7 @@ git commit -m "Extract state singleton and constants to js/state.js"
 - Create: `js/utils.js`
 - Modify: `index.html`
 
-- [ ] **Step 1: Find the utility functions in index.html**
+- [x] **Step 1: Find the utility functions in index.html**
 
 ```powershell
 Select-String -Path .\index.html -Pattern "^function showScreen|^function openModal|^function closeModal|^function escHtml|^function applyTheme|^function toggleTheme" -n
@@ -220,7 +220,7 @@ Note line numbers. Read each function body using:
 $lines = Get-Content .\index.html; $lines[<start>..<end>]
 ```
 
-- [ ] **Step 2: Create `js/utils.js`**
+- [x] **Step 2: Create `js/utils.js`**
 
 Copy the six functions from index.html verbatim, adding `export` to each:
 
@@ -254,7 +254,7 @@ export function toggleTheme() {
 
 Only add `import { state }` if any of these functions reference `state.*`. Check before adding.
 
-- [ ] **Step 3: Add import to index.html's script block**
+- [x] **Step 3: Add import to index.html's script block**
 
 After the existing import line(s), add:
 
@@ -262,18 +262,18 @@ After the existing import line(s), add:
 import { escHtml, showScreen, openModal, closeModal, applyTheme, toggleTheme } from './js/utils.js';
 ```
 
-- [ ] **Step 4: Remove the six functions from index.html's script block**
+- [x] **Step 4: Remove the six functions from index.html's script block**
 
 Delete the `function escHtml`, `function showScreen`, `function openModal`, `function closeModal`, `function applyTheme`, and `function toggleTheme` bodies from index.html.
 
-- [ ] **Step 5: Verify**
+- [x] **Step 5: Verify**
 
 Open `http://localhost:8000`. Check:
 - Theme toggle button works (dark/light switch)
 - Modals open and close (e.g., trigger goal modal during a game)
 - No console errors
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add js/utils.js index.html
