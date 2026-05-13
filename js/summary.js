@@ -4,6 +4,12 @@ import { avatarHtml, renderGameDayCheckboxes, renderTeamSetupRoster } from './ro
 import { closeModal, escHtml, openModal, showScreen } from './utils.js';
 import { APP_VERSION } from './version.js';
 
+let summaryHandlers = {};
+
+export function configureSummaryHandlers(handlers) {
+  summaryHandlers = handlers;
+}
+
 function fmt(secs) {
   const m = Math.floor(secs / 60).toString().padStart(2, '0');
   const s = (secs % 60).toString().padStart(2, '0');
@@ -302,7 +308,7 @@ export function goToTeamSetup() {
 }
 
 export function goBackFromTeamSetup() {
-  window.saveTeamName();
+  summaryHandlers.saveTeamName?.();
   showScreen('setup-screen');
   renderGameDayCheckboxes();
 }

@@ -18,7 +18,11 @@ let gkSpinMode = false;
 let gkSpinWinner = null;
 let gkSpinPhase = 1;
 
-window.savedChecked = savedChecked;
+let gameHandlers = {};
+
+export function configureLineupGameHandlers(handlers) {
+  gameHandlers = handlers;
+}
 
 const halfDuration = () => state.halfMinutes * 60;
 
@@ -40,7 +44,7 @@ export function goToLineup() {
   document.getElementById('lineup-header-title').textContent = `${state.teamName} \u2014 Starting Lineup`;
 
   savedChecked = new Set(present.map(p => p.id));
-  window.savedChecked = savedChecked;
+  state.savedChecked = savedChecked;
 
   state.lineupDraft = [...present].sort((a, b) => a.name.localeCompare(b.name)).map(p => ({
     id: p.id,
@@ -679,11 +683,11 @@ export function initGame() {
 
   document.getElementById('score-us-label').textContent = state.teamName || 'My Team';
   document.getElementById('score-them-label').textContent = state.opponentName || 'Opponent';
-  window.renderScore();
+  gameHandlers.renderScore?.();
 
   showScreen('game-screen');
-  window.renderClock();
-  window.renderGame();
+  gameHandlers.renderClock?.();
+  gameHandlers.renderGame?.();
 }
 
 export function createFieldDragPreview(player, position) {

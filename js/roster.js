@@ -86,13 +86,13 @@ export function renderTeamSetupRoster() {
   const sorted = [...state.roster].sort((a, b) => a.name.localeCompare(b.name));
   list.innerHTML = sorted.map(p => `
     <div class="roster-item">
-      <div class="roster-avatar-btn" onclick="triggerPhotoUpload(${p.id})">
+      <div class="roster-avatar-btn" data-photo-id="${p.id}">
         ${avatarHtml(p.id, p.name, 36)}
         <div class="avatar-overlay">Photo</div>
       </div>
       <span class="player-name-text">${escHtml(p.name)}</span>
-      <button class="btn-rename" onclick="openRenameModal(${p.id}); event.stopPropagation();">&#9998;</button>
-      <button class="btn-remove" onclick="removeRosterPlayer(${p.id}); event.stopPropagation();">&#10005;</button>
+      <button class="btn-rename" data-rename-id="${p.id}">&#9998;</button>
+      <button class="btn-remove" data-remove-id="${p.id}">&#10005;</button>
     </div>
   `).join('');
 }
@@ -116,12 +116,12 @@ export function renderGameDayCheckboxes(restoreChecked = false) {
   const oppInput = document.getElementById('opponent-input');
   if (oppInput && !oppInput.value && state.opponentName) oppInput.value = state.opponentName;
 
-  const savedChecked = window.savedChecked || new Set();
+  const savedChecked = state.savedChecked || new Set();
   const list   = document.getElementById('gameday-roster');
   const sorted = [...state.roster].sort((a, b) => a.name.localeCompare(b.name));
   list.innerHTML = sorted.map(p => {
     const sel = restoreChecked && savedChecked.has(p.id);
-    return `<div class="player-tile${sel ? ' selected' : ''}" id="tile-${p.id}" onclick="togglePlayerTile(${p.id})">
+    return `<div class="player-tile${sel ? ' selected' : ''}" id="tile-${p.id}" data-player-id="${p.id}">
       <div class="tile-check">&#10003;</div>
       ${avatarHtml(p.id, p.name, 48)}
       <span class="player-name-text">${escHtml(p.name)}</span>
@@ -253,4 +253,26 @@ document.getElementById('new-player-input').addEventListener('input', e => {
 
 document.getElementById('new-player-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') addRosterPlayer();
+});
+
+document.getElementById('roster-list').addEventListener('click', e => {
+  const photo = e.target.closest('[data-photo-id]');
+  if (photo) {
+    triggerPhotoUpload(parseInt(photo.dataset.photoId, 10));
+    return;
+  }
+
+  const rename = e.target.closest('[data-rename-id]');
+  if (rename) {
+    openRenameModal(parseInt(rename.dataset.renameId, 10));
+    return;
+  }
+
+  const remove = e.target.closest('[data-remove-id]');
+  if (remove) removeRosterPlayer(parseInt(remove.dataset.removeId, 10));
+});
+
+document.getElementById('gameday-roster').addEventListener('click', e => {
+  const tile = e.target.closest('[data-player-id]');
+  if (tile) togglePlayerTile(parseInt(tile.dataset.playerId, 10));
 });

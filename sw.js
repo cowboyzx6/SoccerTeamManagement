@@ -1,4 +1,4 @@
-const CACHE = 'stm-v5';
+const CACHE = 'stm-v6';
 const ASSETS = [
   './',
   './index.html',

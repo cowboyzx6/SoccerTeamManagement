@@ -293,7 +293,7 @@ Use `commitPositionTime(player)` before changing a player's position or moving t
 
 ## Known Limitations
 
-- The app still uses inline HTML event handlers bridged through `js/app.js`; those can be migrated to explicit listeners over time.
+- Some dynamic UI still attaches event handlers while rendering; static markup uses explicit listeners in `js/app.js`.
 - Automated coverage is currently limited to smoke tests.
 - Data integrity depends on browser `localStorage`.
 - Export/import is JSON-file based, not cloud sync.

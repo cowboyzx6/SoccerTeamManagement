@@ -20,18 +20,18 @@
 <div id="setup-screen" class="screen active">
   <div class="setup-container">
     <div class="setup-topbar">
-      <button class="btn-theme" id="theme-btn" onclick="toggleTheme()">&#9728;&#65039;</button>
+      <button class="btn-theme" id="theme-btn">&#9728;&#65039;</button>
       <div class="setup-title-block">
         <div class="app-title">&#9917; <span id="app-title-name">My Team</span></div>
         <div class="app-subtitle">Team Management</div>
       </div>
       <div class="setup-menu-wrap">
-        <button id="overflow-menu-btn" class="btn btn-gray" style="font-size:0.82rem;padding:6px 14px;" onclick="toggleOverflowMenu()">&#8943;</button>
+        <button id="overflow-menu-btn" class="btn btn-gray" style="font-size:0.82rem;padding:6px 14px;">&#8943;</button>
         <div id="overflow-menu" style="display:none;position:absolute;right:0;top:calc(100% + 4px);background:var(--bg-card);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.2);z-index:100;min-width:160px;">
-          <button class="overflow-menu-item" onclick="importGameReview();closeOverflowMenu()"><span class="overflow-menu-icon">&#128202;</span><span class="overflow-menu-label">Review Game</span></button>
-          <button class="overflow-menu-item" onclick="showSeasonSummary();closeOverflowMenu()"><span class="overflow-menu-icon">&#128200;</span><span class="overflow-menu-label">Review Season</span></button>
-          <button class="overflow-menu-item" onclick="goToTeamSetup();closeOverflowMenu()"><span class="overflow-menu-icon">&#9881;</span><span class="overflow-menu-label">Team Settings</span></button>
-          <button class="overflow-menu-item" onclick="openAboutModal();closeOverflowMenu()"><span class="overflow-menu-icon">&#8505;</span><span class="overflow-menu-label">About</span></button>
+          <button class="overflow-menu-item" id="review-game-btn"><span class="overflow-menu-icon">&#128202;</span><span class="overflow-menu-label">Review Game</span></button>
+          <button class="overflow-menu-item" id="review-season-btn"><span class="overflow-menu-icon">&#128200;</span><span class="overflow-menu-label">Review Season</span></button>
+          <button class="overflow-menu-item" id="team-settings-btn"><span class="overflow-menu-icon">&#9881;</span><span class="overflow-menu-label">Team Settings</span></button>
+          <button class="overflow-menu-item" id="about-btn"><span class="overflow-menu-icon">&#8505;</span><span class="overflow-menu-label">About</span></button>
         </div>
       </div>
     </div>
@@ -41,20 +41,20 @@
       <div style="font-size:3rem;margin-bottom:12px;">&#9917;</div>
       <p style="color:var(--text-muted);margin-bottom:8px;font-size:1rem;">No team configured yet.</p>
       <p style="color:var(--text-dim);margin-bottom:24px;font-size:0.85rem;">Add your roster and team name before your first game.</p>
-      <button class="btn btn-green btn-full" onclick="goToTeamSetup()">Set Up My Team &#8594;</button>
+      <button class="btn btn-green btn-full" id="setup-empty-btn">Set Up My Team &#8594;</button>
     </div>
 
     <!-- Game day content: shown when roster exists -->
     <div id="gameday-content" style="display:none;">
       <div class="game-info-row">
         <span class="game-number-badge" id="game-number-label">Game 1</span>
-        <input class="game-date-input" type="date" id="game-date-input" oninput="state.gameDate=this.value">
-        <input class="text-input" type="text" id="opponent-input" placeholder="Opponent (required)..." maxlength="30" autocomplete="off" oninput="updateStartBtn()">
+        <input class="game-date-input" type="date" id="game-date-input">
+        <input class="text-input" type="text" id="opponent-input" placeholder="Opponent (required)..." maxlength="30" autocomplete="off">
       </div>
 
       <div class="section-header" style="margin-top:16px;">
         <span class="section-title">Who Showed Up?</span>
-        <button class="btn btn-gray" id="check-all-btn" style="font-size:0.72rem;padding:6px 10px;" onclick="checkAllPlayers()">Select All</button>
+        <button class="btn btn-gray" id="check-all-btn" style="font-size:0.72rem;padding:6px 10px;">Select All</button>
       </div>
       <div class="attendance-counter">
         <span class="attendance-big" id="selected-count">0</span>
@@ -67,13 +67,13 @@
       <div class="half-duration-row">
         <span class="half-duration-label">Minutes per half</span>
         <div class="half-duration-controls">
-          <button class="btn-stepper" onclick="changeHalfMinutes(-1)">&#8722;</button>
+          <button class="btn-stepper" id="half-minus-btn">&#8722;</button>
           <span class="half-duration-value" id="half-minutes-display">25 min</span>
-          <button class="btn-stepper" onclick="changeHalfMinutes(1)">+</button>
+          <button class="btn-stepper" id="half-plus-btn">+</button>
         </div>
       </div>
 
-      <button class="btn btn-green btn-full" id="start-btn" onclick="goToLineup()" disabled>
+      <button class="btn btn-green btn-full" id="start-btn" disabled>
         Set Starting Lineup &#8594;
       </button>
     </div>
@@ -86,11 +86,11 @@
 <div id="team-setup-screen" class="screen">
   <div class="setup-container">
     <div class="setup-actions-bar">
-      <button class="btn btn-gray btn-compact" onclick="goBackFromTeamSetup()">&#8592; Back</button>
+      <button class="btn btn-gray btn-compact" id="team-setup-back-btn">&#8592; Back</button>
       <div class="setup-actions">
-        <button class="btn btn-gray btn-compact" onclick="importLeagueCsv()">&#128203; Import League CSV</button>
-        <button class="btn btn-gray btn-compact" onclick="importProfile()">&#128229; Restore Backup</button>
-        <button class="btn btn-gray btn-compact" onclick="exportProfile()">&#128228; Backup Team</button>
+        <button class="btn btn-gray btn-compact" id="import-csv-btn">&#128203; Import League CSV</button>
+        <button class="btn btn-gray btn-compact" id="restore-backup-btn">&#128229; Restore Backup</button>
+        <button class="btn btn-gray btn-compact" id="backup-team-btn">&#128228; Backup Team</button>
       </div>
     </div>
 
@@ -100,7 +100,7 @@
       <span class="section-title">Team Name</span>
     </div>
     <div class="add-row" style="margin-bottom:20px;">
-      <input class="text-input" type="text" id="team-name-input" placeholder="Team name..." maxlength="30" autocomplete="off" oninput="onTeamNameInput()" onblur="saveTeamName()">
+      <input class="text-input" type="text" id="team-name-input" placeholder="Team name..." maxlength="30" autocomplete="off">
     </div>
 
     <div class="section-header">
@@ -115,11 +115,11 @@
       <input type="file" id="import-file-input" accept=".json" style="display:none">
       <input type="file" id="csv-file-input" accept=".csv" style="display:none">
       <input type="file" id="review-file-input" accept=".json" style="display:none">
-      <button class="btn btn-blue" id="add-player-btn" onclick="addRosterPlayer()" disabled>Add</button>
+      <button class="btn btn-blue" id="add-player-btn" disabled>Add</button>
     </div>
 
     <div class="setup-danger-zone">
-      <button class="btn btn-red" onclick="confirmClearData()">&#9888; Clear All Data &amp; Reset</button>
+      <button class="btn btn-red" id="clear-data-btn">&#9888; Clear All Data &amp; Reset</button>
     </div>
   </div>
 </div>
@@ -132,8 +132,8 @@
     <h3>&#9888; Clear All Data?</h3>
     <p style="color:var(--text-modal-p);margin-bottom:16px;">This will permanently delete your team name, entire roster, photos, and game history. The app will reset to a blank state.<br><br>Use Backup Team first if you want a downloadable backup.</p>
     <div class="modal-btns">
-      <button class="btn btn-red" onclick="executeClearData()">Yes, Clear Everything</button>
-      <button class="btn btn-gray" onclick="closeClearDataModal()">Cancel</button>
+      <button class="btn btn-red" id="clear-confirm-btn">Yes, Clear Everything</button>
+      <button class="btn btn-gray" id="clear-cancel-btn">Cancel</button>
     </div>
   </div>
 </div>
@@ -150,7 +150,7 @@
       <span id="about-version" style="color:var(--text-main);font-size:1rem;font-weight:800;">v0.0.0</span>
     </div>
     <div class="modal-btns">
-      <button class="btn btn-gray" onclick="closeModal('about-modal')">Close</button>
+      <button class="btn btn-gray" id="about-close-btn">Close</button>
     </div>
   </div>
 </div>
@@ -162,7 +162,7 @@
 
   <div class="lineup-header">
     <div class="lineup-header-title" id="lineup-header-title">My Team &mdash; Starting Lineup</div>
-    <button class="btn-sm btn-gray" onclick="goBackFromLineup()">&#8592; Back</button>
+    <button class="btn-sm btn-gray" id="lineup-back-btn">&#8592; Back</button>
   </div>
 
   <div class="lineup-layout">
@@ -181,7 +181,7 @@
       <div class="lineup-hint" id="lineup-hint">Tap a position slot on the field, then tap a player here to assign them.</div>
       <div class="lineup-unassigned-list" id="lineup-unassigned-list"></div>
       <div class="lineup-panel-actions">
-        <button class="btn btn-green btn-full" id="launch-btn" onclick="launchGame()" disabled>
+        <button class="btn btn-green btn-full" id="launch-btn" disabled>
           Start Game &#8594;
         </button>
       </div>
@@ -208,11 +208,11 @@
         <span id="score-them">0</span>
       </div>
       <div class="score-team" id="score-them-label">Them</div>
-      <button id="goal-btn" class="score-goal-btn" onclick="openGoalModal()" disabled>+ Goal</button>
+      <button id="goal-btn" class="score-goal-btn" disabled>+ Goal</button>
     </div>
     <div class="header-btns">
-      <button class="btn-sm btn-orange" id="pause-btn" onclick="togglePause()">&#9654; START</button>
-      <button class="btn-sm btn-purple" id="action-btn" onclick="handleHalfEnd()">HALF</button>
+      <button class="btn-sm btn-orange" id="pause-btn">&#9654; START</button>
+      <button class="btn-sm btn-purple" id="action-btn">HALF</button>
     </div>
   </div>
 
@@ -234,15 +234,15 @@
       <div class="bench-panel-header">
         <span class="zone-label">Bench &nbsp;<span id="bench-count"></span></span>
         <div class="bench-sort-toggle">
-          <button class="bench-sort-btn active" id="sort-name-btn" onclick="setBenchSort('name')">Name</button>
-          <button class="bench-sort-btn" id="sort-time-btn" onclick="setBenchSort('time')">Time</button>
-          <button class="bench-sort-btn" id="sort-priority-btn" onclick="setBenchSort('priority')">Priority</button>
+          <button class="bench-sort-btn active" id="sort-name-btn">Name</button>
+          <button class="bench-sort-btn" id="sort-time-btn">Time</button>
+          <button class="bench-sort-btn" id="sort-priority-btn">Priority</button>
         </div>
-        <button class="btn-late" onclick="openLateModal()">+ Late Arrival</button>
+        <button class="btn-late" id="late-arrival-btn">+ Late Arrival</button>
       </div>
       <div class="sub-hint" id="sub-hint">Tap a bench player to plan a sub</div>
       <div id="sub-now-wrap" style="display:none;">
-        <button class="btn-sub-now" id="sub-now-btn" onclick="executeAllPlans()">Sub Now (0)</button>
+        <button class="btn-sub-now" id="sub-now-btn">Sub Now (0)</button>
       </div>
       <div class="player-grid" id="bench-grid"></div>
       <div class="color-legend">
@@ -276,8 +276,8 @@
         <div class="summary-meta" id="summary-meta"></div>
       </div>
       <div class="summary-actions">
-        <button class="btn btn-gray" id="summary-export-btn" onclick="exportProfile(false, true)">&#128228; Export JSON Backup</button>
-        <button class="btn btn-blue" onclick="goToSetup()">&#8592; Home</button>
+        <button class="btn btn-gray" id="summary-export-btn">&#128228; Export JSON Backup</button>
+        <button class="btn btn-blue" id="summary-home-btn">&#8592; Home</button>
       </div>
     </div>
     <div class="summary-goals-title" id="summary-goals-title">Goals Scored</div>
@@ -307,7 +307,7 @@
         <div class="summary-vs-line">Season Summary</div>
       </div>
       <div class="summary-actions">
-        <button class="btn btn-gray" onclick="goToSetup()">&#8592; Back</button>
+        <button class="btn btn-gray" id="season-back-btn">&#8592; Back</button>
       </div>
     </div>
     <div class="season-record-row">
@@ -336,10 +336,10 @@
     <table>
       <thead>
         <tr>
-          <th><button class="sortable-th" id="season-sort-player" onclick="setSeasonSort('name')">Player <span class="sort-indicator"></span></button></th>
-          <th><button class="sortable-th" id="season-sort-gp" onclick="setSeasonSort('games')">GP <span class="sort-indicator"></span></button></th>
-          <th><button class="sortable-th" id="season-sort-goals" onclick="setSeasonSort('goals')">Goals <span class="sort-indicator"></span></button></th>
-          <th><button class="sortable-th" id="season-sort-time" onclick="setSeasonSort('seconds')">Total Time <span class="sort-indicator"></span></button></th>
+          <th><button class="sortable-th" id="season-sort-player">Player <span class="sort-indicator"></span></button></th>
+          <th><button class="sortable-th" id="season-sort-gp">GP <span class="sort-indicator"></span></button></th>
+          <th><button class="sortable-th" id="season-sort-goals">Goals <span class="sort-indicator"></span></button></th>
+          <th><button class="sortable-th" id="season-sort-time">Total Time <span class="sort-indicator"></span></button></th>
         </tr>
       </thead>
       <tbody id="season-body"></tbody>
@@ -362,13 +362,13 @@
       <div class="wheel-track" id="wheel-track"></div>
     </div>
 
-    <button class="btn btn-blue btn-full" id="wheel-spin-btn" onclick="spinWheel()">&#127920; Spin!</button>
-    <button class="btn btn-orange btn-full" id="wheel-stop-btn" onclick="stopWheel()" style="display:none;margin-top:8px;">&#9995; Stop!</button>
-    <button class="btn btn-green btn-full" id="wheel-next-btn" onclick="nextGoaliePick()" style="display:none;margin-top:8px;">2nd Half Goalie &#8594;</button>
-    <button class="btn btn-green btn-full" id="goalie-confirm-btn" onclick="confirmGoalies()" style="display:none;margin-top:8px;">Start Game &#8594;</button>
-    <button class="btn btn-green btn-full" id="gk-assign-btn" onclick="confirmGkFromSpin()" style="display:none;margin-top:8px;">&#9989; Assign as GK &#8594;</button>
-    <button class="btn btn-blue btn-full" id="wheel-spin-again-btn" onclick="spinAgain()" style="display:none;margin-top:8px;">&#127920; Spin Again</button>
-    <button class="btn btn-gray btn-full" id="wheel-cancel-btn" onclick="cancelGoalieSpin()" style="display:none;margin-top:8px;">Cancel</button>
+    <button class="btn btn-blue btn-full" id="wheel-spin-btn">&#127920; Spin!</button>
+    <button class="btn btn-orange btn-full" id="wheel-stop-btn" style="display:none;margin-top:8px;">&#9995; Stop!</button>
+    <button class="btn btn-green btn-full" id="wheel-next-btn" style="display:none;margin-top:8px;">2nd Half Goalie &#8594;</button>
+    <button class="btn btn-green btn-full" id="goalie-confirm-btn" style="display:none;margin-top:8px;">Start Game &#8594;</button>
+    <button class="btn btn-green btn-full" id="gk-assign-btn" style="display:none;margin-top:8px;">&#9989; Assign as GK &#8594;</button>
+    <button class="btn btn-blue btn-full" id="wheel-spin-again-btn" style="display:none;margin-top:8px;">&#127920; Spin Again</button>
+    <button class="btn btn-gray btn-full" id="wheel-cancel-btn" style="display:none;margin-top:8px;">Cancel</button>
   </div>
 </div>
 
@@ -380,8 +380,8 @@
     <h3>Remove Player?</h3>
     <p id="remove-roster-body"></p>
     <div class="modal-btns">
-      <button class="btn btn-red" onclick="confirmRemoveRosterPlayer()">Remove</button>
-      <button class="btn btn-gray" onclick="closeRemoveRosterModal()">Cancel</button>
+      <button class="btn btn-red" id="remove-roster-confirm-btn">Remove</button>
+      <button class="btn btn-gray" id="remove-roster-cancel-btn">Cancel</button>
     </div>
   </div>
 </div>
@@ -394,8 +394,8 @@
     <h3>Edit Player Name</h3>
     <input class="text-input" type="text" id="rename-input" maxlength="30" autocomplete="off">
     <div class="modal-btns">
-      <button class="btn btn-blue" onclick="confirmRename()">Save</button>
-      <button class="btn btn-gray" onclick="closeRenameModal()">Cancel</button>
+      <button class="btn btn-blue" id="rename-confirm-btn">Save</button>
+      <button class="btn btn-gray" id="rename-cancel-btn">Cancel</button>
     </div>
   </div>
 </div>
@@ -409,8 +409,8 @@
     <p id="gk-picker-subtitle" style="color:var(--text-modal-p);font-size:0.85rem;margin-bottom:12px;">Tap a player to assign them to GK.</p>
     <div id="gk-picker-list" style="margin-bottom:16px;max-height:480px;overflow-y:auto;"></div>
     <div style="border-top:1px solid var(--border);margin-bottom:16px;"></div>
-    <button class="btn btn-blue btn-full" id="gk-picker-spin-btn" style="margin-bottom:8px;" onclick="openGkSpin()">🎲 Spin to Pick 1st Half Goalie</button>
-    <button class="btn btn-gray" id="gk-picker-skip-btn" style="width:100%;" onclick="skipGkPicker()">Skip — Assign Later</button>
+    <button class="btn btn-blue btn-full" id="gk-picker-spin-btn" style="margin-bottom:8px;">🎲 Spin to Pick 1st Half Goalie</button>
+    <button class="btn btn-gray" id="gk-picker-skip-btn" style="width:100%;">Skip — Assign Later</button>
   </div>
 </div>
 
@@ -421,7 +421,7 @@
   <div class="modal">
     <h3>Late Arrival</h3>
     <div id="late-player-list" style="margin-bottom:16px;"></div>
-    <button class="btn btn-gray" style="width:100%;" onclick="closeLateModal()">Cancel</button>
+    <button class="btn btn-gray" id="late-cancel-btn" style="width:100%;">Cancel</button>
   </div>
 </div>
 
@@ -433,8 +433,8 @@
     <h3>Remove from Game?</h3>
     <p id="remove-player-body"></p>
     <div class="modal-btns">
-      <button class="btn btn-red" onclick="confirmRemovePlayer()">Remove</button>
-      <button class="btn btn-gray" onclick="closeRemovePlayerModal()">Cancel</button>
+      <button class="btn btn-red" id="remove-player-confirm-btn">Remove</button>
+      <button class="btn btn-gray" id="remove-player-cancel-btn">Cancel</button>
     </div>
   </div>
 </div>
@@ -447,28 +447,28 @@
     <h3>&#9917; Goal!</h3>
 
     <div style="display:flex;gap:8px;margin-bottom:14px;">
-      <button id="goal-us-btn"   class="btn btn-green" style="flex:1;font-size:0.95rem;" onclick="recordGoal('us')">&#9917; Our Goal</button>
-      <button id="goal-them-btn" class="btn btn-red"   style="flex:1;font-size:0.95rem;" onclick="recordGoal('them')">Opponent Goal</button>
+      <button id="goal-us-btn"   class="btn btn-green" style="flex:1;font-size:0.95rem;">&#9917; Our Goal</button>
+      <button id="goal-them-btn" class="btn btn-red"   style="flex:1;font-size:0.95rem;">Opponent Goal</button>
     </div>
 
     <!-- Our goal scorer section (shown after clicking Our Goal) -->
     <div id="goal-scorer-section" style="display:none;">
       <p style="color:var(--text-modal-p);font-size:0.85rem;margin-bottom:8px;">Who scored? (optional)</p>
       <div id="goal-scorer-list" style="max-height:220px;overflow-y:auto;margin-bottom:10px;"></div>
-      <button class="btn btn-gray" style="width:100%;margin-bottom:6px;" onclick="confirmGoal(null)">No scorer recorded</button>
+      <button class="btn btn-gray" id="goal-no-scorer-btn" style="width:100%;margin-bottom:6px;">No scorer recorded</button>
     </div>
 
     <!-- Opponent score adjustment (shown after clicking Opponent Goal) -->
     <div id="goal-them-section" style="display:none;">
       <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:14px;">
-        <button class="btn btn-gray" style="font-size:1.2rem;padding:8px 16px;" onclick="adjustTheirScore(-1)">&#8722;</button>
+        <button class="btn btn-gray" id="their-score-minus-btn" style="font-size:1.2rem;padding:8px 16px;">&#8722;</button>
         <span id="goal-them-preview" style="font-size:2rem;font-weight:800;min-width:40px;text-align:center;">0</span>
-        <button class="btn btn-gray" style="font-size:1.2rem;padding:8px 16px;" onclick="adjustTheirScore(1)">+</button>
+        <button class="btn btn-gray" id="their-score-plus-btn" style="font-size:1.2rem;padding:8px 16px;">+</button>
       </div>
-      <button class="btn btn-green" style="width:100%;margin-bottom:6px;" onclick="confirmTheirScore()">Confirm</button>
+      <button class="btn btn-green" id="their-score-confirm-btn" style="width:100%;margin-bottom:6px;">Confirm</button>
     </div>
 
-    <button class="btn btn-gray" style="width:100%;" onclick="closeGoalModal()">Cancel</button>
+    <button class="btn btn-gray" id="goal-cancel-btn" style="width:100%;">Cancel</button>
   </div>
 </div>
 
@@ -480,10 +480,10 @@
     <h3 id="half-modal-title">Half Time</h3>
     <div id="half-modal-body" style="margin-bottom:18px;"></div>
     <div class="modal-btns">
-      <button class="btn btn-green" id="half-confirm-btn" onclick="confirmHalfAction()">Start 2nd Half</button>
-      <button class="btn btn-gray" onclick="closeHalfModal()">Back</button>
+      <button class="btn btn-green" id="half-confirm-btn">Start 2nd Half</button>
+      <button class="btn btn-gray" id="half-cancel-btn">Back</button>
     </div>
-    <button class="btn btn-red" id="half-end-early-btn" onclick="endGame()" style="width:100%;margin-top:10px;display:none;">End Game Now</button>
+    <button class="btn btn-red" id="half-end-early-btn" style="width:100%;margin-top:10px;display:none;">End Game Now</button>
   </div>
 </div>
 

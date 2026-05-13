@@ -86,7 +86,7 @@ There is no separate `review-screen` element. Game review imports are rendered t
 | `js/lineup.js` | Lineup, GK picker, goalie wheel | `goToLineup`, `renderLineup`, `launchGame`, `initGame`, `spinWheel`, `handleLineupPointerDown` |
 | `js/game.js` | Timer, render, subs, goals, game flow | `handleTap`, `renderGame`, `executeAllPlans`, `endGame`, `renderScore`, `handleFieldSlotPointerDown` |
 | `js/summary.js` | Summary, season, navigation | `showSummary`, `showSeasonSummary`, `goToSetup`, `confirmClearData`, `setSeasonSort` |
-| `js/app.js` | Entry point, init, delegated listeners, transitional inline-handler bridge | No exports |
+| `js/app.js` | Entry point, init, delegated listeners | No exports |
 
 ## Common bug targets
 
