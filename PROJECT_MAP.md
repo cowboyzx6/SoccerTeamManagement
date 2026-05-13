@@ -1,6 +1,6 @@
 # PROJECT_MAP.md
 
-Purpose: quick navigation map for Claude Code and humans working on the single-file app. This file is intentionally concise so Claude can read it instead of scanning all of `index.html`.
+Purpose: quick navigation map for Claude Code and humans working on the browser app. This file is intentionally concise so Claude can read it instead of scanning all of `index.html`.
 
 ## How to use this map
 
@@ -11,7 +11,8 @@ Purpose: quick navigation map for Claude Code and humans working on the single-f
 
 ## Project files
 
-- `index.html` - main PWA: HTML, CSS, and JavaScript in one file, currently 5103 lines.
+- `index.html` - main PWA shell: HTML, CSS, and a single ES module entry tag, currently 2396 lines.
+- `js/` - browser-native ES modules for app logic; see the JavaScript modules map below.
 - `manifest.json` - PWA metadata.
 - `sw.js` - service worker/offline caching.
 - `README.md` - user-facing app overview, setup, data/export notes, limitations.
@@ -69,38 +70,20 @@ There is no separate `review-screen` element. Game review imports are rendered t
 | 2332-2345 | Remove player from game modal | Mark player as left/removed from active game. |
 | 2346-2378 | Goal modal | Our goal/opponent goal and scorer/score adjustment UI. |
 | 2379-2393 | Half time / end game modal | Half-time summary, second-half start, and end-game controls. |
-| 2394-5103 | Script block | All app logic. |
+| 2394 | Script tag | Loads `js/app.js` as the ES module entry point. |
 
-## JavaScript map in `index.html`
+## JavaScript modules in `js/`
 
-| Lines | Section | What lives here |
-|---:|---|---|
-| 2398-2418 | POSITIONS / constants | Field coordinates, position order, app version, shared field SVG. |
-| 2419-2462 | STATE | Global state for roster, active players, timer, planned subs, goalies, score, history, lineup/drag state. |
-| 2463-2471 | HALF DURATION STEPPER | Minutes-per-half stepper. |
-| 2472-2538 | TEAM NAME / SETTINGS | Team name, settings/history persistence, active game save/resume. |
-| 2539-2634 | IMPORT / EXPORT PROFILE | Build/export profile and game record JSON. |
-| 2635-2775 | LEAGUE CSV / PROFILE IMPORT | Team backup restore, league CSV file reader/parser. |
-| 2776-3008 | GAME REVIEW + SEASON SUMMARY | Import past game JSON, review summary with GK marker, season sorting/summary. |
-| 3009-3081 | PHOTOS | Player photo load, avatar HTML, upload, resize/crop/store. |
-| 3082-3278 | ROSTER MANAGEMENT | Roster CRUD, attendance tiles, select all, start button enablement. |
-| 3279-3389 | GAME START / GK PICKER ENTRY | Build lineup draft, two-step GK picker entry, navigation back to gameday. |
-| 3390-3675 | LINEUP RENDERING / DRAG | Render lineup field/unassigned players, pointer drag/tap assignment, launch button for short lineups. |
-| 3676-3979 | GOALIE WHEEL + GAME INIT | Season-fresh goalie candidates, manual/spin goalie workflow, wheel animation, start game setup. |
-| 3980-4053 | TIMER / PHASE UI | Start/pause/resume/tick clock, render clock warning/urgent classes, sync half/action buttons. |
-| 4054-4171 | GAME RENDER CORE | Played time, fair share, status colors, bench sort, render shell/hints. |
-| 4172-4263 | FIELD DRAG HANDLERS | Drag preview and pointer handlers for moving/switching field players. |
-| 4264-4395 | FIELD / BENCH RENDER | Render position slots, incoming sub strips, bench cards, goalie/bench controls. |
-| 4396-4435 | REMOVE PLAYER FROM GAME | Mark a player as leftEarly and preserve played/position time. |
-| 4436-4627 | SUBSTITUTION | Tap handling, planned subs, executeAllPlans, immediate makeSub, field-to-bench, active goalie assignment. |
-| 4628-4676 | LATE ARRIVAL | Add roster players who were not in active game to bench mid-game. |
-| 4677-4789 | HALF TIME / SECOND HALF | Half-time modal, first-half snapshots, GK switch for second half. |
-| 4790-4866 | SCORE / GOALS | Goal modal, score updates, scorer tracking, opponent score adjustment. |
-| 4867-5017 | SUMMARY / NAV / CLEAR DATA | End game, summary render, overflow/About menu, navigation, clear data. |
-| 5018-5032 | UTILITIES | `showScreen`, modal helpers, `escHtml`. |
-| 5033-5050 | THEME | Dark/light theme persistence. |
-| 5051-5068 | INIT | Shared SVG insertion, load theme/photos/settings/history/roster, active game resume, beforeunload save. |
-| 5069-5103 | DELEGATED LISTENERS / SERVICE WORKER | Delegated click/pointer handlers for field/bench buttons and service worker registration. |
+| File | Responsibility | Key exports |
+|---|---|---|
+| `js/state.js` | State singleton + constants | `state`, `POSITIONS`, `POSITION_ORDER`, `FIELD_SVG` |
+| `js/utils.js` | DOM helpers + theme | `escHtml`, `showScreen`, `openModal`, `closeModal`, `applyTheme`, `toggleTheme` |
+| `js/persistence.js` | localStorage + import/export | `saveSettings`, `loadSettings`, `saveRoster`, `loadRoster`, `saveActiveGame`, `loadGameHistory`, `exportProfile`, `importProfile`, `importLeagueCsv`, `buildGameRecord` |
+| `js/roster.js` | Roster, attendance, photos | `renderTeamSetupRoster`, `renderGameDayCheckboxes`, `togglePlayerTile`, `renderRoster`, `avatarHtml`, `changeHalfMinutes` |
+| `js/lineup.js` | Lineup, GK picker, goalie wheel | `goToLineup`, `renderLineup`, `launchGame`, `initGame`, `spinWheel`, `handleLineupPointerDown` |
+| `js/game.js` | Timer, render, subs, goals, game flow | `handleTap`, `renderGame`, `executeAllPlans`, `endGame`, `renderScore`, `handleFieldSlotPointerDown` |
+| `js/summary.js` | Summary, season, navigation | `showSummary`, `showSeasonSummary`, `goToSetup`, `confirmClearData`, `setSeasonSort` |
+| `js/app.js` | Entry point, init, delegated listeners, transitional inline-handler bridge | No exports |
 
 ## Common bug targets
 

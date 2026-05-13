@@ -681,7 +681,7 @@ At this point, `index.html`'s script block should contain only:
 - The init block (lines ~4551–4566): insert SVGs, load theme/photos/settings/history/roster, resume active game, beforeunload handler
 - The delegated listeners block (lines ~4567–4593): click handlers and service worker registration
 
-- [ ] **Step 1: Verify what remains in index.html's script block**
+- [x] **Step 1: Verify what remains in index.html's script block**
 
 ```powershell
 Select-String -Path .\index.html -Pattern "^function " -n
@@ -689,7 +689,7 @@ Select-String -Path .\index.html -Pattern "^function " -n
 
 Expected: zero results. If any functions remain, they were missed in earlier tasks — extract them to the appropriate module before continuing.
 
-- [ ] **Step 2: Create `js/app.js`**
+- [x] **Step 2: Create `js/app.js`**
 
 Move the import statements, init block, and delegated listeners from index.html's script block into `js/app.js`:
 
@@ -720,7 +720,7 @@ import { showSummary, showSeasonSummary, goToSetup,
 
 Adjust the import lists above to match the actual function names you extracted — add any missed functions.
 
-- [ ] **Step 3: Replace index.html's script block**
+- [x] **Step 3: Replace index.html's script block**
 
 Remove everything between `<script type="module">` and `</script>` and replace:
 
@@ -728,7 +728,7 @@ Remove everything between `<script type="module">` and `</script>` and replace:
 <script type="module" src="js/app.js"></script>
 ```
 
-- [ ] **Step 4: Bump service worker cache version**
+- [x] **Step 4: Bump service worker cache version**
 
 In `sw.js` line 1, change:
 ```js
@@ -750,7 +750,7 @@ Open `http://localhost:8000`. Full smoke test:
 - Theme toggle works
 - No console errors
 
-- [ ] **Step 6: Update PROJECT_MAP.md**
+- [x] **Step 6: Update PROJECT_MAP.md**
 
 Replace the JavaScript map section to reflect the new file structure. Add a new section:
 
@@ -773,7 +773,7 @@ Update the "Project files" section to list the `js/` directory and note that the
 
 Update the CSS map line numbers if they shifted during the JS extraction.
 
-- [ ] **Step 7: Final commit**
+- [x] **Step 7: Final commit**
 
 ```powershell
 git add js/app.js index.html sw.js PROJECT_MAP.md
@@ -784,10 +784,10 @@ git commit -m "Complete JS module split: finalize app.js, bump sw cache to stm-v
 
 ## Post-Migration Checklist
 
-- [ ] All 8 JS files exist in `js/`
-- [ ] `index.html` script block is a single `<script type="module" src="js/app.js">` tag
-- [ ] `sw.js` reads `stm-v3`
-- [ ] `PROJECT_MAP.md` reflects the new structure
+- [x] All 8 JS files exist in `js/`
+- [x] `index.html` script block is a single `<script type="module" src="js/app.js">` tag
+- [x] `sw.js` reads `stm-v3`
+- [x] `PROJECT_MAP.md` reflects the new structure
 - [ ] Full game flow works in browser
 - [ ] No console errors
 - [ ] Git log shows 9 clean commits (one per task)
