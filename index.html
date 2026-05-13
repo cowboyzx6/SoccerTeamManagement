@@ -2429,6 +2429,22 @@ import {
   triggerPhotoUpload,
   updateStartBtn
 } from './js/roster.js';
+import {
+  closeClearDataModal,
+  closeOverflowMenu,
+  confirmClearData,
+  executeClearData,
+  goBackFromTeamSetup,
+  goToSetup,
+  goToTeamSetup,
+  openAboutModal,
+  renderGoalsHtml,
+  setSeasonSort,
+  showGameReviewFromRecord,
+  showSeasonSummary,
+  showSummary,
+  toggleOverflowMenu
+} from './js/summary.js';
 import { applyTheme, closeModal, escHtml, openModal, showScreen, toggleTheme } from './js/utils.js';
 
 // ─────────────────────────────────────────────────────────────
@@ -2471,210 +2487,6 @@ function saveTeamName() {
 // ─────────────────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────
 //  GAME REVIEW (import a past game JSON for read-only display)
-// ─────────────────────────────────────────────────────────────
-function renderGoalsHtml(goalsArray, opponentLabel) {
-  if (!goalsArray.length) {
-    return '<div class="summary-goal-empty">No goals recorded.</div>';
-  }
-  const grouped = goalsArray.reduce((acc, g) => {
-    const key = g.team === 'us' ? (g.scorer || 'Unknown') : '__opponent__';
-    if (!acc[key]) acc[key] = { team: g.team, scorer: g.scorer, count: 0 };
-    acc[key].count += 1;
-    return acc;
-  }, {});
-  return Object.values(grouped).map(entry => {
-    const label = entry.team === 'us'
-      ? escHtml(entry.scorer || 'Unknown')
-      : escHtml(opponentLabel);
-    const balls = '<span class="summary-goal-balls">' + '⚽'.repeat(entry.count) + '</span>';
-    return `<div class="summary-goal-item">${balls}<div class="summary-goal-scorer">${label}</div></div>`;
-  }).join('');
-}
-
-function showGameReviewFromRecord(gameRecord, profileTeamName) {
-  const stats   = gameRecord.playerStats || [];
-  const sorted  = [...stats].sort((a, b) => b.secondsPlayed - a.secondsPlayed);
-  const maxTime = sorted.length ? sorted[0].secondsPlayed : 1;
-  const totalAll = stats.reduce((s, p) => s + p.secondsPlayed, 0);
-  const avg = stats.length ? Math.round(totalAll / stats.length) : 0;
-
-  const tbody = document.getElementById('summary-body');
-  tbody.innerHTML = sorted.map(p => {
-    const pct = maxTime > 0 ? Math.round((p.secondsPlayed / maxTime) * 100) : 0;
-    const hasHalfSplit = Number.isFinite(p.firstHalfSeconds) && Number.isFinite(p.secondHalfSeconds);
-    const firstHalf = hasHalfSplit ? fmt(p.firstHalfSeconds) : '&mdash;';
-    const secondHalf = hasHalfSplit ? fmt(p.secondHalfSeconds) : '&mdash;';
-    const posChips = Object.entries(p.positionSeconds || {})
-      .filter(([, t]) => t > 0)
-      .sort(([, a], [, b]) => b - a)
-      .map(([pos, t]) => `<span class="summary-pos-chip">${pos} <strong>${fmt(t)}</strong></span>`)
-      .join('');
-    const posHtml = posChips ? `<div class="summary-pos-breakdown">${posChips}</div>` : '';
-    const goalieIcon = (p.positionSeconds || {}).GK > 0
-      ? '<span class="summary-goalie-icon" title="Goalkeeper" aria-label="Goalkeeper">&#129508;</span>'
-      : '';
-    return `
-      <tr>
-        <td>
-          <div class="summary-player-cell">
-            <div class="summary-player-avatar">${avatarHtml(p.id, p.name, 30)}</div>
-            <div class="summary-player-info">
-              <div class="summary-player-name">${escHtml(p.name)}${goalieIcon}</div>
-              ${posHtml}
-            </div>
-          </div>
-        </td>
-        <td>${firstHalf}</td>
-        <td>${secondHalf}</td>
-        <td class="total-col">
-          ${fmt(p.secondsPlayed)}
-          <div class="time-bar"><div class="time-bar-fill" style="width:${pct}%"></div></div>
-        </td>
-      </tr>
-    `;
-  }).join('');
-
-  const tn  = profileTeamName || 'Team';
-  const opp = gameRecord.opponent || 'Opponent';
-  document.getElementById('summary-team-name').textContent = tn;
-  document.getElementById('summary-vs-line').textContent =
-    `vs ${opp}  •  ${gameRecord.ourScore} – ${gameRecord.theirScore}`;
-  document.getElementById('summary-meta').textContent =
-    `${stats.length} players · Avg: ${fmt(avg)} · ${gameRecord.date || ''}`;
-
-  document.getElementById('summary-goals').innerHTML =
-    renderGoalsHtml(gameRecord.goals || [], opp);
-
-  document.getElementById('summary-export-btn').style.display = 'none';
-  showScreen('summary-screen');
-}
-
-function setSeasonSort(key) {
-  if (state.seasonSortKey === key) {
-    state.seasonSortDir = state.seasonSortDir === 'asc' ? 'desc' : 'asc';
-  } else {
-    state.seasonSortKey = key;
-    state.seasonSortDir = key === 'name' ? 'asc' : 'desc';
-  }
-  showSeasonSummary();
-}
-
-function compareSeasonPlayers(a, b) {
-  if (state.seasonSortKey === 'name') {
-    const result = a.name.localeCompare(b.name);
-    return state.seasonSortDir === 'asc' ? result : -result;
-  }
-
-  const result = (a[state.seasonSortKey] || 0) - (b[state.seasonSortKey] || 0);
-  if (result !== 0) return state.seasonSortDir === 'asc' ? result : -result;
-  return a.name.localeCompare(b.name);
-}
-
-function updateSeasonSortHeaders() {
-  const map = {
-    name: 'season-sort-player',
-    games: 'season-sort-gp',
-    goals: 'season-sort-goals',
-    seconds: 'season-sort-time',
-  };
-
-  Object.entries(map).forEach(([key, id]) => {
-    const btn = document.getElementById(id);
-    if (!btn) return;
-    const indicator = btn.querySelector('.sort-indicator');
-    const isActive = key === state.seasonSortKey;
-    btn.classList.toggle('active', isActive);
-    if (indicator) indicator.textContent = isActive ? (state.seasonSortDir === 'asc' ? '\u25B2' : '\u25BC') : '';
-  });
-}
-
-function showSeasonSummary() {
-  if (!state.gameHistory.length) {
-    alert('No games recorded yet.');
-    return;
-  }
-
-  let wins = 0, losses = 0, draws = 0, gf = 0, ga = 0;
-  const playerMap = {};
-
-  state.gameHistory.forEach(game => {
-    const us = game.ourScore || 0, them = game.theirScore || 0;
-    if (us > them) wins++;
-    else if (us < them) losses++;
-    else draws++;
-    gf += us;
-    ga += them;
-
-    (game.playerStats || []).forEach(ps => {
-      if (!playerMap[ps.id]) {
-        playerMap[ps.id] = { id: ps.id, name: ps.name, games: 0, seconds: 0, goals: 0, posSeconds: {} };
-      }
-      const e = playerMap[ps.id];
-      e.games++;
-      e.seconds += ps.secondsPlayed || 0;
-      Object.entries(ps.positionSeconds || {}).forEach(([pos, t]) => {
-        e.posSeconds[pos] = (e.posSeconds[pos] || 0) + t;
-      });
-    });
-
-    (game.goals || []).filter(g => g.team === 'us' && g.scorer).forEach(g => {
-      const found = g.scorerId != null
-        ? Object.values(playerMap).find(p => p.id === g.scorerId)
-        : Object.values(playerMap).find(p => p.name === g.scorer);
-      if (found) found.goals++;
-    });
-  });
-
-  state.roster.forEach(r => { if (playerMap[r.id]) playerMap[r.id].name = r.name; });
-
-  const seasonPlayers = Object.values(playerMap);
-  const sorted  = seasonPlayers.sort(compareSeasonPlayers);
-  const maxSecs = seasonPlayers.length ? Math.max(...seasonPlayers.map(p => p.seconds)) : 1;
-
-  document.getElementById('season-team-name').textContent = state.teamName;
-  document.getElementById('season-wins').textContent      = wins;
-  document.getElementById('season-losses').textContent    = losses;
-  document.getElementById('season-draws').textContent     = draws;
-  document.getElementById('season-gf').textContent        = gf;
-  document.getElementById('season-ga').textContent        = ga;
-  document.getElementById('season-meta').textContent      =
-    `${state.gameHistory.length} game${state.gameHistory.length !== 1 ? 's' : ''} · ${sorted.length} players`;
-
-  updateSeasonSortHeaders();
-
-  document.getElementById('season-body').innerHTML = sorted.map(p => {
-    const pct      = maxSecs > 0 ? Math.round((p.seconds / maxSecs) * 100) : 0;
-    const posChips = Object.entries(p.posSeconds)
-      .filter(([, t]) => t > 0)
-      .sort(([, a], [, b]) => b - a)
-      .map(([pos, t]) => `<span class="summary-pos-chip">${pos} <strong>${fmt(t)}</strong></span>`)
-      .join('');
-    const posHtml   = posChips ? `<div class="summary-pos-breakdown">${posChips}</div>` : '';
-    const goalsHtml = p.goals > 0 ? `<span style="color:#ffd54f">⚽ ${p.goals}</span>` : '—';
-    return `
-      <tr>
-        <td>
-          <div class="summary-player-cell">
-            <div class="summary-player-avatar">${avatarHtml(p.id, p.name, 30)}</div>
-            <div class="summary-player-info">
-              <div class="summary-player-name">${escHtml(p.name)}</div>
-              ${posHtml}
-            </div>
-          </div>
-        </td>
-        <td>${p.games}</td>
-        <td>${goalsHtml}</td>
-        <td class="total-col">
-          ${fmt(p.seconds)}
-          <div class="time-bar"><div class="time-bar-fill" style="width:${pct}%"></div></div>
-        </td>
-      </tr>
-    `;
-  }).join('');
-
-  showScreen('season-summary-screen');
-}
-
 // ─────────────────────────────────────────────────────────────
 //  PHOTOS
 // ─────────────────────────────────────────────────────────────
@@ -4301,130 +4113,6 @@ function endGame() {
 
 // ─────────────────────────────────────────────────────────────
 //  SUMMARY
-// ─────────────────────────────────────────────────────────────
-function showSummary() {
-  const sorted   = [...players].sort((a, b) => b.totalPlayed - a.totalPlayed);
-  const maxTime  = sorted.length ? sorted[0].totalPlayed : 1;
-  const totalAll = state.players.reduce((s, p) => s + p.totalPlayed, 0);
-  const avg      = state.players.length ? Math.round(totalAll / state.players.length) : 0;
-
-  const tbody = document.getElementById('summary-body');
-  tbody.innerHTML = sorted.map(p => {
-    const h1   = Number.isFinite(p.h1Snapshot) ? p.h1Snapshot : p.totalPlayed;
-    const h2   = Number.isFinite(p.h1Snapshot) ? Math.max(0, p.totalPlayed - p.h1Snapshot) : 0;
-    const pct  = maxTime > 0 ? Math.round((p.totalPlayed / maxTime) * 100) : 0;
-    const posChips = Object.entries(p.positionTime || {})
-      .filter(([, t]) => t > 0)
-      .sort(([, a], [, b]) => b - a)
-      .map(([pos, t]) => `<span class="summary-pos-chip">${pos} <strong>${fmt(t)}</strong></span>`)
-      .join('');
-    const posHtml = posChips
-      ? `<div class="summary-pos-breakdown">${posChips}</div>`
-      : '';
-    return `
-      <tr>
-        <td>
-          <div class="summary-player-cell">
-            <div class="summary-player-avatar">${avatarHtml(p.id, p.name, 30)}</div>
-            <div class="summary-player-info">
-              <div class="summary-player-name">${escHtml(p.name)}</div>
-              ${posHtml}
-            </div>
-          </div>
-        </td>
-        <td>${fmt(h1)}</td>
-        <td>${fmt(h2)}</td>
-        <td class="total-col">
-          ${fmt(p.totalPlayed)}
-          <div class="time-bar"><div class="time-bar-fill" style="width:${pct}%"></div></div>
-        </td>
-      </tr>
-    `;
-  }).join('');
-
-  document.getElementById('summary-team-name').textContent = state.teamName;
-  document.getElementById('summary-vs-line').textContent =
-    state.opponentName ? `vs ${state.opponentName}  •  ${state.scoreUs} – ${state.scoreThem}` : `Score: ${state.scoreUs} – ${state.scoreThem}`;
-  document.getElementById('summary-meta').textContent =
-    `${state.players.length} players \u00B7 Avg: ${fmt(avg)} \u00B7 ${state.currentHalf === 2 ? 'Full game' : '1st half only'}`;
-
-  document.getElementById('summary-goals').innerHTML =
-    renderGoalsHtml(state.goals, state.opponentName || 'Opponent');
-
-  document.getElementById('summary-export-btn').style.display = '';
-  showScreen('summary-screen');
-}
-
-function toggleOverflowMenu() {
-  const menu = document.getElementById('overflow-menu');
-  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-}
-
-function closeOverflowMenu() {
-  document.getElementById('overflow-menu').style.display = 'none';
-}
-
-function openAboutModal() {
-  document.getElementById('about-version').textContent = `v${APP_VERSION}`;
-  openModal('about-modal');
-}
-
-document.addEventListener('click', function(e) {
-  const menu = document.getElementById('overflow-menu');
-  if (!menu || menu.style.display === 'none') return;
-  const btn = document.getElementById('overflow-menu-btn');
-  if (!menu.contains(e.target) && !btn.contains(e.target)) {
-    menu.style.display = 'none';
-  }
-});
-
-function goToSetup() {
-  clearActiveGame();
-  state.gameDate = '';
-  showScreen('setup-screen');
-  renderGameDayCheckboxes();
-}
-
-function goToTeamSetup() {
-  showScreen('team-setup-screen');
-  renderTeamSetupRoster();
-}
-
-function goBackFromTeamSetup() {
-  saveTeamName();
-  showScreen('setup-screen');
-  renderGameDayCheckboxes();
-}
-
-function confirmClearData() {
-  openModal('clear-data-modal');
-}
-
-function closeClearDataModal() {
-  closeModal('clear-data-modal');
-}
-
-function executeClearData() {
-  localStorage.clear();
-  // Reset all state
-  state.roster       = [];
-  state.nextId       = 1;
-  state.playerPhotos = {};
-  state.teamName     = 'My Team';
-  state.halfMinutes  = 25;
-  state.gameHistory  = [];
-  document.getElementById('team-name-input').value = '';
-  document.getElementById('app-title-name').textContent = 'My Team';
-  document.getElementById('half-minutes-display').textContent = '25 min';
-  state.gameDate     = '';
-  state.opponentName = '';
-  document.getElementById('opponent-input').value = '';
-  closeClearDataModal();
-  renderTeamSetupRoster();
-  showScreen('setup-screen');
-  renderGameDayCheckboxes();
-}
-
 // ─────────────────────────────────────────────────────────────
 //  UTILITIES
 // ─────────────────────────────────────────────────────────────

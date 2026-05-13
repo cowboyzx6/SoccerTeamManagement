@@ -431,7 +431,7 @@ git commit -m "Extract roster management, attendance, and photos to js/roster.js
 - Create: `js/summary.js`
 - Modify: `index.html`
 
-- [ ] **Step 1: Find summary, season, and navigation functions**
+- [x] **Step 1: Find summary, season, and navigation functions**
 
 ```powershell
 Select-String -Path .\index.html -Pattern "^function show(Summary|SeasonSummary|GameReview)|^function renderGoals|^function goTo(Setup|SeasonSummary|Lineup)|^function goBack|^function confirmClearData|^function.*[Oo]verflow|^function.*[Nn]av" -n
@@ -443,7 +443,7 @@ Also check for any function in lines 2522–2752 (game review + season summary s
 $lines = Get-Content .\index.html; $lines[2521..2751] | Select-String "^function "
 ```
 
-- [ ] **Step 2: Create `js/summary.js`**
+- [x] **Step 2: Create `js/summary.js`**
 
 ```js
 import { state } from './state.js';
@@ -462,16 +462,16 @@ export function confirmClearData() { /* paste verbatim */ }
 
 Note: `importGameReview` may have been extracted to `persistence.js` in Task 4. If so, omit it here.
 
-- [ ] **Step 3: Add import to index.html's script block**
+- [x] **Step 3: Add import to index.html's script block**
 
 ```js
 import { renderGoalsHtml, showSummary, showSeasonSummary, showGameReviewFromRecord,
   goToSetup, goToSeasonSummary, confirmClearData } from './js/summary.js';
 ```
 
-- [ ] **Step 4: Remove moved functions from index.html**
+- [x] **Step 4: Remove moved functions from index.html**
 
-- [ ] **Step 5: Verify**
+- [x] **Step 5: Verify**
 
 Open `http://localhost:8000`. Start and end a game. Check:
 - Game summary screen renders correctly
@@ -480,7 +480,7 @@ Open `http://localhost:8000`. Start and end a game. Check:
 - Clear data modal works
 - No console errors
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add js/summary.js index.html
