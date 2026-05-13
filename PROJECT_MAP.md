@@ -11,7 +11,8 @@ Purpose: quick navigation map for Claude Code and humans working on the browser 
 
 ## Project files
 
-- `index.html` - main PWA shell: HTML, CSS, and a single ES module entry tag, currently 2396 lines.
+- `index.html` - main PWA shell: HTML and a single ES module entry tag, currently 495 lines.
+- `css/styles.css` - extracted app stylesheet, currently 1899 lines.
 - `js/` - browser-native ES modules for app logic; see the JavaScript modules map below.
 - `manifest.json` - PWA metadata.
 - `sw.js` - service worker/offline caching.
@@ -32,45 +33,45 @@ There is no separate `gameday-screen` element. The game-day landing/check-in UI 
 
 There is no separate `review-screen` element. Game review imports are rendered through `#summary-screen`.
 
-## CSS map in `index.html`
+## CSS map in `css/styles.css`
 
 | Lines | Section | What lives here |
 |---:|---|---|
-| 12-91 | Global/reset/theme variables | Base CSS, dark/light theme variables, body, `.screen` toggling |
-| 92-429 | Setup screen | Setup/team screens, roster list, buttons, text inputs, overflow menu, responsive setup layout |
-| 430-467 | Game info row | Game number/date/opponent inputs and responsive layout |
-| 468-604 | Gameday player tiles | Attendance tiles, selected check mark, attendance counter/bar, theme button |
-| 605-743 | Game header / score bar | Live header, half pill, clock, score labels/buttons, compact action controls |
-| 744-1026 | Game panels / cards | Game body, field/bench panels, player cards, avatars, status colors, roster avatars |
-| 1027-1167 | Lineup screen | Lineup layout, unassigned player list, shared field board, lineup actions |
-| 1168-1209 | Modals | Overlay/modal generic styles and modal button rows |
-| 1210-1570 | Summary screens | Game/season summary tables, stat cards, time bars, chips, review goalie icon |
-| 1571-1606 | Goalie styles | Goalie status, GK badges/buttons |
-| 1607-1659 | Goalie wheel | Wheel container, fades, track, items |
-| 1660-1823 | Field diagram | Shared field diagram, position slots, pos labels/avatar/time, GK/bench slot buttons |
-| 1824-1920 | Sub planning | Planned sub indicators, incoming player strip, Sub Now button |
+| 1-78 | Global/reset/theme variables | Base CSS, dark/light theme variables, body, `.screen` toggling |
+| 79-416 | Setup screen | Setup/team screens, roster list, buttons, text inputs, overflow menu, responsive setup layout |
+| 417-454 | Game info row | Game number/date/opponent inputs and responsive layout |
+| 455-591 | Gameday player tiles | Attendance tiles, selected check mark, attendance counter/bar, theme button |
+| 592-730 | Game header / score bar | Live header, half pill, clock, score labels/buttons, compact action controls |
+| 731-1013 | Game panels / cards | Game body, field/bench panels, player cards, avatars, status colors, roster avatars |
+| 1014-1154 | Lineup screen | Lineup layout, unassigned player list, shared field board, lineup actions |
+| 1155-1196 | Modals | Overlay/modal generic styles and modal button rows |
+| 1197-1557 | Summary screens | Game/season summary tables, stat cards, time bars, chips, review goalie icon |
+| 1558-1593 | Goalie styles | Goalie status, GK badges/buttons |
+| 1594-1646 | Goalie wheel | Wheel container, fades, track, items |
+| 1647-1810 | Field diagram | Shared field diagram, position slots, pos labels/avatar/time, GK/bench slot buttons |
+| 1811-1899 | Sub planning | Planned sub indicators, incoming player strip, Sub Now button |
 
 ## HTML / DOM map in `index.html`
 
 | Lines | Section | What lives here |
 |---:|---|---|
-| 1921-1986 | Game day screen / setup-screen | Landing screen. Theme button, overflow menu, no-roster empty state, game info, attendance grid, half duration controls. |
-| 1987-2030 | Team setup screen | Team settings, roster management, import/export inputs, clear data button. |
-| 2031-2044 | Clear data confirm modal | Reset confirmation dialog. |
-| 2045-2061 | About modal | Displays `APP_VERSION` and app metadata from the overflow menu. |
-| 2062-2096 | Lineup screen | Starting lineup assignment field + unassigned players. |
-| 2097-2170 | Game screen | Compact live header, score area, field panel, bench panel, planned subs. |
-| 2171-2202 | Summary screen | Post-game/review summary and manual Export Game JSON button. |
-| 2203-2253 | Season summary screen | Aggregate season record/stats table with sortable columns and top-right back button. |
-| 2254-2278 | Goalie wheel modal | Spin wheel controls and goalie confirm buttons. |
-| 2279-2292 | Remove from roster modal | Permanent roster removal. |
-| 2293-2306 | Rename player modal | Player rename input. |
-| 2307-2320 | GK picker modal | Two-step manual GK picker plus spin option. |
-| 2321-2331 | Late arrival modal | Add not-present roster player to active game bench. |
-| 2332-2345 | Remove player from game modal | Mark player as left/removed from active game. |
-| 2346-2378 | Goal modal | Our goal/opponent goal and scorer/score adjustment UI. |
-| 2379-2393 | Half time / end game modal | Half-time summary, second-half start, and end-game controls. |
-| 2394 | Script tag | Loads `js/app.js` as the ES module entry point. |
+| 18-83 | Game day screen / setup-screen | Landing screen. Theme button, overflow menu, no-roster empty state, game info, attendance grid, half duration controls. |
+| 84-127 | Team setup screen | Team settings, roster management, import/export inputs, clear data button. |
+| 128-141 | Clear data confirm modal | Reset confirmation dialog. |
+| 142-158 | About modal | Displays `APP_VERSION` and app metadata from the overflow menu. |
+| 159-193 | Lineup screen | Starting lineup assignment field + unassigned players. |
+| 194-267 | Game screen | Compact live header, score area, field panel, bench panel, planned subs. |
+| 268-299 | Summary screen | Post-game/review summary and manual Export Game JSON button. |
+| 300-350 | Season summary screen | Aggregate season record/stats table with sortable columns and top-right back button. |
+| 351-375 | Goalie wheel modal | Spin wheel controls and goalie confirm buttons. |
+| 376-389 | Remove from roster modal | Permanent roster removal. |
+| 390-403 | Rename player modal | Player rename input. |
+| 404-417 | GK picker modal | Two-step manual GK picker plus spin option. |
+| 418-428 | Late arrival modal | Add not-present roster player to active game bench. |
+| 429-442 | Remove player from game modal | Mark player as left/removed from active game. |
+| 443-475 | Goal modal | Our goal/opponent goal and scorer/score adjustment UI. |
+| 476-492 | Half time / end game modal | Half-time summary, second-half start, and end-game controls. |
+| 493 | Script tag | Loads `js/app.js` as the ES module entry point. |
 
 ## JavaScript modules in `js/`
 

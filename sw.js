@@ -1,5 +1,5 @@
-const CACHE = 'stm-v3';
-const ASSETS = ['./', './index.html'];
+const CACHE = 'stm-v4';
+const ASSETS = ['./', './index.html', './css/styles.css', './js/app.js'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
