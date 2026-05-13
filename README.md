@@ -2,7 +2,7 @@
 
 A browser-only web app for managing youth soccer rotations during live games. It tracks who is on the field, who is on the bench, playing time by player, time by position, goals, game history, and season totals.
 
-The app is currently implemented as a **single-file vanilla HTML/CSS/JavaScript app** in `index.html`. There is no build system, no npm dependency tree, no backend, and no account requirement.
+The app is a **vanilla HTML/CSS/JavaScript app** with browser-native ES modules. There is no build system, backend, or account requirement.
 
 ## What the App Does
 
@@ -63,9 +63,7 @@ The app is currently implemented as a **single-file vanilla HTML/CSS/JavaScript 
 
 ## Running the App
 
-For basic use, open `index.html` in a modern browser.
-
-For the most reliable browser behavior, especially PWA/service-worker behavior, serve the folder locally instead of opening the file directly:
+Serve the folder locally. Browser-native ES modules and service workers should be tested over HTTP rather than by opening `index.html` directly:
 
 ```bash
 python -m http.server 8000
@@ -175,32 +173,34 @@ It imports names as `First L.` and skips duplicates already in the roster.
 ## File Structure
 
 ```text
-index.html       Main app: HTML, CSS, and JavaScript
-manifest.json   PWA manifest
-sw.js           Service worker for offline caching
-README.md       Project overview and usage notes
-CLAUDE.md       Claude Code project guidance
-PROJECT_MAP.md  Lightweight map to help Claude target sections in index.html
+index.html       App shell and screen/modal markup
+css/styles.css   App stylesheet
+js/              Browser-native ES modules for app logic
+manifest.json    PWA manifest
+sw.js            Service worker for offline caching
+README.md        Project overview and usage notes
+CLAUDE.md        Claude Code project guidance
+PROJECT_MAP.md   Lightweight map to help target sections and modules
 ```
 
 ## Development Notes
 
 This app intentionally has no build step.
 
-- Edit `index.html` directly.
-- Test in a browser.
+- Edit `index.html`, `css/styles.css`, or the focused module in `js/`.
+- Test through the local HTTP server.
 - Use browser DevTools for runtime errors.
-- Keep changes targeted; the file is large enough that broad rewrites are risky.
-- Avoid dumping the entire file into AI coding tools unless absolutely necessary.
+- Keep changes targeted; the app is split by file so broad rewrites are rarely needed.
+- Avoid dumping large files into AI coding tools unless absolutely necessary.
 - Use `PROJECT_MAP.md` to locate the relevant section before editing.
 
 ## Code Organization
 
-`index.html` contains three major areas:
+The app has three main areas:
 
-1. Embedded CSS in the `<style>` block.
-2. Screen/modal markup in the `<body>`.
-3. App logic in the `<script>` block.
+1. `index.html` contains screen and modal markup.
+2. `css/styles.css` contains the stylesheet.
+3. `js/` contains app logic, with `js/app.js` as the entry point.
 
 The main screens are:
 
@@ -227,7 +227,7 @@ Common modals include:
 
 ### State
 
-The app uses global JavaScript state. Mutating state does not automatically update the UI. After changing state, call the appropriate render/update function.
+Mutable app state lives in `js/state.js`. Mutating state does not automatically update the UI. After changing state, call the appropriate render/update function.
 
 Important state variables include:
 
@@ -293,8 +293,8 @@ Use `commitPositionTime(player)` before changing a player's position or moving t
 
 ## Known Limitations
 
-- The app is a large single-file codebase, which makes navigation and AI-assisted edits harder.
-- There are no automated tests.
+- The app still uses inline HTML event handlers bridged through `js/app.js`; those can be migrated to explicit listeners over time.
+- Automated coverage is currently limited to smoke tests.
 - Data integrity depends on browser `localStorage`.
 - Export/import is JSON-file based, not cloud sync.
 - Service worker and PWA install behavior may require serving the app over `localhost` or HTTPS.

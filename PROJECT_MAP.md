@@ -24,6 +24,7 @@ Purpose: quick navigation map for Claude Code and humans working on the browser 
   - `Oyster_Blueberries_Game_1_2026-04-18_1100.json`
   - `Oyster_Blueberries_Game_2_2026-04-25_1158.json`
   - `Oyster_Blueberries_Game_3_2026-05-02_1902.json`
+  - `Oyster_Blueberries_Game_4_2026-05-09_1757.json`
 - `docs/superpowers/specs/` and `docs/superpowers/plans/` - design specs and implementation plans for recent screen/layout work.
 - `.superpowers/` - local generated brainstorm/session scratch files; currently untracked.
 
@@ -256,7 +257,7 @@ There is no separate `review-screen` element. Game review imports are rendered t
 - `totalElapsed`, `halfClock`, `timerBase`, `isRunning` - timer state.
 - `scoreUs`, `scoreThem`, `goals` - scoring state.
 - `gameDate`, `opponentName`, `teamName`, `halfMinutes` - game/team metadata.
-- `seasonSortKey`, `seasonSortAsc` - season summary sorting state.
+- `seasonSortKey`, `seasonSortDir` - season summary sorting state.
 - `APP_VERSION` - exported from `js/version.js`; shown in About and included in JSON exports.
 
 ## Targeted PowerShell snippets for Claude Code
@@ -264,27 +265,27 @@ There is no separate `review-screen` element. Game review imports are rendered t
 Find likely code without dumping the whole file:
 
 ```powershell
-Select-String -Path .\index.html -Pattern "renderGameDayCheckboxes|togglePlayerTile|updateStartBtn" -Context 5,20
+Select-String -Path .\js\roster.js -Pattern "renderGameDayCheckboxes|togglePlayerTile|updateStartBtn" -Context 5,20
 ```
 
 Read a tight range:
 
 ```powershell
-$lines = Get-Content .\index.html
-$lines[3390..3675]
+$lines = Get-Content .\js\lineup.js
+$lines[120..230]
 ```
 
 Recent regression first:
 
 ```powershell
 git diff --stat
-git diff --unified=5 -- index.html
+git diff --unified=5 -- index.html css/styles.css js
 ```
 
 Avoid:
 
 ```powershell
-Get-Content .\index.html
-cat .\index.html
+Get-Content .\css\styles.css
+Get-Content .\js\game.js
 git diff
 ```
