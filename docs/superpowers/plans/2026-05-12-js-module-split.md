@@ -495,13 +495,13 @@ git commit -m "Extract summary, season, and navigation functions to js/summary.j
 - Create: `js/lineup.js`
 - Modify: `index.html`
 
-- [ ] **Step 1: Find lineup and goalie functions**
+- [x] **Step 1: Find lineup and goalie functions**
 
 ```powershell
 Select-String -Path .\index.html -Pattern "^function (goTo|build|render|launch|update)(Lineup|LineupDraft|LineupField|LineupLaunch)|^function (show|open|confirm|spin|stop)(Gk|Goalie|Wheel)|^function lineupSlot|^function lineupPlayer|^function seasonFresh|^function initGame|^function confirmGoalies|^function launchGame|^function goBackToGameDay" -n
 ```
 
-- [ ] **Step 2: Create `js/lineup.js`**
+- [x] **Step 2: Create `js/lineup.js`**
 
 ```js
 import { state, POSITIONS, POSITION_ORDER, FIELD_SVG } from './state.js';
@@ -529,7 +529,7 @@ export function launchGame() { /* paste verbatim */ }
 export function initGame() { /* paste verbatim */ }
 ```
 
-- [ ] **Step 3: Add import to index.html's script block**
+- [x] **Step 3: Add import to index.html's script block**
 
 ```js
 import { goToLineup, buildLineupDraft, goBackToGameDay, showGkPicker, openGoaliePicker,
@@ -538,9 +538,9 @@ import { goToLineup, buildLineupDraft, goBackToGameDay, showGkPicker, openGoalie
   updateLineupLaunchBtn, launchGame, initGame } from './js/lineup.js';
 ```
 
-- [ ] **Step 4: Remove moved functions from index.html**
+- [x] **Step 4: Remove moved functions from index.html**
 
-- [ ] **Step 5: Verify**
+- [x] **Step 5: Verify**
 
 Open `http://localhost:8000`. Check:
 - "Start Game" flow: select players → lineup screen renders → assign positions → GK picker appears
@@ -548,7 +548,7 @@ Open `http://localhost:8000`. Check:
 - Launch game works (game screen appears)
 - No console errors
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add js/lineup.js index.html
