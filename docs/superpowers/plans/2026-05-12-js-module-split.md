@@ -355,7 +355,7 @@ git commit -m "Extract persistence, import/export, and CSV functions to js/persi
 - Create: `js/roster.js`
 - Modify: `index.html`
 
-- [ ] **Step 1: Find roster and photo functions**
+- [x] **Step 1: Find roster and photo functions**
 
 ```powershell
 Select-String -Path .\index.html -Pattern "^function render(TeamSetup|GameDay)|^function (add|remove|open)(Roster|Rename)|^function confirm(Rename|RemoveRoster)|^function togglePlayerTile|^function checkedPlayers|^function updateStartBtn|^function selectAll|^function loadPhotos|^function avatarHtml|^function avatarParts|^function triggerPhotoUpload|^function resizeAndStorePhoto" -n
@@ -367,7 +367,7 @@ Also find the half-duration stepper function:
 Select-String -Path .\index.html -Pattern "^function.*[Hh]alf[Mm]inutes|^function.*[Ss]tepper" -n
 ```
 
-- [ ] **Step 2: Create `js/roster.js`**
+- [x] **Step 2: Create `js/roster.js`**
 
 ```js
 import { state } from './state.js';
@@ -393,7 +393,7 @@ export function selectAllAttendance() { /* paste verbatim */ }
 // include half-duration stepper function(s) found in Step 1
 ```
 
-- [ ] **Step 3: Add import to index.html's script block**
+- [x] **Step 3: Add import to index.html's script block**
 
 ```js
 import { loadPhotos, avatarHtml, avatarParts, triggerPhotoUpload, resizeAndStorePhoto,
@@ -404,9 +404,9 @@ import { loadPhotos, avatarHtml, avatarParts, triggerPhotoUpload, resizeAndStore
 
 Add the half-duration stepper function name(s) to this import.
 
-- [ ] **Step 4: Remove moved functions from index.html**
+- [x] **Step 4: Remove moved functions from index.html**
 
-- [ ] **Step 5: Verify**
+- [x] **Step 5: Verify**
 
 Open `http://localhost:8000`. Check:
 - Roster tiles render on attendance screen
@@ -416,7 +416,7 @@ Open `http://localhost:8000`. Check:
 - Half-minutes stepper increments/decrements
 - No console errors
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add js/roster.js index.html
