@@ -565,7 +565,7 @@ git commit -m "Extract lineup, GK picker, and goalie wheel to js/lineup.js"
 
 This is the largest extraction. Take it section by section.
 
-- [ ] **Step 1: Find all game functions**
+- [x] **Step 1: Find all game functions**
 
 ```powershell
 Select-String -Path .\index.html -Pattern "^function (toggle|pause|resume|render|compute|get|handle|create|cancel|execute|make|move|open|confirm|prompt|start|end)(Pause|Game|Clock|Field|Grid|FairShare|Status|Tap|Plan|Sub|FieldPlayer|LateModal|LateArrival|RemovePlayer|HalfEnd|SecondHalf|Game$|GoalModal|Goal|TheirScore|Score)" -n
@@ -576,7 +576,7 @@ Also:
 Select-String -Path .\index.html -Pattern "^function (tick|setBenchSort|getHint|renderScore|recordGoal|endGame)" -n
 ```
 
-- [ ] **Step 2: Create `js/game.js`**
+- [x] **Step 2: Create `js/game.js`**
 
 ```js
 import { state, POSITIONS, POSITION_ORDER } from './state.js';
@@ -630,7 +630,7 @@ export function confirmTheirScore() { /* paste verbatim */ }
 export function renderScore() { /* paste verbatim */ }
 ```
 
-- [ ] **Step 3: Add import to index.html's script block**
+- [x] **Step 3: Add import to index.html's script block**
 
 ```js
 import { togglePause, pauseGame, resumeGame, tick, renderClock, computeFairShare,
@@ -641,9 +641,9 @@ import { togglePause, pauseGame, resumeGame, tick, renderClock, computeFairShare
   confirmTheirScore, renderScore } from './js/game.js';
 ```
 
-- [ ] **Step 4: Remove moved functions from index.html**
+- [x] **Step 4: Remove moved functions from index.html**
 
-- [ ] **Step 5: Verify thoroughly**
+- [x] **Step 5: Verify thoroughly**
 
 Open `http://localhost:8000`. Run through a full game flow:
 - Select players → start game
@@ -658,7 +658,7 @@ Open `http://localhost:8000`. Run through a full game flow:
 - End game → summary screen appears
 - Check console for errors throughout
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add js/game.js index.html
