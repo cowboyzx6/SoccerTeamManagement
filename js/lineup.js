@@ -621,6 +621,10 @@ export function nextGoaliePick() {
 }
 
 export function spinAgain() {
+  if (!gkSpinMode) {
+    if (currentGoaliePick === 1) state.goalie1Id = null;
+    else state.goalie2Id = null;
+  }
   const title = gkSpinMode
     ? (gkSpinPhase === 1 ? '1st Half Goalie' : '2nd Half Goalie')
     : (currentGoaliePick === 1 ? '1st Half Goalie' : '2nd Half Goalie');
