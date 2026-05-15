@@ -283,7 +283,9 @@ export function openAboutModal() {
 
 export function goToSetup() {
   clearActiveGame();
-  state.gameDate = '';
+  state.gameDate     = '';
+  state.opponentName = '';
+  document.getElementById('opponent-input').value = '';
   showScreen('setup-screen');
   renderGameDayCheckboxes();
 }

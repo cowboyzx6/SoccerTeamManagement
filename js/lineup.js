@@ -417,7 +417,7 @@ function hasBeenGoalieThisSeason(playerId) {
   );
 }
 
-export function seasonFreshGoalieCandidates(sourcePlayers, excludedIds = []) {
+function seasonFreshGoalieCandidates(sourcePlayers, excludedIds = []) {
   const excluded = new Set(excludedIds.map(id => String(id)));
   return sourcePlayers
     .filter(p => !excluded.has(String(p.id)) && !hasBeenGoalieThisSeason(p.id))
@@ -670,7 +670,7 @@ function startGameDirect() {
   initGame();
 }
 
-export function initGame() {
+function initGame() {
   state.totalElapsed = 0;
   state.halfClock = halfDuration();
   state.currentHalf = 1;

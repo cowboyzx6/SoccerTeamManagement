@@ -465,6 +465,7 @@ export function handleTap(id, zone) {
       state.subPlans.splice(existingPlanIdx, 1);
       if (state.planningBenchId === id) state.planningBenchId = null;
       renderGame();
+      saveActiveGame();
       return;
     }
 
@@ -478,6 +479,7 @@ export function handleTap(id, zone) {
 export function cancelPlanForPos(pos) {
   state.subPlans = state.subPlans.filter(pl => pl.pos !== pos);
   renderGame();
+  saveActiveGame();
 }
 
 // Called when a field position slot is tapped while planningBenchId is set
@@ -891,7 +893,10 @@ export function endGame() {
   const noBtn  = document.getElementById('download-prompt-no-btn');
   function onYes() { exportProfile(false, true); dismiss(); }
   function onNo()  { dismiss(); }
+  let dismissed = false;
   function dismiss() {
+    if (dismissed) return;
+    dismissed = true;
     yesBtn.removeEventListener('click', onYes);
     noBtn.removeEventListener('click', onNo);
     closeModal('download-prompt-modal');
