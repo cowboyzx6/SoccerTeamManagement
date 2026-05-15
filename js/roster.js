@@ -63,7 +63,7 @@ export function resizeAndStorePhoto(id, dataURL) {
       delete state.playerPhotos[id];
       alert('Storage full — photo could not be saved. Try removing old game history.');
     }
-    renderRoster();
+    document.dispatchEvent(new CustomEvent('photo:updated'));
   };
   img.src = dataURL;
 }

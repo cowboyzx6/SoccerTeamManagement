@@ -98,6 +98,16 @@ function onTeamNameInput() {
 }
 
 
+document.addEventListener('click', e => {
+  const menu = document.getElementById('overflow-menu');
+  if (!menu || menu.style.display === 'none') return;
+  if (!menu.contains(e.target) && !document.getElementById('overflow-menu-btn').contains(e.target)) {
+    closeOverflowMenu();
+  }
+});
+
+document.addEventListener('photo:updated', () => renderRoster());
+
 document.addEventListener('game:resumed', () => {
   syncGamePhaseUi();
   renderClock();

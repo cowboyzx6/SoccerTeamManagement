@@ -777,11 +777,8 @@ export function startSecondHalf() {
   state.planningPosition = null;
   state.selectedId       = null;
 
-  document.getElementById('half-pill').textContent  = 'HALF 2';
-  document.getElementById('action-btn').textContent = 'END';
-  document.getElementById('action-btn').style.background = '#4527a0';
-  document.getElementById('pause-btn').style.display = '';
-  document.getElementById('pause-btn').textContent   = '\u25B6 START';
+  syncGamePhaseUi();
+  document.getElementById('pause-btn').textContent  = '\u25B6 START';
   document.getElementById('pause-btn').style.background = '#e65100';
 
   renderClock();
@@ -891,15 +888,18 @@ export function endGame() {
   state.players = [];
 
   openModal('download-prompt-modal');
-  document.getElementById('download-prompt-yes-btn').onclick = () => {
-    exportProfile(false, true);
+  const yesBtn = document.getElementById('download-prompt-yes-btn');
+  const noBtn  = document.getElementById('download-prompt-no-btn');
+  function onYes() { exportProfile(false, true); dismiss(); }
+  function onNo()  { dismiss(); }
+  function dismiss() {
+    yesBtn.removeEventListener('click', onYes);
+    noBtn.removeEventListener('click', onNo);
     closeModal('download-prompt-modal');
     showSummary();
-  };
-  document.getElementById('download-prompt-no-btn').onclick = () => {
-    closeModal('download-prompt-modal');
-    showSummary();
-  };
+  }
+  yesBtn.addEventListener('click', onYes);
+  noBtn.addEventListener('click', onNo);
 }
 
 export function isFieldClickSuppressed() {

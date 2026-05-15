@@ -278,15 +278,6 @@ export function openAboutModal() {
   openModal('about-modal');
 }
 
-document.addEventListener('click', function(e) {
-  const menu = document.getElementById('overflow-menu');
-  if (!menu || menu.style.display === 'none') return;
-  const btn = document.getElementById('overflow-menu-btn');
-  if (!menu.contains(e.target) && !btn.contains(e.target)) {
-    menu.style.display = 'none';
-  }
-});
-
 export function goToSetup() {
   clearActiveGame();
   state.gameDate = '';
