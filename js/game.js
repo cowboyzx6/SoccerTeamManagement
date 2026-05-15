@@ -885,11 +885,20 @@ export function endGame() {
   const gameRecord = buildGameRecord();
   state.gameHistory.push(gameRecord);
   saveGameHistory();
-  exportProfile(false, true);
   clearActiveGame();
-  state.players = [];
 
-  showSummary();
+  openModal('download-prompt-modal');
+  document.getElementById('download-prompt-yes-btn').onclick = () => {
+    exportProfile(false, true);
+    closeModal('download-prompt-modal');
+    showSummary();
+    state.players = [];
+  };
+  document.getElementById('download-prompt-no-btn').onclick = () => {
+    closeModal('download-prompt-modal');
+    showSummary();
+    state.players = [];
+  };
 }
 
 export function isFieldClickSuppressed() {
