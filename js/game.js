@@ -845,6 +845,7 @@ export function recordGoal(team) {
 export function adjustTheirScore(delta) {
   const preview = document.getElementById('goal-them-preview');
   const current = parseInt(preview.textContent);
+  if (isNaN(current)) return;
   preview.textContent = Math.max(0, current + delta);
 }
 
