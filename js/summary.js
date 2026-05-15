@@ -16,7 +16,9 @@ export function renderGoalsHtml(goalsArray, opponentLabel) {
     return '<div class="summary-goal-empty">No goals recorded.</div>';
   }
   const grouped = goalsArray.reduce((acc, g) => {
-    const key = g.team === 'us' ? (g.scorer || 'Unknown') : '__opponent__';
+    const key = g.team === 'us'
+      ? (g.scorerId != null ? g.scorerId : (g.scorer || 'Unknown'))
+      : '__opponent__';
     if (!acc[key]) acc[key] = { team: g.team, scorer: g.scorer, count: 0 };
     acc[key].count += 1;
     return acc;
