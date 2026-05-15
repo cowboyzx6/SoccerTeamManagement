@@ -10,15 +10,29 @@ A no-build, single-file PWA for managing youth soccer player rotations during li
 
 - Main app file: `index.html`
 - Supporting files: `manifest.json`, `sw.js`
-- No npm, bundler, framework, transpiler, or build step
+- No bundler, framework, transpiler, or build step. npm is used only for Playwright test tooling.
 - Edit files directly
 - Test by opening `index.html` in a browser, or run:
 
 ```bash
-python3 -m http.server
+python3 -m http.server 8000
 ```
 
 Then open `http://localhost:8000`.
+
+Run smoke tests with:
+
+```bash
+npm test
+```
+
+On this Windows PowerShell setup, prefer:
+
+```powershell
+npm.cmd test
+```
+
+The Playwright config uses `tests/global-setup.cjs` / `tests/global-teardown.cjs` to manage `scripts/test-server.js`; do not reintroduce Playwright's built-in `webServer` plugin unless its Windows teardown behavior has been verified. Test contexts block service workers, and `tests/app-smoke.spec.js` sets `window.__STM_DISABLE_SW__` before app startup.
 
 ## Token / context discipline
 
@@ -55,12 +69,12 @@ App logic lives in `js/` as browser-native ES modules:
 
 - `js/state.js` — shared singleton `state` object and constants (`POSITIONS`, `FIELD_SVG`, etc.)
 - `js/utils.js` — DOM helpers (`escHtml`, `fmt`, `showScreen`, `openModal`, `closeModal`, `applyTheme`, `toggleTheme`)
-- `js/persistence.js` — localStorage read/write, import/export, file input wiring
+- `js/persistence.js` - localStorage read/write, import/export validation, file input wiring
 - `js/roster.js` — roster management, attendance tiles, photo upload
 - `js/lineup.js` — starting lineup assignment, GK picker, goalie wheel
 - `js/game.js` — timer, substitutions, goals, score, half/end flow
 - `js/summary.js` — post-game summary, season summary, navigation
-- `js/app.js` — entry point: initialises all modules, wires all delegated listeners
+- `js/app.js` - entry point: initialises all modules, wires all delegated listeners, registers the service worker unless tests opt out
 - `css/styles.css` — extracted stylesheet
 
 There is no virtual DOM or automatic reactivity. After mutating state, call the appropriate render/save function.
@@ -149,9 +163,12 @@ Data is stored in `localStorage`:
 
 When changing data that should survive refresh, update the relevant `save*()` function or call it after mutation.
 
+Profile/game JSON imports are normalized in `js/persistence.js` before they replace state. Keep imported IDs, names, scores, goals, stats, position seconds, half length, and photos inside that validation path. Restore Backup rebuilds `state.playerPhotos` from the imported roster and removes the previous `playerPhotos` key before saving new photos.
+
 ## Implementation rules
 
 - Use `escHtml()` for untrusted/user-visible strings inserted into HTML templates.
+- Use the import normalization helpers in `js/persistence.js` for JSON backup/review data rather than assigning parsed JSON directly into state.
 - When moving a player off the field, commit position time before clearing `position`.
 - When putting a player on the field, set `subInAt`, `position`, and start position timing.
 - When changing goalie assignment, keep `activeGoalieId`, `goalie1Id`, and `goalie2Id` consistent with the current half.

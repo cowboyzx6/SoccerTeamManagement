@@ -130,6 +130,7 @@ Downloads a JSON backup of the full team profile, including roster, photos, sett
 ### Restore Backup
 
 Imports a previously downloaded team backup JSON file and restores its profile data.
+Imported profiles are validated and normalized before replacing local data: roster ids and names, settings, saved games, scores, goals, player stats, position totals, and embedded photos are checked before they are stored. Restoring a backup rebuilds the photo map from that backup so old local photos cannot leak into the restored team.
 
 ### Export Game JSON
 
@@ -137,7 +138,7 @@ The summary-screen export uses the same profile-style JSON structure and include
 
 ### Review Game
 
-Loads a JSON file and displays the most recent game record found in the file without replacing the current team profile.
+Loads a JSON file, validates the saved game data, and displays the most recent game record found in the file without replacing the current team profile.
 
 ## App Versioning
 
@@ -153,7 +154,9 @@ Versions use this format:
 - `DDD` is the day number of the year.
 - `N` is the next versioned update number for that day.
 
-The version is stored in `APP_VERSION` in `js/version.js` and is shown in About plus included as `appVersion` in JSON exports. A tracked pre-commit hook runs `scripts/Update-AppVersion.ps1` to stamp the version automatically before each commit. The first versioned commit on a day ends in `.1`, the second ends in `.2`, and so on. On a fresh clone, enable the hook with:
+The version is stored in `APP_VERSION` in `js/version.js` and is shown in About plus included as `appVersion` in JSON exports. The service worker cache uses `CACHE_VERSION` in `sw.js`, and the cache name is derived from that value.
+
+A tracked pre-commit hook runs `scripts/Update-AppVersion.ps1` to stamp both `js/version.js` and `sw.js` automatically before each commit. The first versioned commit on a day ends in `.1`, the second ends in `.2`, and so on. On a fresh clone, enable the hook with:
 
 ```bash
 git config core.hooksPath .githooks
@@ -176,6 +179,8 @@ It imports names as `First L.` and skips duplicates already in the roster.
 index.html       App shell and screen/modal markup
 css/styles.css   App stylesheet
 js/              Browser-native ES modules for app logic
+scripts/         Version stamping and test-server helpers
+tests/           Playwright smoke tests and test server setup/teardown
 manifest.json    PWA manifest
 sw.js            Service worker for offline caching
 README.md        Project overview and usage notes
@@ -189,10 +194,27 @@ This app intentionally has no build step.
 
 - Edit `index.html`, `css/styles.css`, or the focused module in `js/`.
 - Test through the local HTTP server.
+- Run smoke tests with `npm.cmd test` on Windows PowerShell, or `npm test` in shells where npm scripts are enabled.
 - Use browser DevTools for runtime errors.
 - Keep changes targeted; the app is split by file so broad rewrites are rarely needed.
 - Avoid dumping large files into AI coding tools unless absolutely necessary.
 - Use `PROJECT_MAP.md` to locate the relevant section before editing.
+
+### Playwright smoke tests
+
+The Playwright suite uses `tests/global-setup.cjs` and `tests/global-teardown.cjs` to start and stop `scripts/test-server.js`. This avoids Windows teardown hangs seen with Playwright's built-in `webServer` plugin and Python's `http.server`.
+
+The test browser blocks service workers through Playwright config, and `tests/app-smoke.spec.js` also sets `window.__STM_DISABLE_SW__` before app code runs. This keeps the PWA service worker from affecting smoke-test page reloads while leaving normal browser behavior unchanged.
+
+```bash
+npm test
+```
+
+On this Windows PowerShell setup, use:
+
+```powershell
+npm.cmd test
+```
 
 ## Code Organization
 
@@ -303,8 +325,7 @@ Use `commitPositionTime(player)` before changing a player's position or moving t
 ## Suggested Future Improvements
 
 - Split `index.html` into separate `styles.css` and `app.js` files.
-- Add automated smoke tests for critical flows.
+- Add more automated coverage for critical flows beyond the current smoke tests.
 - Add an explicit backup/reminder flow.
-- Add validation around imported JSON/profile files.
 - Consider a lightweight data schema/version field for future migrations.
 - Improve mobile layout testing across common phone sizes.

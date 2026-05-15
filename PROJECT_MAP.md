@@ -11,7 +11,7 @@ Purpose: quick navigation map for Claude Code and humans working on the browser 
 
 ## Project files
 
-- `index.html` - main PWA shell: HTML and a single ES module entry tag, currently 495 lines.
+- `index.html` - main PWA shell: HTML and a single ES module entry tag, currently 506 lines.
 - `css/styles.css` - extracted app stylesheet, currently 1899 lines.
 - `js/` - browser-native ES modules for app logic; see the JavaScript modules map below.
 - `manifest.json` - PWA metadata.
@@ -19,6 +19,8 @@ Purpose: quick navigation map for Claude Code and humans working on the browser 
 - `README.md` - user-facing app overview, setup, data/export notes, limitations.
 - `CLAUDE.md` - repo-specific guidance for AI coding agents.
 - `scripts/Update-AppVersion.ps1` - version stamping helper used by the git hook.
+- `scripts/test-server.js` - tiny Node static server used by Playwright smoke tests.
+- `tests/` - Playwright smoke specs plus global setup/teardown for the test server.
 - `.githooks/` - tracked git hook setup.
 - `GameResults/` - exported game JSON examples/history:
   - `Oyster_Blueberries_Game_1_2026-04-18_1100.json`
@@ -82,7 +84,7 @@ There is no separate `review-screen` element. Game review imports are rendered t
 | `js/state.js` | State singleton + constants | `state`, `POSITIONS`, `POSITION_ORDER`, `FIELD_SVG` |
 | `js/version.js` | Shared app version | `APP_VERSION` |
 | `js/utils.js` | DOM helpers + theme | `escHtml`, `fmt`, `showScreen`, `openModal`, `closeModal`, `applyTheme`, `toggleTheme` |
-| `js/persistence.js` | localStorage + import/export | `saveSettings`, `loadSettings`, `saveRoster`, `loadRoster`, `saveActiveGame`, `loadGameHistory`, `exportProfile`, `importProfile`, `importLeagueCsv`, `buildGameRecord`, `initEventListeners` |
+| `js/persistence.js` | localStorage + validated import/export | `saveSettings`, `loadSettings`, `saveRoster`, `loadRoster`, `saveActiveGame`, `loadGameHistory`, `exportProfile`, `importProfile`, `importLeagueCsv`, `buildGameRecord`, `initEventListeners` |
 | `js/roster.js` | Roster, attendance, photos | `renderTeamSetupRoster`, `renderGameDayCheckboxes`, `togglePlayerTile`, `renderRoster`, `avatarHtml`, `changeHalfMinutes`, `initEventListeners` |
 | `js/lineup.js` | Lineup, GK picker, goalie wheel | `goToLineup`, `renderLineup`, `launchGame`, `initGame`, `spinWheel`, `handleLineupPointerDown` |
 | `js/game.js` | Timer, render, subs, goals, game flow | `handleTap`, `renderGame`, `executeAllPlans`, `endGame`, `renderScore`, `handleFieldSlotPointerDown` |
@@ -108,13 +110,14 @@ There is no separate `review-screen` element. Game review imports are rendered t
 | Half time / second half | `handleHalfEnd`, `startSecondHalf`, `h1Snapshot`, `goalie2Id`, `activeGoalieId` |
 | End game / summary | `endGame`, `buildGameRecord`, `showSummary`, `renderGoalsHtml`, `saveGameHistory`, `download-prompt-modal` |
 | Season summary | `showSeasonSummary`, `setSeasonSort`, `compareSeasonPlayers`, `gameHistory`, `season-body` |
-| Backup/restore/import | UI labels: `Backup Team`, `Restore Backup`, `Import League CSV`. Code targets: `buildProfile`, `exportProfile`, `importProfile`, `importLeagueCsv`, `parseCsvRoster` |
+| Backup/restore/import | UI labels: `Backup Team`, `Restore Backup`, `Import League CSV`. Code targets: `normalizeProfile`, `buildProfile`, `exportProfile`, `importProfile`, `importLeagueCsv`, `parseCsvRoster` |
 | Game review import | `importGameReview`, `showGameReviewFromRecord`, `review-file-input` |
 | Photos / avatars | `loadPhotos`, `avatarHtml`, `avatarParts`, `triggerPhotoUpload`, `resizeAndStorePhoto`, `playerPhotos` |
 | Theme | `applyTheme`, `toggleTheme`, `[data-theme="light"]`, `theme-btn` |
-| About/version | `js/version.js`, `APP_VERSION`, `openAboutModal`, `about-modal`, `about-version`, `scripts/Update-AppVersion.ps1` |
+| About/version/cache | `js/version.js`, `APP_VERSION`, `sw.js`, `CACHE_VERSION`, `openAboutModal`, `about-modal`, `about-version`, `scripts/Update-AppVersion.ps1` |
 | Resume interrupted game | `saveActiveGame`, `checkForActiveGame`, `soccerActiveGame` |
 | Service worker / PWA | `navigator.serviceWorker.register`, `manifest.json`, `sw.js` |
+| Playwright smoke tests | `npm.cmd test`, `playwright.config.js`, `tests/app-smoke.spec.js`, `tests/global-setup.cjs`, `tests/global-teardown.cjs`, `scripts/test-server.js` |
 
 ## Key DOM ids
 
@@ -264,6 +267,7 @@ There is no separate `review-screen` element. Game review imports are rendered t
 - `gameDate`, `opponentName`, `teamName`, `halfMinutes` - game/team metadata.
 - `seasonSortKey`, `seasonSortDir` - season summary sorting state.
 - `APP_VERSION` - exported from `js/version.js`; shown in About and included in JSON exports.
+- `CACHE_VERSION` - declared in `sw.js`; stamped with `APP_VERSION` by `scripts/Update-AppVersion.ps1`.
 
 ## Targeted PowerShell snippets for Claude Code
 
