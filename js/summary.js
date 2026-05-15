@@ -106,6 +106,10 @@ function compareSeasonPlayers(a, b) {
   return a.name.localeCompare(b.name);
 }
 
+function playerKey(id) {
+  return String(id);
+}
+
 function updateSeasonSortHeaders() {
   const map = {
     name: 'season-sort-player',
@@ -142,10 +146,11 @@ export function showSeasonSummary() {
     ga += them;
 
     (game.playerStats || []).forEach(ps => {
-      if (!playerMap[ps.id]) {
-        playerMap[ps.id] = { id: ps.id, name: ps.name, games: 0, seconds: 0, goals: 0, posSeconds: {} };
+      const key = playerKey(ps.id);
+      if (!playerMap[key]) {
+        playerMap[key] = { id: ps.id, name: ps.name, games: 0, seconds: 0, goals: 0, posSeconds: {} };
       }
-      const e = playerMap[ps.id];
+      const e = playerMap[key];
       e.games++;
       e.seconds += ps.secondsPlayed || 0;
       Object.entries(ps.positionSeconds || {}).forEach(([pos, t]) => {
@@ -155,13 +160,16 @@ export function showSeasonSummary() {
 
     (game.goals || []).filter(g => g.team === 'us' && g.scorer).forEach(g => {
       const found = g.scorerId != null
-        ? Object.values(playerMap).find(p => p.id === g.scorerId)
+        ? playerMap[playerKey(g.scorerId)]
         : Object.values(playerMap).find(p => p.name === g.scorer);
       if (found) found.goals++;
     });
   });
 
-  state.roster.forEach(r => { if (playerMap[r.id]) playerMap[r.id].name = r.name; });
+  state.roster.forEach(r => {
+    const existing = playerMap[playerKey(r.id)];
+    if (existing) existing.name = r.name;
+  });
 
   const seasonPlayers = Object.values(playerMap);
   const sorted  = seasonPlayers.sort(compareSeasonPlayers);
