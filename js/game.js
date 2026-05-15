@@ -887,6 +887,7 @@ export function endGame() {
   saveGameHistory();
   exportProfile(false, true);
   clearActiveGame();
+  state.players = [];
 
   showSummary();
 }
