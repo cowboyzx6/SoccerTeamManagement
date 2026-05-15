@@ -1,14 +1,9 @@
 import { state } from './state.js';
-import { clearActiveGame } from './persistence.js';
+import { clearActiveGame, saveSettings } from './persistence.js';
 import { avatarHtml, renderGameDayCheckboxes, renderTeamSetupRoster } from './roster.js';
 import { closeModal, escHtml, fmt, openModal, showScreen } from './utils.js';
 import { APP_VERSION } from './version.js';
 
-let summaryHandlers = {};
-
-export function configureSummaryHandlers(handlers) {
-  summaryHandlers = handlers;
-}
 
 
 export function renderGoalsHtml(goalsArray, opponentLabel) {
@@ -305,7 +300,9 @@ export function goToTeamSetup() {
 }
 
 export function goBackFromTeamSetup() {
-  summaryHandlers.saveTeamName?.();
+  state.teamName = document.getElementById('team-name-input').value.trim() || 'My Team';
+  document.getElementById('app-title-name').textContent = state.teamName;
+  saveSettings();
   showScreen('setup-screen');
   renderGameDayCheckboxes();
 }

@@ -1,7 +1,6 @@
 import { FIELD_SVG, state } from './state.js';
 import {
   checkForActiveGame,
-  configurePersistenceHandlers,
   exportProfile,
   importGameReview,
   importLeagueCsv,
@@ -29,7 +28,6 @@ import {
 import {
   closeClearDataModal,
   closeOverflowMenu,
-  configureSummaryHandlers,
   confirmClearData,
   executeClearData,
   goBackFromTeamSetup,
@@ -43,7 +41,6 @@ import {
 } from './summary.js';
 import {
   cancelGoalieSpin,
-  configureLineupGameHandlers,
   confirmGkFromSpin,
   confirmGoalies,
   goBackFromLineup,
@@ -98,28 +95,36 @@ function onTeamNameInput() {
   updateStartBtn();
 }
 
-function saveTeamName() {
-  state.teamName = document.getElementById('team-name-input').value.trim() || 'My Team';
-  document.getElementById('app-title-name').textContent = state.teamName;
-  saveSettings();
-}
 
-configurePersistenceHandlers({
-  pauseGame,
-  renderClock,
-  renderGame,
-  renderGameDayCheckboxes,
-  renderRoster,
-  renderScore,
-  renderTeamSetupRoster,
-  showGameReviewFromRecord,
-  syncGamePhaseUi,
-  updateGoalBtn,
-  updateStartBtn,
+document.addEventListener('game:resumed', () => {
+  syncGamePhaseUi();
+  renderClock();
+  renderScore();
+  renderGame();
+  updateGoalBtn();
+  pauseGame();
 });
 
-configureSummaryHandlers({ saveTeamName });
-configureLineupGameHandlers({ renderClock, renderGame, renderScore });
+document.addEventListener('game:started', () => {
+  renderScore();
+  renderClock();
+  renderGame();
+});
+
+document.addEventListener('league-csv:imported', () => {
+  renderTeamSetupRoster();
+  renderGameDayCheckboxes();
+});
+
+document.addEventListener('profile:imported', () => {
+  renderRoster();
+  updateStartBtn();
+});
+
+document.addEventListener('game-review:loaded', e => {
+  showGameReviewFromRecord(e.detail.gameRecord, e.detail.teamName);
+});
+
 document.getElementById('lineup-field-diagram').insertAdjacentHTML('afterbegin', FIELD_SVG);
 document.getElementById('game-field-diagram').insertAdjacentHTML('afterbegin', FIELD_SVG);
 applyTheme(localStorage.getItem('theme') || 'dark');
@@ -127,6 +132,8 @@ loadPhotos();
 loadSettings();
 loadGameHistory();
 loadRoster();
+renderTeamSetupRoster();
+renderGameDayCheckboxes();
 checkForActiveGame();
 
 window.addEventListener('beforeunload', () => {

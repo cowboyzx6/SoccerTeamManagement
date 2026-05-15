@@ -18,11 +18,6 @@ let gkSpinMode = false;
 let gkSpinWinner = null;
 let gkSpinPhase = 1;
 
-let gameHandlers = {};
-
-export function configureLineupGameHandlers(handlers) {
-  gameHandlers = handlers;
-}
 
 const halfDuration = () => state.halfMinutes * 60;
 
@@ -692,11 +687,8 @@ export function initGame() {
 
   document.getElementById('score-us-label').textContent = state.teamName || 'My Team';
   document.getElementById('score-them-label').textContent = state.opponentName || 'Opponent';
-  gameHandlers.renderScore?.();
-
   showScreen('game-screen');
-  gameHandlers.renderClock?.();
-  gameHandlers.renderGame?.();
+  document.dispatchEvent(new CustomEvent('game:started'));
 }
 
 export function createFieldDragPreview(player, position) {

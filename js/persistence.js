@@ -2,11 +2,6 @@ import { state } from './state.js';
 import { showScreen } from './utils.js';
 import { APP_VERSION } from './version.js';
 
-let uiHandlers = {};
-
-export function configurePersistenceHandlers(handlers) {
-  uiHandlers = handlers;
-}
 
 export function saveSettings() {
   localStorage.setItem('soccerSettings', JSON.stringify({
@@ -96,12 +91,7 @@ export function checkForActiveGame() {
   state.gameDate         = saved.gameDate        || new Date().toISOString().slice(0, 10);
 
   showScreen('game-screen');
-  uiHandlers.syncGamePhaseUi?.();
-  uiHandlers.renderClock?.();
-  uiHandlers.renderScore?.();
-  uiHandlers.renderGame?.();
-  uiHandlers.updateGoalBtn?.();
-  uiHandlers.pauseGame?.();
+  document.dispatchEvent(new CustomEvent('game:resumed'));
 }
 
 export function buildGameRecord() {
@@ -234,8 +224,7 @@ export function parseCsvRoster(text) {
       state.roster.push({ id: state.nextId++, name });
     });
     saveRoster();
-    uiHandlers.renderTeamSetupRoster?.();
-    uiHandlers.renderGameDayCheckboxes?.();
+    document.dispatchEvent(new CustomEvent('league-csv:imported'));
   }
 }
 
@@ -292,8 +281,7 @@ document.getElementById('import-file-input').addEventListener('change', function
         document.getElementById('team-name-input').value = state.teamName;
         document.getElementById('app-title-name').textContent = state.teamName;
         document.getElementById('half-minutes-display').textContent = `${state.halfMinutes} min`;
-        uiHandlers.renderRoster?.();
-        uiHandlers.updateStartBtn?.();
+        document.dispatchEvent(new CustomEvent('profile:imported'));
       } catch {
         alert('Invalid profile file.');
       }
@@ -318,7 +306,9 @@ document.getElementById('review-file-input').addEventListener('change', function
         return;
       }
       const gameRecord = profile.games[profile.games.length - 1];
-      uiHandlers.showGameReviewFromRecord?.(gameRecord, profile.teamName || state.teamName);
+      document.dispatchEvent(new CustomEvent('game-review:loaded', {
+        detail: { gameRecord, teamName: profile.teamName || state.teamName }
+      }));
     } catch {
       alert('Invalid game file.');
     }
@@ -335,8 +325,6 @@ export function loadRoster() {
       state.nextId  = state.roster.length ? Math.max(...state.roster.map(p => p.id)) + 1 : 1;
     } catch { localStorage.removeItem('soccerRoster'); }
   }
-  uiHandlers.renderTeamSetupRoster?.();
-  uiHandlers.renderGameDayCheckboxes?.();
 }
 
 export function saveRoster() {
