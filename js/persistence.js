@@ -414,14 +414,21 @@ export function initEventListeners() {
         state.gameHistory = profile.games;
         state.roster      = profile.roster.map(p => ({ id: p.id, name: p.name }));
         state.nextId      = state.roster.length ? Math.max(...state.roster.map(p => p.id)) + 1 : 1;
-        state.playerPhotos = {};
+        const importedPhotos = {};
 
         profile.roster.forEach(p => {
-          if (p.photo) state.playerPhotos[p.id] = p.photo;
+          if (p.photo) importedPhotos[p.id] = p.photo;
         });
+
+        state.playerPhotos = importedPhotos;
+        localStorage.removeItem('playerPhotos');
         try {
-          localStorage.setItem('playerPhotos', JSON.stringify(state.playerPhotos));
+          if (Object.keys(importedPhotos).length) {
+            localStorage.setItem('playerPhotos', JSON.stringify(importedPhotos));
+          }
         } catch (e) {
+          state.playerPhotos = {};
+          localStorage.removeItem('playerPhotos');
           alert('Storage full \u2014 some photos from the imported profile could not be saved.');
         }
         saveRoster();
