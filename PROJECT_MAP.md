@@ -71,8 +71,9 @@ There is no separate `review-screen` element. Game review imports are rendered t
 | 418-428 | Late arrival modal | Add not-present roster player to active game bench. |
 | 429-442 | Remove player from game modal | Mark player as left/removed from active game. |
 | 443-475 | Goal modal | Our goal/opponent goal and scorer/score adjustment UI. |
-| 476-492 | Half time / end game modal | Half-time summary, second-half start, and end-game controls. |
-| 493 | Script tag | Loads `js/app.js` as the ES module entry point. |
+| 478-488 | Download-prompt modal | Post-game download confirmation (yes/skip). |
+| 489-503 | Half time / end game modal | Half-time summary, second-half start, and end-game controls. |
+| 504 | Script tag | Loads `js/app.js` as the ES module entry point. |
 
 ## JavaScript modules in `js/`
 
@@ -80,9 +81,9 @@ There is no separate `review-screen` element. Game review imports are rendered t
 |---|---|---|
 | `js/state.js` | State singleton + constants | `state`, `POSITIONS`, `POSITION_ORDER`, `FIELD_SVG` |
 | `js/version.js` | Shared app version | `APP_VERSION` |
-| `js/utils.js` | DOM helpers + theme | `escHtml`, `showScreen`, `openModal`, `closeModal`, `applyTheme`, `toggleTheme` |
-| `js/persistence.js` | localStorage + import/export | `saveSettings`, `loadSettings`, `saveRoster`, `loadRoster`, `saveActiveGame`, `loadGameHistory`, `exportProfile`, `importProfile`, `importLeagueCsv`, `buildGameRecord` |
-| `js/roster.js` | Roster, attendance, photos | `renderTeamSetupRoster`, `renderGameDayCheckboxes`, `togglePlayerTile`, `renderRoster`, `avatarHtml`, `changeHalfMinutes` |
+| `js/utils.js` | DOM helpers + theme | `escHtml`, `fmt`, `showScreen`, `openModal`, `closeModal`, `applyTheme`, `toggleTheme` |
+| `js/persistence.js` | localStorage + import/export | `saveSettings`, `loadSettings`, `saveRoster`, `loadRoster`, `saveActiveGame`, `loadGameHistory`, `exportProfile`, `importProfile`, `importLeagueCsv`, `buildGameRecord`, `initEventListeners` |
+| `js/roster.js` | Roster, attendance, photos | `renderTeamSetupRoster`, `renderGameDayCheckboxes`, `togglePlayerTile`, `renderRoster`, `avatarHtml`, `changeHalfMinutes`, `initEventListeners` |
 | `js/lineup.js` | Lineup, GK picker, goalie wheel | `goToLineup`, `renderLineup`, `launchGame`, `initGame`, `spinWheel`, `handleLineupPointerDown` |
 | `js/game.js` | Timer, render, subs, goals, game flow | `handleTap`, `renderGame`, `executeAllPlans`, `endGame`, `renderScore`, `handleFieldSlotPointerDown` |
 | `js/summary.js` | Summary, season, navigation | `showSummary`, `showSeasonSummary`, `goToSetup`, `confirmClearData`, `setSeasonSort` |
@@ -105,7 +106,7 @@ There is no separate `review-screen` element. Game review imports are rendered t
 | Remove player from active game | `promptRemovePlayer`, `confirmRemovePlayer`, `leftEarly`, delegated bench listener |
 | Goals / score | `openGoalModal`, `recordGoal`, `confirmGoal`, `confirmTheirScore`, `renderScore`, `goals`, `scoreUs`, `scoreThem` |
 | Half time / second half | `handleHalfEnd`, `startSecondHalf`, `h1Snapshot`, `goalie2Id`, `activeGoalieId` |
-| End game / summary | `endGame`, `buildGameRecord`, `showSummary`, `renderGoalsHtml`, `saveGameHistory` |
+| End game / summary | `endGame`, `buildGameRecord`, `showSummary`, `renderGoalsHtml`, `saveGameHistory`, `download-prompt-modal` |
 | Season summary | `showSeasonSummary`, `setSeasonSort`, `compareSeasonPlayers`, `gameHistory`, `season-body` |
 | Backup/restore/import | UI labels: `Backup Team`, `Restore Backup`, `Import League CSV`. Code targets: `buildProfile`, `exportProfile`, `importProfile`, `importLeagueCsv`, `parseCsvRoster` |
 | Game review import | `importGameReview`, `showGameReviewFromRecord`, `review-file-input` |
@@ -213,6 +214,9 @@ There is no separate `review-screen` element. Game review imports are rendered t
 
 ### Modals
 
+- `download-prompt-modal`
+- `download-prompt-yes-btn`
+- `download-prompt-no-btn`
 - `clear-data-modal`
 - `about-modal`
 - `about-version`
@@ -251,6 +255,7 @@ There is no separate `review-screen` element. Game review imports are rendered t
 - `planningPosition` - empty/field slot selected while planning a sub.
 - `selectedId` - field player selected for immediate substitution.
 - `lineupDraft` - temporary pre-game lineup assignment.
+- `savedChecked` - `Set` of player ids that were checked on game-day; used to restore attendance after navigating back.
 - `selectedLineupPlayer`, `lineupPointerDrag` - lineup tap/drag assignment state.
 - `fieldPointerDrag` - live-game field drag/reposition state.
 - `goalie1Id`, `goalie2Id`, `activeGoalieId` - goalie assignment state.

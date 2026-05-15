@@ -49,13 +49,19 @@ Avoid using the older labels `League CSV`, `Load Profile`, or `Save Profile` in 
 
 ## Architecture
 
-`index.html` contains:
+`index.html` contains the HTML for all screens and modals, plus a single `<script type="module" src="js/app.js">` entry point.
 
-- CSS in a `<style>` block
-- All screens and modals in HTML
-- All app logic in a `<script>` block
-- Global state variables
-- Direct DOM updates through `render*()` functions
+App logic lives in `js/` as browser-native ES modules:
+
+- `js/state.js` — shared singleton `state` object and constants (`POSITIONS`, `FIELD_SVG`, etc.)
+- `js/utils.js` — DOM helpers (`escHtml`, `fmt`, `showScreen`, `openModal`, `closeModal`, `applyTheme`, `toggleTheme`)
+- `js/persistence.js` — localStorage read/write, import/export, file input wiring
+- `js/roster.js` — roster management, attendance tiles, photo upload
+- `js/lineup.js` — starting lineup assignment, GK picker, goalie wheel
+- `js/game.js` — timer, substitutions, goals, score, half/end flow
+- `js/summary.js` — post-game summary, season summary, navigation
+- `js/app.js` — entry point: initialises all modules, wires all delegated listeners
+- `css/styles.css` — extracted stylesheet
 
 There is no virtual DOM or automatic reactivity. After mutating state, call the appropriate render/save function.
 
@@ -91,26 +97,41 @@ Important corrections:
 
 ## Key state
 
+All mutable app state lives in the `state` singleton exported from `js/state.js`.
+
 ```js
-let roster = [];          // permanent roster, persisted
-let players = [];         // active-game player state
-let gameHistory = [];     // completed games
-let playerPhotos = {};    // id -> base64 data URL
+state.roster          // permanent roster, persisted
+state.players         // active-game player state
+state.gameHistory     // completed games
+state.playerPhotos    // id -> base64 data URL
 
-let subPlans = [];        // planned substitutions: [{ inId, pos }]
-let planningBenchId = null;
-let planningPosition = null;
-let selectedId = null;
+state.subPlans        // planned substitutions: [{ inId, pos }]
+state.planningBenchId
+state.planningPosition
+state.selectedId      // field player selected for immediate sub
 
-let lineupDraft = [];
-let goalie1Id = null;
-let goalie2Id = null;
-let activeGoalieId = null;
+state.lineupDraft     // pre-game lineup assignment
+state.savedChecked    // Set of player ids checked at game-day start
+state.selectedLineupSlot
+state.selectedLineupPlayer
 
-let totalElapsed = 0;
-let halfClock = 0;
-let timerBase = null;
-let isRunning = false;
+state.goalie1Id
+state.goalie2Id
+state.activeGoalieId
+
+state.totalElapsed
+state.halfClock
+state.timerBase
+state.isRunning
+
+state.scoreUs
+state.scoreThem
+state.goals
+
+state.gameDate
+state.opponentName
+state.teamName
+state.halfMinutes
 ```
 
 State changes do not update the UI automatically.
@@ -178,32 +199,32 @@ Both the starting lineup screen and live game screen insert the shared `FIELD_SV
 ## Debugging workflow
 
 1. Identify the feature area using `PROJECT_MAP.md`.
-2. Search `index.html` for the relevant function/id/state variable.
+2. Search the relevant `js/` module for the function/id/state variable (use Grep or `Select-String`).
 3. Read a tight range around the match.
 4. Check both the state mutation and the corresponding render/save call.
-5. Check delegated listeners at the bottom if clicks on re-rendered elements are involved.
+5. For delegated click listeners on re-rendered elements, check `js/app.js` (bottom section) and the `initEventListeners()` functions in `js/roster.js` and `js/persistence.js`.
 6. Use `git diff --stat` and targeted diffs for recent regressions.
 
 Useful PowerShell patterns:
 
 ```powershell
-Select-String -Path .\index.html -Pattern "functionName|dom-id|stateVariable" -Context 5,20
+Select-String -Path .\js\*.js -Pattern "functionName|dom-id|stateVariable" -Context 5,20
 ```
 
 ```powershell
-$lines = Get-Content .\index.html
-$lines[1200..1320]
+$lines = Get-Content .\js\game.js
+$lines[200..350]
 ```
 
 ```powershell
 git diff --stat
-git diff --unified=5 -- index.html
+git diff --unified=5 -- js css index.html
 ```
 
 Avoid:
 
 ```powershell
-Get-Content .\index.html
+Get-Content .\js\game.js
 cat .\index.html
 git diff
 ```
