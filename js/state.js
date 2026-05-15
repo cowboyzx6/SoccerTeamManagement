@@ -31,6 +31,7 @@ export const state = {
   selectedLineupSlot: null,
   selectedLineupPlayer: null,
   lineupDraft: [],
+  savedChecked: new Set(),
   playerPhotos: {}
 };
 

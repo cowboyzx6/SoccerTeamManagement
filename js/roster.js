@@ -45,15 +45,6 @@ export function triggerPhotoUpload(id) {
   document.getElementById('photo-file-input').click();
 }
 
-document.getElementById('photo-file-input').addEventListener('change', function (e) {
-  const file = e.target.files[0];
-  if (!file || photoUploadTargetId === null) return;
-  const reader = new FileReader();
-  reader.onload = ev => resizeAndStorePhoto(photoUploadTargetId, ev.target.result);
-  reader.readAsDataURL(file);
-  this.value = '';
-});
-
 export function resizeAndStorePhoto(id, dataURL) {
   const img = new Image();
   img.onload = () => {
@@ -70,7 +61,7 @@ export function resizeAndStorePhoto(id, dataURL) {
       localStorage.setItem('playerPhotos', JSON.stringify(state.playerPhotos));
     } catch (e) {
       delete state.playerPhotos[id];
-      alert('Storage full \u2014 photo could not be saved. Try removing old game history.');
+      alert('Storage full — photo could not be saved. Try removing old game history.');
     }
     renderRoster();
   };
@@ -80,7 +71,7 @@ export function resizeAndStorePhoto(id, dataURL) {
 export function renderTeamSetupRoster() {
   const list = document.getElementById('roster-list');
   if (!state.roster.length) {
-    list.innerHTML = '<div class="empty-roster">No players yet \u2014 add some below</div>';
+    list.innerHTML = '<div class="empty-roster">No players yet — add some below</div>';
     return;
   }
   const sorted = [...state.roster].sort((a, b) => a.name.localeCompare(b.name));
@@ -116,7 +107,7 @@ export function renderGameDayCheckboxes(restoreChecked = false) {
   const oppInput = document.getElementById('opponent-input');
   if (oppInput && !oppInput.value && state.opponentName) oppInput.value = state.opponentName;
 
-  const savedChecked = state.savedChecked || new Set();
+  const savedChecked = state.savedChecked;
   const list   = document.getElementById('gameday-roster');
   const sorted = [...state.roster].sort((a, b) => a.name.localeCompare(b.name));
   list.innerHTML = sorted.map(p => {
@@ -184,11 +175,6 @@ export function closeRenameModal() {
   renameTargetId = null;
 }
 
-document.getElementById('rename-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') confirmRename();
-  if (e.key === 'Escape') closeRenameModal();
-});
-
 let removeRosterTargetId = null;
 
 export function removeRosterPlayer(id) {
@@ -247,32 +233,48 @@ export function checkedPlayers() {
   });
 }
 
-document.getElementById('new-player-input').addEventListener('input', e => {
-  document.getElementById('add-player-btn').disabled = e.target.value.trim().length < 2;
-});
+export function initEventListeners() {
+  document.getElementById('photo-file-input').addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    if (!file || photoUploadTargetId === null) return;
+    const reader = new FileReader();
+    reader.onload = ev => resizeAndStorePhoto(photoUploadTargetId, ev.target.result);
+    reader.readAsDataURL(file);
+    this.value = '';
+  });
 
-document.getElementById('new-player-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') addRosterPlayer();
-});
+  document.getElementById('rename-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') confirmRename();
+    if (e.key === 'Escape') closeRenameModal();
+  });
 
-document.getElementById('roster-list').addEventListener('click', e => {
-  const photo = e.target.closest('[data-photo-id]');
-  if (photo) {
-    triggerPhotoUpload(parseInt(photo.dataset.photoId, 10));
-    return;
-  }
+  document.getElementById('new-player-input').addEventListener('input', e => {
+    document.getElementById('add-player-btn').disabled = e.target.value.trim().length < 2;
+  });
 
-  const rename = e.target.closest('[data-rename-id]');
-  if (rename) {
-    openRenameModal(parseInt(rename.dataset.renameId, 10));
-    return;
-  }
+  document.getElementById('new-player-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addRosterPlayer();
+  });
 
-  const remove = e.target.closest('[data-remove-id]');
-  if (remove) removeRosterPlayer(parseInt(remove.dataset.removeId, 10));
-});
+  document.getElementById('roster-list').addEventListener('click', e => {
+    const photo = e.target.closest('[data-photo-id]');
+    if (photo) {
+      triggerPhotoUpload(parseInt(photo.dataset.photoId, 10));
+      return;
+    }
 
-document.getElementById('gameday-roster').addEventListener('click', e => {
-  const tile = e.target.closest('[data-player-id]');
-  if (tile) togglePlayerTile(parseInt(tile.dataset.playerId, 10));
-});
+    const rename = e.target.closest('[data-rename-id]');
+    if (rename) {
+      openRenameModal(parseInt(rename.dataset.renameId, 10));
+      return;
+    }
+
+    const remove = e.target.closest('[data-remove-id]');
+    if (remove) removeRosterPlayer(parseInt(remove.dataset.removeId, 10));
+  });
+
+  document.getElementById('gameday-roster').addEventListener('click', e => {
+    const tile = e.target.closest('[data-player-id]');
+    if (tile) togglePlayerTile(parseInt(tile.dataset.playerId, 10));
+  });
+}

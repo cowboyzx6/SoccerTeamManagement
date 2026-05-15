@@ -5,7 +5,6 @@ import { closeModal, escHtml, openModal, showScreen } from './utils.js';
 const WHEEL_ITEM_H = 60;
 const WHEEL_REPS = 50;
 
-let savedChecked = new Set();
 let lineupPointerDrag = null;
 let suppressLineupClickUntil = 0;
 let wheelPlayers = [];
@@ -38,8 +37,7 @@ export function goToLineup() {
 
   document.getElementById('lineup-header-title').textContent = `${state.teamName} \u2014 Starting Lineup`;
 
-  savedChecked = new Set(present.map(p => p.id));
-  state.savedChecked = savedChecked;
+  state.savedChecked = new Set(present.map(p => p.id));
 
   state.lineupDraft = [...present].sort((a, b) => a.name.localeCompare(b.name)).map(p => ({
     id: p.id,

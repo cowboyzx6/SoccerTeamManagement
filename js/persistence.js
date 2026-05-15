@@ -169,15 +169,6 @@ export function importLeagueCsv() {
   document.getElementById('csv-file-input').click();
 }
 
-document.getElementById('csv-file-input').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => parseCsvRoster(ev.target.result);
-  reader.readAsText(file);
-  this.value = '';
-});
-
 export function parseCsvRoster(text) {
   const lines = text.trim().split(/\r?\n/);
   if (lines.length < 2) { alert('CSV appears empty.'); return; }
@@ -247,7 +238,21 @@ function parseCsvLine(line) {
   return result;
 }
 
-document.getElementById('import-file-input').addEventListener('change', function(e) {
+export function importGameReview() {
+  document.getElementById('review-file-input').click();
+}
+
+export function initEventListeners() {
+  document.getElementById('csv-file-input').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => parseCsvRoster(ev.target.result);
+    reader.readAsText(file);
+    this.value = '';
+  });
+
+  document.getElementById('import-file-input').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
@@ -290,32 +295,29 @@ document.getElementById('import-file-input').addEventListener('change', function
     this.value = '';
   });
 
-export function importGameReview() {
-  document.getElementById('review-file-input').click();
-}
-
-document.getElementById('review-file-input').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      const profile = JSON.parse(ev.target.result);
-      if (!Array.isArray(profile.games) || profile.games.length === 0) {
-        alert('No game records found in this file.');
-        return;
+  document.getElementById('review-file-input').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const profile = JSON.parse(ev.target.result);
+        if (!Array.isArray(profile.games) || profile.games.length === 0) {
+          alert('No game records found in this file.');
+          return;
+        }
+        const gameRecord = profile.games[profile.games.length - 1];
+        document.dispatchEvent(new CustomEvent('game-review:loaded', {
+          detail: { gameRecord, teamName: profile.teamName || state.teamName }
+        }));
+      } catch {
+        alert('Invalid game file.');
       }
-      const gameRecord = profile.games[profile.games.length - 1];
-      document.dispatchEvent(new CustomEvent('game-review:loaded', {
-        detail: { gameRecord, teamName: profile.teamName || state.teamName }
-      }));
-    } catch {
-      alert('Invalid game file.');
-    }
-  };
-  reader.readAsText(file);
-  this.value = '';
-});
+    };
+    reader.readAsText(file);
+    this.value = '';
+  });
+}
 
 export function loadRoster() {
   const saved = localStorage.getItem('soccerRoster');

@@ -5,6 +5,7 @@ import {
   importGameReview,
   importLeagueCsv,
   importProfile,
+  initEventListeners as initPersistenceListeners,
   loadGameHistory,
   loadRoster,
   loadSettings,
@@ -19,6 +20,7 @@ import {
   closeRenameModal,
   confirmRemoveRosterPlayer,
   confirmRename,
+  initEventListeners as initRosterListeners,
   loadPhotos,
   renderGameDayCheckboxes,
   renderRoster,
@@ -128,6 +130,8 @@ document.addEventListener('game-review:loaded', e => {
 document.getElementById('lineup-field-diagram').insertAdjacentHTML('afterbegin', FIELD_SVG);
 document.getElementById('game-field-diagram').insertAdjacentHTML('afterbegin', FIELD_SVG);
 applyTheme(localStorage.getItem('theme') || 'dark');
+initPersistenceListeners();
+initRosterListeners();
 loadPhotos();
 loadSettings();
 loadGameHistory();
