@@ -37,7 +37,8 @@ export function resumeGame() {
 }
 
 export function tick() {
-  const secs        = state.timerBase ? Math.floor((Date.now() - state.timerBase.ts) / 1000) : 1;
+  if (!state.timerBase) return;
+  const secs        = Math.floor((Date.now() - state.timerBase.ts) / 1000);
   const newHalf     = state.timerBase.halfClock - secs;
   const newElapsed  = state.timerBase.totalElapsed + secs;
 
@@ -407,6 +408,7 @@ export function promptRemovePlayer(id) {
 
 export function confirmRemovePlayer() {
   const p = state.players.find(p => p.id === removePlayerId);
+  const removedPos = p && p.onField ? p.position : null;
   if (p) {
     if (p.onField) {
       commitPositionTime(p);
@@ -419,10 +421,13 @@ export function confirmRemovePlayer() {
     }
     p.leftEarly = true;
   }
-  state.subPlans = state.subPlans.filter(pl => pl.inId !== removePlayerId);
-  if (state.planningBenchId === removePlayerId) state.planningBenchId = null;
-  if (state.selectedId      === removePlayerId) state.selectedId      = null;
-  if (state.activeGoalieId  === removePlayerId) state.activeGoalieId  = null;
+  state.subPlans = state.subPlans.filter(
+    pl => pl.inId !== removePlayerId && (!removedPos || pl.pos !== removedPos)
+  );
+  if (state.planningBenchId  === removePlayerId) state.planningBenchId  = null;
+  if (state.selectedId       === removePlayerId) state.selectedId       = null;
+  if (state.activeGoalieId   === removePlayerId) state.activeGoalieId   = null;
+  if (state.planningPosition === removedPos)     state.planningPosition = null;
   removePlayerId = null;
   closeRemovePlayerModal();
   renderGame();

@@ -5,6 +5,12 @@ import { closeModal, escHtml, openModal, showScreen } from './utils.js';
 const WHEEL_ITEM_H = 60;
 const WHEEL_REPS = 50;
 
+function setLineupGoalieId(pos, playerId) {
+  if (pos !== 'GK') return;
+  if (state.gkPickerPhase === 1) state.goalie1Id = playerId;
+  else state.goalie2Id = playerId;
+}
+
 let lineupPointerDrag = null;
 let suppressLineupClickUntil = 0;
 let wheelPlayers = [];
@@ -214,13 +220,8 @@ function moveLineupPlayerToPosition(playerId, targetPos) {
     target.onField = !!fromPos;
   }
 
-  if (targetPos === 'GK') {
-    if (state.gkPickerPhase === 1) state.goalie1Id = playerId;
-    else state.goalie2Id = playerId;
-  } else if (fromPos === 'GK') {
-    if (state.gkPickerPhase === 1) state.goalie1Id = null;
-    else state.goalie2Id = null;
-  }
+  setLineupGoalieId(targetPos, player.id);
+  if (fromPos === 'GK') setLineupGoalieId('GK', null);
 
   player.position = targetPos;
   player.onField = true;
@@ -308,7 +309,7 @@ export function lineupSlotTap(pos) {
   if (assigned) {
     assigned.position = null;
     assigned.onField = false;
-    if (pos === 'GK') state.goalie2Id = null;
+    setLineupGoalieId(pos, null);
     state.selectedLineupSlot = null;
     state.selectedLineupPlayer = null;
   } else if (state.selectedLineupPlayer !== null) {
@@ -316,7 +317,7 @@ export function lineupSlotTap(pos) {
     if (player) {
       player.position = pos;
       player.onField = true;
-      if (pos === 'GK') state.goalie2Id = null;
+      setLineupGoalieId(pos, player.id);
     }
     state.selectedLineupPlayer = null;
     state.selectedLineupSlot = null;
@@ -336,7 +337,7 @@ export function lineupPlayerTap(id) {
     if (player) {
       player.position = state.selectedLineupSlot;
       player.onField = true;
-      if (state.selectedLineupSlot === 'GK') state.goalie2Id = null;
+      setLineupGoalieId(state.selectedLineupSlot, player.id);
     }
     state.selectedLineupSlot = null;
     state.selectedLineupPlayer = null;
