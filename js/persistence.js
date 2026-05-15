@@ -328,8 +328,10 @@ document.getElementById('review-file-input').addEventListener('change', function
 export function loadRoster() {
   const saved = localStorage.getItem('soccerRoster');
   if (saved) {
-    state.roster = JSON.parse(saved);
-    state.nextId  = state.roster.length ? Math.max(...state.roster.map(p => p.id)) + 1 : 1;
+    try {
+      state.roster = JSON.parse(saved);
+      state.nextId  = state.roster.length ? Math.max(...state.roster.map(p => p.id)) + 1 : 1;
+    } catch { localStorage.removeItem('soccerRoster'); }
   }
   uiHandlers.renderTeamSetupRoster?.();
   uiHandlers.renderGameDayCheckboxes?.();
