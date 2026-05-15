@@ -61,7 +61,7 @@ export function resizeAndStorePhoto(id, dataURL) {
       localStorage.setItem('playerPhotos', JSON.stringify(state.playerPhotos));
     } catch (e) {
       delete state.playerPhotos[id];
-      alert('Storage full — photo could not be saved. Try removing old game history.');
+      alert('Storage full \u2014 photo could not be saved. Try removing old game history.');
     }
     document.dispatchEvent(new CustomEvent('photo:updated'));
   };
@@ -71,7 +71,7 @@ export function resizeAndStorePhoto(id, dataURL) {
 export function renderTeamSetupRoster() {
   const list = document.getElementById('roster-list');
   if (!state.roster.length) {
-    list.innerHTML = '<div class="empty-roster">No players yet — add some below</div>';
+    list.innerHTML = '<div class="empty-roster">No players yet &mdash; add some below</div>';
     return;
   }
   const sorted = [...state.roster].sort((a, b) => a.name.localeCompare(b.name));

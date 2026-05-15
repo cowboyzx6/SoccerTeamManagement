@@ -80,9 +80,9 @@ export function syncGamePhaseUi() {
   pauseBtn.style.display = state.halfClock === 0 ? 'none' : '';
 }
 
-// ─────────────────────────────────────────────────────────────
+// ------------------------------------------------------------
 //  GAME RENDER
-// ─────────────────────────────────────────────────────────────
+// ------------------------------------------------------------
 export function getPlayedTime(player) {
   if (player.onField && player.subInAt !== null) {
     return player.totalPlayed + (state.totalElapsed - player.subInAt);
@@ -168,24 +168,24 @@ export function renderGame() {
   const hint = document.getElementById('sub-hint');
   if (state.planningBenchId !== null) {
     const p = state.players.find(p => p.id === state.planningBenchId);
-    hint.textContent = p ? `${p.name} selected — tap any field slot to swap in` : '';
+    hint.textContent = p ? `${p.name} selected \u2014 tap any field slot to swap in` : '';
     hint.className   = 'sub-hint active';
-    document.getElementById('sub-status').textContent = '↓ select position';
+    document.getElementById('sub-status').textContent = '\u2193 select position';
   } else if (state.planningPosition !== null) {
     hint.textContent = `Tap a bench player to place into ${state.planningPosition}`;
     hint.className   = 'sub-hint active';
-    document.getElementById('sub-status').textContent = '↕ select bench player';
+    document.getElementById('sub-status').textContent = '\u2195 select bench player';
   } else if (state.selectedId !== null) {
     const sel = state.players.find(p => p.id === state.selectedId);
     hint.textContent = sel ? `Tap a bench player to sub in for ${sel.name}` : '';
     hint.className   = 'sub-hint active';
-    document.getElementById('sub-status').textContent = '↕ select bench player';
+    document.getElementById('sub-status').textContent = '\u2195 select bench player';
   } else if (state.subPlans.length > 0) {
-    hint.textContent = `${state.subPlans.length} sub(s) planned — press Sub Now to execute`;
+    hint.textContent = `${state.subPlans.length} sub(s) planned \u2014 press Sub Now to execute`;
     hint.className   = 'sub-hint active';
     document.getElementById('sub-status').textContent = '';
   } else {
-    hint.textContent = bench.length ? 'Tap a bench player to plan · Tap a field slot to sub out' : '';
+    hint.textContent = bench.length ? 'Tap a bench player to plan \u00B7 Tap a field slot to sub out' : '';
     hint.className   = 'sub-hint';
     document.getElementById('sub-status').textContent = '';
   }
@@ -291,7 +291,7 @@ export function renderField(fairShare) {
       slot.className = `pos-slot slot-filled ${status}${isSelected ? ' selected' : ''}${hasPlan ? ' planned-out' : ''}${isTarget ? ' slot-target' : ''}`;
       slot.dataset.playerId = String(player.id);
 
-      // Bench player selected → tap filled slot to queue a planned sub
+      // Bench player selected, tap filled slot to queue a planned sub
       if (state.planningBenchId !== null) {
         slot.onclick = e => {
           if (e.target.closest('.pos-bench-btn')) return;
@@ -325,7 +325,7 @@ export function renderField(fairShare) {
       `;
 
     } else {
-      // Empty slot — glow when bench player selected or this slot is selected
+      // Empty slot glows when bench player selected or this slot is selected
       const emptyClass = (state.planningPosition === pos || state.planningBenchId !== null) ? ' slot-sel-empty' : '';
       slot.className = 'pos-slot slot-empty' + emptyClass;
       slot.innerHTML = `
@@ -365,7 +365,7 @@ export function renderGrid(gridId, list, zone, fairShare) {
     let sublabel = '';
     if (plan) {
       const outPlayer = state.players.find(p => p.onField && p.position === plan.pos);
-      sublabel = `→ ${plan.pos}${outPlayer ? ` · ${escHtml(outPlayer.name)} out` : ''}`;
+      sublabel = `\u2192 ${plan.pos}${outPlayer ? ` \u00B7 ${escHtml(outPlayer.name)} out` : ''}`;
     } else if (isPlanning) {
       sublabel = 'tap a position slot...';
     }
@@ -392,9 +392,9 @@ export function renderGrid(gridId, list, zone, fairShare) {
   });
 }
 
-// ─────────────────────────────────────────────────────────────
+// ------------------------------------------------------------
 //  REMOVE PLAYER FROM GAME
-// ─────────────────────────────────────────────────────────────
+// ------------------------------------------------------------
 let removePlayerId = null;
 
 export function promptRemovePlayer(id) {
@@ -438,9 +438,9 @@ export function closeRemovePlayerModal() {
   closeModal('remove-player-modal');
 }
 
-// ─────────────────────────────────────────────────────────────
+// ------------------------------------------------------------
 //  SUBSTITUTION
-// ─────────────────────────────────────────────────────────────
+// ------------------------------------------------------------
 export function handleTap(id, zone) {
   if (zone === 'field') {
     if (state.planningBenchId !== null) return; // field player taps ignored while planning
@@ -459,7 +459,7 @@ export function handleTap(id, zone) {
       return;
     }
 
-    // Check if tapping a player who already has a plan → remove it (toggle off)
+    // Check if tapping a player who already has a plan removes it (toggle off)
     const existingPlanIdx = state.subPlans.findIndex(pl => pl.inId === id);
     if (existingPlanIdx !== -1) {
       state.subPlans.splice(existingPlanIdx, 1);
@@ -623,7 +623,7 @@ export function makeSub(outId, inId) {
     setActiveGoalie(inId);
   }
 
-  // Clear any pending plans involving the incoming player — they're now on the field
+  // Clear any pending plans involving the incoming player; they're now on the field
   state.subPlans = state.subPlans.filter(pl => pl.inId !== inId);
 
   state.selectedId = null;
@@ -631,9 +631,9 @@ export function makeSub(outId, inId) {
   saveActiveGame();
 }
 
-// ─────────────────────────────────────────────────────────────
+// ------------------------------------------------------------
 //  LATE ARRIVAL
-// ─────────────────────────────────────────────────────────────
+// ------------------------------------------------------------
 export function openLateModal() {
   const inGameIds = new Set(state.players.map(p => p.id));
   const available = state.roster.filter(p => !inGameIds.has(p.id));
@@ -681,9 +681,9 @@ export function confirmLateArrival(rosterId) {
   saveActiveGame();
 }
 
-// ─────────────────────────────────────────────────────────────
+// ------------------------------------------------------------
 //  HALF TIME / END GAME
-// ─────────────────────────────────────────────────────────────
+// ------------------------------------------------------------
 export function handleHalfEnd() {
   pauseGame();
 
@@ -788,9 +788,9 @@ export function startSecondHalf() {
   saveActiveGame();
 }
 
-// ─────────────────────────────────────────────────────────────
+// ------------------------------------------------------------
 //  SCORE / GOALS
-// ─────────────────────────────────────────────────────────────
+// ------------------------------------------------------------
 export function renderScore() {
   document.getElementById('score-us').textContent   = state.scoreUs;
   document.getElementById('score-them').textContent = state.scoreThem;
