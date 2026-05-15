@@ -2,11 +2,16 @@ const fs = require('fs');
 const http = require('http');
 const path = require('path');
 const { spawn } = require('child_process');
+const {
+  ROOT,
+  STATE_PATH,
+  clearServerState,
+  readServerState,
+  stopManagedServer,
+} = require('./server-state.cjs');
 
-const ROOT = path.resolve(__dirname, '..');
 const PORT = 8000;
 const HOST = '127.0.0.1';
-const STATE_PATH = path.join(ROOT, 'test-results', 'server-state.json');
 const URL = `http://${HOST}:${PORT}`;
 
 function isServerReady() {
@@ -34,6 +39,12 @@ async function waitForServer() {
 
 module.exports = async () => {
   fs.mkdirSync(path.dirname(STATE_PATH), { recursive: true });
+  const previousState = readServerState();
+  clearServerState();
+
+  if (previousState?.started) {
+    stopManagedServer(previousState);
+  }
 
   if (await isServerReady()) {
     fs.writeFileSync(STATE_PATH, JSON.stringify({ started: false }), 'utf8');
