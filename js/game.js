@@ -499,6 +499,7 @@ export function createPlan(inId, pos) {
     state.planningBenchId = null;
     state.subPlans = state.subPlans.filter(pl => pl.inId !== inId && pl.pos !== pos);
     renderGame();
+    saveActiveGame();
     return;
   }
 
