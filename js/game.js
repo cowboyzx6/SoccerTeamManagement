@@ -885,7 +885,6 @@ export function endGame() {
   state.gameHistory.push(gameRecord);
   saveGameHistory();
   clearActiveGame();
-  state.players = [];
 
   openModal('download-prompt-modal');
   const yesBtn = document.getElementById('download-prompt-yes-btn');
@@ -897,6 +896,7 @@ export function endGame() {
     noBtn.removeEventListener('click', onNo);
     closeModal('download-prompt-modal');
     showSummary();
+    state.players = [];
   }
   yesBtn.addEventListener('click', onYes);
   noBtn.addEventListener('click', onNo);
