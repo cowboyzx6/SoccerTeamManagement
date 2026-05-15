@@ -274,7 +274,9 @@ document.getElementById('import-file-input').addEventListener('change', function
           state.roster = profile.roster.map(p => ({ id: p.id, name: p.name }));
           state.nextId = state.roster.length ? Math.max(...state.roster.map(p => p.id)) + 1 : 1;
           profile.roster.forEach(p => {
-            if (p.photo) state.playerPhotos[p.id] = p.photo;
+            if (p.photo && typeof p.photo === 'string' && p.photo.startsWith('data:image/')) {
+              state.playerPhotos[p.id] = p.photo;
+            }
           });
           try {
             localStorage.setItem('playerPhotos', JSON.stringify(state.playerPhotos));
