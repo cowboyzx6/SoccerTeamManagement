@@ -70,6 +70,7 @@ App logic lives in `js/` as browser-native ES modules:
 - `js/state.js` — shared singleton `state` object and constants (`POSITIONS`, `FIELD_SVG`, etc.)
 - `js/utils.js` — DOM helpers (`escHtml`, `fmt`, `showScreen`, `openModal`, `closeModal`, `applyTheme`, `toggleTheme`)
 - `js/persistence.js` - localStorage read/write, import/export validation, file input wiring
+- `js/profile-normalizer.js` - pure profile/game JSON validation and normalization
 - `js/roster.js` — roster management, attendance tiles, photo upload
 - `js/lineup.js` — starting lineup assignment, GK picker, goalie wheel
 - `js/game.js` — timer, substitutions, goals, score, half/end flow
