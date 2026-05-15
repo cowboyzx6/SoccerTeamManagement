@@ -1,4 +1,5 @@
-const CACHE = 'stm-v6';
+const CACHE_VERSION = '1.26135.32';
+const CACHE = `stm-${CACHE_VERSION}`;
 const ASSETS = [
   './',
   './index.html',
@@ -31,7 +32,6 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   // Network-first for HTML so deployed updates are picked up without manual cache clearing.
-  // Bump CACHE version above whenever sw.js itself changes.
   if (e.request.destination === 'document' || e.request.url.endsWith('.html')) {
     e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
     return;

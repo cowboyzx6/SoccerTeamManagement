@@ -6,6 +6,7 @@ $ErrorActionPreference = 'Stop'
 
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot '..')
 $versionPath = Join-Path $repoRoot 'js/version.js'
+$serviceWorkerPath = Join-Path $repoRoot 'sw.js'
 
 $now = Get-Date
 $year = $now.ToString('yy')
@@ -49,8 +50,18 @@ if (-not [regex]::IsMatch($versionFile, $versionPattern)) {
 $updated = $versionFile -replace $versionPattern, "const APP_VERSION = '$version';"
 Set-Content -LiteralPath $versionPath -Value $updated -NoNewline
 
+$serviceWorkerFile = Get-Content -LiteralPath $serviceWorkerPath -Raw
+$cacheVersionPattern = "const CACHE_VERSION = '[^']+';"
+
+if (-not [regex]::IsMatch($serviceWorkerFile, $cacheVersionPattern)) {
+  throw 'Could not find CACHE_VERSION in sw.js.'
+}
+
+$updatedServiceWorker = $serviceWorkerFile -replace $cacheVersionPattern, "const CACHE_VERSION = '$version';"
+Set-Content -LiteralPath $serviceWorkerPath -Value $updatedServiceWorker -NoNewline
+
 if (-not $NoStage) {
-  git -C $repoRoot add js/version.js
+  git -C $repoRoot add js/version.js sw.js
 }
 
 Write-Host "Stamped app version $version"
