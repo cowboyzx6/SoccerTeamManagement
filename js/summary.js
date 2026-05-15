@@ -326,6 +326,7 @@ export function executeClearData() {
   document.getElementById('team-name-input').value = '';
   document.getElementById('app-title-name').textContent = 'My Team';
   document.getElementById('half-minutes-display').textContent = '25 min';
+  state.savedChecked = new Set();
   state.gameDate     = '';
   state.opponentName = '';
   document.getElementById('opponent-input').value = '';

@@ -176,7 +176,7 @@ document.getElementById('import-csv-btn').addEventListener('click', importLeague
 document.getElementById('restore-backup-btn').addEventListener('click', importProfile);
 document.getElementById('backup-team-btn').addEventListener('click', () => exportProfile());
 document.getElementById('team-name-input').addEventListener('input', onTeamNameInput);
-document.getElementById('team-name-input').addEventListener('blur', saveTeamName);
+document.getElementById('team-name-input').addEventListener('blur', saveSettings);
 document.getElementById('add-player-btn').addEventListener('click', addRosterPlayer);
 document.getElementById('clear-data-btn').addEventListener('click', confirmClearData);
 document.getElementById('clear-confirm-btn').addEventListener('click', executeClearData);

@@ -214,6 +214,14 @@ function moveLineupPlayerToPosition(playerId, targetPos) {
     target.onField = !!fromPos;
   }
 
+  if (targetPos === 'GK') {
+    if (state.gkPickerPhase === 1) state.goalie1Id = playerId;
+    else state.goalie2Id = playerId;
+  } else if (fromPos === 'GK') {
+    if (state.gkPickerPhase === 1) state.goalie1Id = null;
+    else state.goalie2Id = null;
+  }
+
   player.position = targetPos;
   player.onField = true;
   state.selectedLineupSlot = null;
@@ -614,6 +622,7 @@ export function nextGoaliePick() {
 }
 
 export function spinAgain() {
+  gkSpinWinner = null;
   if (!gkSpinMode) {
     if (currentGoaliePick === 1) state.goalie1Id = null;
     else state.goalie2Id = null;

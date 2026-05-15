@@ -503,6 +503,7 @@ export function createPlan(inId, pos) {
   state.subPlans.push({ inId, pos });
   state.planningBenchId = null;
   renderGame();
+  saveActiveGame();
 }
 
 // Execute all planned subs at once
@@ -846,6 +847,7 @@ export function adjustTheirScore(delta) {
 
 export function confirmTheirScore() {
   const newScore = parseInt(document.getElementById('goal-them-preview').textContent);
+  if (isNaN(newScore)) return;
   const delta    = newScore - state.scoreThem;
   state.scoreThem = newScore;
   if (delta > 0) {
@@ -886,18 +888,17 @@ export function endGame() {
   state.gameHistory.push(gameRecord);
   saveGameHistory();
   clearActiveGame();
+  state.players = [];
 
   openModal('download-prompt-modal');
   document.getElementById('download-prompt-yes-btn').onclick = () => {
     exportProfile(false, true);
     closeModal('download-prompt-modal');
     showSummary();
-    state.players = [];
   };
   document.getElementById('download-prompt-no-btn').onclick = () => {
     closeModal('download-prompt-modal');
     showSummary();
-    state.players = [];
   };
 }
 
