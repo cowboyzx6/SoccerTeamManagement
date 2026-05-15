@@ -307,6 +307,7 @@ export function lineupSlotTap(pos) {
   if (assigned) {
     assigned.position = null;
     assigned.onField = false;
+    if (pos === 'GK') state.goalie2Id = null;
     state.selectedLineupSlot = null;
     state.selectedLineupPlayer = null;
   } else if (state.selectedLineupPlayer !== null) {
@@ -314,6 +315,7 @@ export function lineupSlotTap(pos) {
     if (player) {
       player.position = pos;
       player.onField = true;
+      if (pos === 'GK') state.goalie2Id = null;
     }
     state.selectedLineupPlayer = null;
     state.selectedLineupSlot = null;
@@ -333,6 +335,7 @@ export function lineupPlayerTap(id) {
     if (player) {
       player.position = state.selectedLineupSlot;
       player.onField = true;
+      if (state.selectedLineupSlot === 'GK') state.goalie2Id = null;
     }
     state.selectedLineupSlot = null;
     state.selectedLineupPlayer = null;
