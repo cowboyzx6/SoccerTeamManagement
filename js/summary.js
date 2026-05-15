@@ -1,7 +1,7 @@
 import { state } from './state.js';
 import { clearActiveGame } from './persistence.js';
 import { avatarHtml, renderGameDayCheckboxes, renderTeamSetupRoster } from './roster.js';
-import { closeModal, escHtml, openModal, showScreen } from './utils.js';
+import { closeModal, escHtml, fmt, openModal, showScreen } from './utils.js';
 import { APP_VERSION } from './version.js';
 
 let summaryHandlers = {};
@@ -10,11 +10,6 @@ export function configureSummaryHandlers(handlers) {
   summaryHandlers = handlers;
 }
 
-function fmt(secs) {
-  const m = Math.floor(secs / 60).toString().padStart(2, '0');
-  const s = (secs % 60).toString().padStart(2, '0');
-  return `${m}:${s}`;
-}
 
 export function renderGoalsHtml(goalsArray, opponentLabel) {
   if (!goalsArray.length) {

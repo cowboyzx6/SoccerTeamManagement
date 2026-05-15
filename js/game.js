@@ -2,7 +2,7 @@ import { POSITIONS, POSITION_ORDER, state } from './state.js';
 import { buildGameRecord, clearActiveGame, exportProfile, saveActiveGame, saveGameHistory } from './persistence.js';
 import { avatarHtml, avatarParts } from './roster.js';
 import { showSummary } from './summary.js';
-import { closeModal, escHtml, openModal } from './utils.js';
+import { closeModal, escHtml, fmt, openModal } from './utils.js';
 import { createFieldDragPreview, moveFieldDragPreview, removeFieldDragPreview } from './lineup.js';
 
 let intervalId = null;
@@ -109,11 +109,6 @@ export function getStatus(player, fairShare) {
   return 's-green';
 }
 
-export function fmt(secs) {
-  const m = Math.floor(secs / 60).toString().padStart(2, '0');
-  const s = (secs % 60).toString().padStart(2, '0');
-  return `${m}:${s}`;
-}
 
 export function commitPositionTime(player) {
   if (player.position && player.positionStart !== null) {

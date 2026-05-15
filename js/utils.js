@@ -6,6 +6,12 @@ export function showScreen(id) {
 export function openModal(id)  { document.getElementById(id).classList.remove('hidden'); }
 export function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
+export function fmt(secs) {
+  const m = Math.floor(secs / 60).toString().padStart(2, '0');
+  const s = (secs % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+}
+
 export function escHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
