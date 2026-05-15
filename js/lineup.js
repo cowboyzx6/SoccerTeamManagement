@@ -633,6 +633,8 @@ export function spinAgain() {
 }
 
 export function cancelGoalieSpin() {
+  state.selectedLineupPlayer = null;
+  state.selectedLineupSlot = null;
   closeModal('goalie-modal');
   if (gkSpinMode) {
     gkSpinMode = false;
