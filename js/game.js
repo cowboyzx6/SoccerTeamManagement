@@ -747,16 +747,13 @@ export function startSecondHalf() {
   // Commit all 1st half position times before any position changes
   state.players.filter(p => p.onField).forEach(p => commitPositionTime(p));
 
+  const secondHalfGoalieId = state.goalie2Id || state.goalie1Id;
+
   state.players.forEach(p => {
     if (p.onField && p.subInAt !== null) {
       p.totalPlayed += state.totalElapsed - p.subInAt;
     }
-    p.h1Snapshot = p.totalPlayed;
-  });
-
-  const secondHalfGoalieId = state.goalie2Id || state.goalie1Id;
-
-  state.players.forEach(p => {
+    p.h1Snapshot    = p.totalPlayed;
     p.onField       = false;
     p.subInAt       = null;
     p.position      = null;
