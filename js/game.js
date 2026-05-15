@@ -553,6 +553,7 @@ export function moveFieldPlayerToBench(id) {
   if (state.selectedId === id) state.selectedId = null;
   if (state.activeGoalieId === id) state.activeGoalieId = null;
   renderGame();
+  saveActiveGame();
 }
 
 export function moveFieldPlayerToPosition(fromId, targetPos) {
