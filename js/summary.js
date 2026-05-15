@@ -230,13 +230,16 @@ export function showSummary() {
     const posHtml = posChips
       ? `<div class="summary-pos-breakdown">${posChips}</div>`
       : '';
+    const goalieIcon = (p.positionTime || {}).GK > 0
+      ? '<span class="summary-goalie-icon" title="Goalkeeper" aria-label="Goalkeeper">&#129508;</span>'
+      : '';
     return `
       <tr>
         <td>
           <div class="summary-player-cell">
             <div class="summary-player-avatar">${avatarHtml(p.id, p.name, 30)}</div>
             <div class="summary-player-info">
-              <div class="summary-player-name">${escHtml(p.name)}</div>
+              <div class="summary-player-name">${escHtml(p.name)}${goalieIcon}</div>
               ${posHtml}
             </div>
           </div>

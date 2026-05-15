@@ -596,11 +596,6 @@ export function setActiveGoalie(id) {
   else state.goalie2Id = id;
 }
 
-export function assignGoalie(id) {
-  setActiveGoalie(id);
-  renderGame();
-}
-
 export function makeSub(outId, inId) {
   const out = state.players.find(p => p.id === outId);
   const inn = state.players.find(p => p.id === inId);
