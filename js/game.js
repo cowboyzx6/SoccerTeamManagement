@@ -630,6 +630,7 @@ export function makeSub(outId, inId) {
 
   state.selectedId = null;
   renderGame();
+  saveActiveGame();
 }
 
 // ─────────────────────────────────────────────────────────────
