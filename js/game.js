@@ -678,6 +678,7 @@ export function confirmLateArrival(rosterId) {
   });
   closeLateModal();
   renderGame();
+  saveActiveGame();
 }
 
 // ─────────────────────────────────────────────────────────────
