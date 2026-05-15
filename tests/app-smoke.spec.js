@@ -2,6 +2,10 @@
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__STM_DISABLE_SW__ = true;
+  });
+
   page.on('pageerror', error => {
     throw error;
   });

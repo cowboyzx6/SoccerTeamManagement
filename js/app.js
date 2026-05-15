@@ -265,6 +265,6 @@ document.getElementById('bench-grid').addEventListener('click', e => {
   }
 });
 
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator && !window.__STM_DISABLE_SW__) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
