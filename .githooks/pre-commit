@@ -1,2 +1,3 @@
 #!/bin/sh
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/Update-AppVersion.ps1
+PWSH=$(which powershell.exe 2>/dev/null || echo /c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe)
+"$PWSH" -NoProfile -ExecutionPolicy Bypass -File scripts/Update-AppVersion.ps1
