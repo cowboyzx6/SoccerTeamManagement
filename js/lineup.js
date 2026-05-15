@@ -268,7 +268,7 @@ function renderLineupPlayers() {
     hint.textContent = `Slot ${state.selectedLineupSlot} selected \u2014 tap a player to assign them.`;
     hint.className = 'lineup-hint active';
   } else if (state.selectedLineupPlayer) {
-    const p = state.lineupDraft.find(p => p.id === state.selectedLineupPlayer);
+    const p = state.lineupDraft.find(dp => dp.id === state.selectedLineupPlayer);
     hint.textContent = `${p ? p.name : 'Player'} selected \u2014 tap a position slot to place them.`;
     hint.className = 'lineup-hint active';
   } else {

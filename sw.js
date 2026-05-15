@@ -2,6 +2,7 @@ const CACHE = 'stm-v6';
 const ASSETS = [
   './',
   './index.html',
+  './manifest.json',
   './css/styles.css',
   './js/app.js',
   './js/game.js',
