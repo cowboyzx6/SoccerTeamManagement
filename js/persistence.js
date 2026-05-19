@@ -58,7 +58,9 @@ export function saveActiveGame() {
       planningPosition: state.planningPosition,
       gameDate: state.gameDate
     }));
-  } catch (e) {}
+  } catch (e) {
+    console.error('saveActiveGame failed:', e);
+  }
 }
 
 export function clearActiveGame() {
