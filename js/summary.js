@@ -137,6 +137,17 @@ export function showSeasonSummary() {
   let wins = 0, losses = 0, draws = 0, gf = 0, ga = 0;
   const playerMap = {};
 
+  state.roster.forEach(r => {
+    playerMap[playerKey(r.id)] = {
+      id: r.id,
+      name: r.name,
+      games: 0,
+      seconds: 0,
+      goals: 0,
+      posSeconds: {},
+    };
+  });
+
   state.gameHistory.forEach(game => {
     const us = game.ourScore || 0, them = game.theirScore || 0;
     if (us > them) wins++;
@@ -164,11 +175,6 @@ export function showSeasonSummary() {
         : Object.values(playerMap).find(p => p.name === g.scorer);
       if (found) found.goals++;
     });
-  });
-
-  state.roster.forEach(r => {
-    const existing = playerMap[playerKey(r.id)];
-    if (existing) existing.name = r.name;
   });
 
   const seasonPlayers = Object.values(playerMap);

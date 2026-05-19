@@ -131,3 +131,35 @@ test('review game import validates and renders normalized game data', async ({ p
   await expect(page.locator('#summary-body')).toContainText('GK');
   await expect(page.locator('#summary-export-btn')).toBeHidden();
 });
+
+test('season review includes roster players with no recorded appearances', async ({ page }) => {
+  await page.evaluate(() => {
+    localStorage.setItem('soccerRoster', JSON.stringify([
+      { id: 1, name: 'Avery' },
+      { id: 2, name: 'Blair' },
+    ]));
+    localStorage.setItem('soccerSettings', JSON.stringify({ teamName: 'Oyster Blueberries', halfMinutes: 25 }));
+    localStorage.setItem('soccerGameHistory', JSON.stringify([{
+      date: '2026-05-09',
+      opponent: 'Blue Team',
+      ourScore: 1,
+      theirScore: 0,
+      goals: [{ team: 'us', scorer: 'Avery', scorerId: 1, half: 1 }],
+      playerStats: [{
+        id: 1,
+        name: 'Avery',
+        secondsPlayed: 600,
+        positionSeconds: { CF: 600 },
+      }],
+    }]));
+  });
+
+  await page.reload();
+  await page.locator('#overflow-menu-btn').click();
+  await page.locator('#review-season-btn').click();
+
+  await expect(page.locator('#season-summary-screen')).toHaveClass(/active/);
+  await expect(page.locator('#season-meta')).toHaveText('1 game · 2 players');
+  await expect(page.locator('#season-body')).toContainText('Avery');
+  await expect(page.locator('#season-body')).toContainText('Blair');
+});
