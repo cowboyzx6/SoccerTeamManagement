@@ -84,10 +84,11 @@ export function showGkPicker(phase = 1) {
   list.innerHTML = '';
 
   pickerPlayers.forEach(p => {
+    const alreadyGk = hasBeenGoalieThisSeason(p.id, p.name);
     const btn = document.createElement('button');
     btn.className = 'btn btn-gray';
-    btn.style.cssText = 'width:100%;margin-bottom:8px;text-align:left;font-size:1rem;display:flex;align-items:center;gap:12px;padding:10px 14px;';
-    btn.innerHTML = `${avatarHtml(p.id, p.name, 36)}<span>${escHtml(p.name)}</span>`;
+    btn.style.cssText = `width:100%;margin-bottom:8px;text-align:left;font-size:1rem;display:flex;align-items:center;gap:12px;padding:10px 14px;${alreadyGk ? 'opacity:0.45;' : ''}`;
+    btn.innerHTML = `${avatarHtml(p.id, p.name, 36)}<span>${escHtml(p.name)}${alreadyGk ? ' <small style="opacity:0.8;font-size:0.75em;">(played GK)</small>' : ''}</span>`;
     btn.onclick = () => pickGk(p.id);
     list.appendChild(btn);
   });
