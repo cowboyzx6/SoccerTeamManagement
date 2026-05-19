@@ -445,7 +445,8 @@ function openGoaliePicker() {
   gkSpinWinner = null;
   wheelPlayers = seasonFreshGoalieCandidates(state.lineupDraft.filter(p => p.onField));
   if (!wheelPlayers.length) {
-    alert('Everyone in this lineup has already played goalie this season.');
+    alert('Everyone in this lineup has already played goalie this season. Please pick manually.');
+    showGkPicker(1);
     return;
   }
 
