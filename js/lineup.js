@@ -409,18 +409,20 @@ export function launchGame() {
   }
 }
 
-function hasBeenGoalieThisSeason(playerId) {
+function hasBeenGoalieThisSeason(playerId, playerName) {
   return state.gameHistory.some(game =>
-    (game.playerStats || []).some(ps =>
-      String(ps.id) === String(playerId) && (ps.positionSeconds || {}).GK > 0
-    )
+    (game.playerStats || []).some(ps => {
+      const idMatch = String(ps.id) === String(playerId);
+      const nameMatch = playerName && ps.name === playerName;
+      return (idMatch || nameMatch) && (ps.positionSeconds || {}).GK > 0;
+    })
   );
 }
 
 function seasonFreshGoalieCandidates(sourcePlayers, excludedIds = []) {
   const excluded = new Set(excludedIds.map(id => String(id)));
   return sourcePlayers
-    .filter(p => !excluded.has(String(p.id)) && !hasBeenGoalieThisSeason(p.id))
+    .filter(p => !excluded.has(String(p.id)) && !hasBeenGoalieThisSeason(p.id, p.name))
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
