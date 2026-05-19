@@ -19,6 +19,7 @@ export function pauseGame() {
   const btn = document.getElementById('pause-btn');
   btn.textContent  = '\u25B6 RESUME';
   btn.style.background = '#2e7d32';
+  updateGoalBtn();
 }
 
 export function resumeGame() {

@@ -212,3 +212,25 @@ test('ended game does not save a stale active game on reload prompt', async ({ p
   expect(stored.activeGame).toBeNull();
   expect(stored.history).toHaveLength(1);
 });
+
+test('goal button disables when the game is paused', async ({ page }) => {
+  const buttonState = await page.evaluate(async () => {
+    const [{ state }, { resumeGame, pauseGame }] = await Promise.all([
+      import('/js/state.js'),
+      import('/js/game.js'),
+    ]);
+
+    state.halfClock = 1500;
+    state.totalElapsed = 0;
+
+    resumeGame();
+    const runningDisabled = document.getElementById('goal-btn').disabled;
+    pauseGame();
+    const pausedDisabled = document.getElementById('goal-btn').disabled;
+
+    return { runningDisabled, pausedDisabled };
+  });
+
+  expect(buttonState.runningDisabled).toBe(false);
+  expect(buttonState.pausedDisabled).toBe(true);
+});
