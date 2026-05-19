@@ -84,7 +84,7 @@ There is no separate `review-screen` element. Game review imports are rendered t
 | `js/state.js` | State singleton + constants | `state`, `POSITIONS`, `POSITION_ORDER`, `FIELD_SVG` |
 | `js/version.js` | Shared app version | `APP_VERSION` |
 | `js/utils.js` | DOM helpers + theme | `escHtml`, `fmt`, `showScreen`, `openModal`, `closeModal`, `applyTheme`, `toggleTheme` |
-| `js/persistence.js` | localStorage + validated import/export | `saveSettings`, `loadSettings`, `saveRoster`, `loadRoster`, `saveActiveGame`, `loadGameHistory`, `exportProfile`, `importProfile`, `importLeagueCsv`, `buildGameRecord`, `initEventListeners` |
+| `js/persistence.js` | localStorage + validated import/export | `saveSettings`, `loadSettings`, `applySettingsToUi`, `saveRoster`, `loadRoster`, `saveActiveGame`, `loadGameHistory`, `exportProfile`, `importProfile`, `importLeagueCsv`, `buildGameRecord`, `initEventListeners` |
 | `js/profile-normalizer.js` | Pure profile/game import validation | `normalizeProfile` |
 | `js/roster.js` | Roster, attendance, photos | `renderTeamSetupRoster`, `renderGameDayCheckboxes`, `togglePlayerTile`, `renderRoster`, `avatarHtml`, `changeHalfMinutes`, `initEventListeners` |
 | `js/lineup.js` | Lineup, GK picker, goalie wheel | `goToLineup`, `renderLineup`, `launchGame`, `initGame`, `spinWheel`, `handleLineupPointerDown` |
