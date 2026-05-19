@@ -507,18 +507,9 @@ export function confirmGkFromSpin() {
       if (p.id === winner.id) { p.onField = true; p.position = 'GK'; }
     });
 
-    gkSpinPhase = 2;
-    gkSpinWinner = null;
-    wheelPlayers = seasonFreshGoalieCandidates(state.lineupDraft, [state.goalie1Id]);
-    if (!wheelPlayers.length) {
-      closeModal('goalie-modal');
-      gkSpinMode = false;
-      showGkPicker(2);
-      return;
-    }
-
-    resetWheelUI('2nd Half Goalie', 'Spin to pick!');
-    buildWheel();
+    closeModal('goalie-modal');
+    gkSpinMode = false;
+    showGkPicker(2);
   } else {
     state.goalie2Id = winner.id;
     closeModal('goalie-modal');
@@ -615,15 +606,8 @@ function showWheelResult(winner) {
 }
 
 export function nextGoaliePick() {
-  currentGoaliePick = 2;
-  wheelPlayers = wheelPlayers.filter(p => p.id !== state.goalie1Id);
-  if (!wheelPlayers.length) {
-    alert('No other players are eligible for the goalie spinner this season.');
-    return;
-  }
-
-  resetWheelUI('2nd Half Goalie', 'Spin again to pick!');
-  buildWheel();
+  closeModal('goalie-modal');
+  showGkPicker(2);
 }
 
 export function spinAgain() {
