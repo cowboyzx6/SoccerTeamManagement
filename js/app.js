@@ -265,6 +265,13 @@ document.getElementById('bench-grid').addEventListener('click', e => {
   }
 });
 
-if ('serviceWorker' in navigator && !window.__STM_DISABLE_SW__) {
+const isLocalPreview = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+if ('serviceWorker' in navigator && isLocalPreview) {
+  navigator.serviceWorker.getRegistrations?.().then(registrations => {
+    registrations.forEach(registration => registration.unregister());
+  }).catch(() => {});
+}
+
+if ('serviceWorker' in navigator && !window.__STM_DISABLE_SW__ && !isLocalPreview) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }

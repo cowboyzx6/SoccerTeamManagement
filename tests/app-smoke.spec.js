@@ -108,7 +108,12 @@ test('review game import validates and renders normalized game data', async ({ p
       opponent: 'Blue Team',
       ourScore: '2',
       theirScore: '1',
-      goals: [{ team: 'us', scorer: 'Avery', scorerId: '1', half: 1 }],
+      goals: [
+        { team: 'us', scorer: 'Avery', scorerId: '1', half: 1 },
+        { team: 'us', scorer: 'Blair', scorerId: '2', half: 1 },
+        { team: 'us', scorer: 'Blair', scorerId: '2', half: 2 },
+        { team: 'them', scorer: null, half: 2 },
+      ],
       playerStats: [{
         id: '1',
         name: 'Avery',
@@ -129,6 +134,9 @@ test('review game import validates and renders normalized game data', async ({ p
   await expect(page.locator('#summary-vs-line')).toContainText('1');
   await expect(page.locator('#summary-body')).toContainText('Avery');
   await expect(page.locator('#summary-body')).toContainText('GK');
+  await expect(page.locator('#summary-goals')).toContainText('Avery');
+  await expect(page.locator('#summary-goals')).not.toContainText('Blue Team');
+  await expect(page.locator('.summary-goal-item').first()).toContainText('Blair');
   await expect(page.locator('#summary-export-btn')).toBeHidden();
 });
 

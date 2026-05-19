@@ -6,24 +6,29 @@ import { APP_VERSION } from './version.js';
 
 
 
-export function renderGoalsHtml(goalsArray, opponentLabel) {
-  if (!goalsArray.length) {
+export function renderGoalsHtml(goalsArray) {
+  const teamGoals = goalsArray.filter(g => g.team === 'us');
+  if (!teamGoals.length) {
     return '<div class="summary-goal-empty">No goals recorded.</div>';
   }
-  const grouped = goalsArray.reduce((acc, g) => {
-    const key = g.team === 'us'
-      ? (g.scorerId != null ? g.scorerId : (g.scorer || 'Unknown'))
-      : '__opponent__';
-    if (!acc[key]) acc[key] = { team: g.team, scorer: g.scorer, count: 0 };
+  const grouped = teamGoals.reduce((acc, g) => {
+    const key = g.scorerId != null ? g.scorerId : (g.scorer || 'Unknown');
+    if (!acc[key]) acc[key] = { scorer: g.scorer, count: 0 };
     acc[key].count += 1;
     return acc;
   }, {});
-  return Object.values(grouped).map(entry => {
-    const label = entry.team === 'us'
-      ? escHtml(entry.scorer || 'Unknown')
-      : escHtml(opponentLabel);
-    const balls = '<span class="summary-goal-balls">' + '\u26BD'.repeat(entry.count) + '</span>';
-    return `<div class="summary-goal-item">${balls}<div class="summary-goal-scorer">${label}</div></div>`;
+  return Object.values(grouped).sort((a, b) => {
+    const result = b.count - a.count;
+    if (result !== 0) return result;
+    return (a.scorer || 'Unknown').localeCompare(b.scorer || 'Unknown');
+  }).map(entry => {
+    const label = escHtml(entry.scorer || 'Unknown');
+    return `
+      <div class="summary-goal-item">
+        <span class="summary-goal-count">${entry.count}</span>
+        <div class="summary-goal-scorer">${label}</div>
+      </div>
+    `;
   }).join('');
 }
 
@@ -79,7 +84,7 @@ export function showGameReviewFromRecord(gameRecord, profileTeamName) {
     `${stats.length} players \u00B7 Avg: ${fmt(avg)} \u00B7 ${gameRecord.date || ''}`;
 
   document.getElementById('summary-goals').innerHTML =
-    renderGoalsHtml(gameRecord.goals || [], opp);
+    renderGoalsHtml(gameRecord.goals || []);
 
   document.getElementById('summary-export-btn').style.display = 'none';
   showScreen('summary-screen');
@@ -275,7 +280,7 @@ export function showSummary() {
     `${state.players.length} players \u00B7 Avg: ${fmt(avg)} \u00B7 ${state.currentHalf === 2 ? 'Full game' : '1st half only'}`;
 
   document.getElementById('summary-goals').innerHTML =
-    renderGoalsHtml(state.goals, state.opponentName || 'Opponent');
+    renderGoalsHtml(state.goals);
 
   document.getElementById('summary-export-btn').style.display = '';
   showScreen('summary-screen');
