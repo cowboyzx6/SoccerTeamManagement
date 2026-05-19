@@ -291,6 +291,7 @@ export function initEventListeners() {
 
         saveSettings();
         saveGameHistory();
+        clearActiveGame();
 
         document.getElementById('team-name-input').value = state.teamName;
         document.getElementById('app-title-name').textContent = state.teamName;

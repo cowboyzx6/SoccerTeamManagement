@@ -76,6 +76,10 @@ test('restore backup normalizes profile data and clears stale photos', async ({ 
 
   await page.evaluate(() => {
     localStorage.setItem('playerPhotos', JSON.stringify({ 1: 'data:image/png;base64,OLDPHOTO' }));
+    localStorage.setItem('soccerActiveGame', JSON.stringify({
+      players: [{ id: 99, name: 'Stale Player' }],
+      opponentName: 'Stale Team',
+    }));
   });
 
   await page.setInputFiles('#import-file-input', profilePath);
@@ -90,6 +94,7 @@ test('restore backup normalizes profile data and clears stale photos', async ({ 
     settings: JSON.parse(localStorage.getItem('soccerSettings') || '{}'),
     history: JSON.parse(localStorage.getItem('soccerGameHistory') || '[]'),
     photos: localStorage.getItem('playerPhotos'),
+    activeGame: localStorage.getItem('soccerActiveGame'),
   }));
 
   expect(stored.roster).toEqual([{ id: 1, name: 'Avery' }]);
@@ -97,6 +102,7 @@ test('restore backup normalizes profile data and clears stale photos', async ({ 
   expect(stored.history[0].playerStats[0].positionSeconds).toEqual({ GK: 120 });
   expect(stored.history[0].goals[0].scorerId).toBe(1);
   expect(stored.photos).toBeNull();
+  expect(stored.activeGame).toBeNull();
 });
 
 test('review game import validates and renders normalized game data', async ({ page }, testInfo) => {
