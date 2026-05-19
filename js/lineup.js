@@ -675,6 +675,7 @@ function initGame() {
   state.halfClock = halfDuration();
   state.currentHalf = 1;
   state.isRunning = false;
+  state.gameFinalized = false;
   state.selectedId = null;
   state.subPlans = [];
   state.planningBenchId = null;

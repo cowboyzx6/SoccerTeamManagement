@@ -873,6 +873,7 @@ export function confirmGoal(scorerName, scorerId = null) {
 export function endGame() {
   closeModal('half-modal');
   pauseGame();
+  state.gameFinalized = true;
 
   state.players.forEach(p => {
     if (p.onField && p.subInAt !== null) {
@@ -902,6 +903,7 @@ export function endGame() {
     closeModal('download-prompt-modal');
     showSummary();
     state.players = [];
+    state.gameFinalized = false;
   }
   yesBtn.addEventListener('click', onYes);
   noBtn.addEventListener('click', onNo);

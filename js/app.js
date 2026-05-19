@@ -151,7 +151,7 @@ renderGameDayCheckboxes();
 checkForActiveGame();
 
 window.addEventListener('beforeunload', () => {
-  if (state.players.length > 0) saveActiveGame();
+  if (state.players.length > 0 && !state.gameFinalized) saveActiveGame();
 });
 
 document.getElementById('theme-btn').addEventListener('click', toggleTheme);

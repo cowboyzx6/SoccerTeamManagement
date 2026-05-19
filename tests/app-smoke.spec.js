@@ -171,3 +171,44 @@ test('season review includes roster players with no recorded appearances', async
   await expect(page.locator('#season-body')).toContainText('Avery');
   await expect(page.locator('#season-body')).toContainText('Blair');
 });
+
+test('ended game does not save a stale active game on reload prompt', async ({ page }) => {
+  const stored = await page.evaluate(async () => {
+    const [{ state }, { endGame }] = await Promise.all([
+      import('/js/state.js'),
+      import('/js/game.js'),
+    ]);
+
+    state.teamName = 'Oyster Blueberries';
+    state.opponentName = 'Blue Team';
+    state.gameDate = '2026-05-09';
+    state.scoreUs = 1;
+    state.scoreThem = 0;
+    state.goals = [{ team: 'us', scorer: 'Avery', scorerId: 1, half: 1 }];
+    state.totalElapsed = 600;
+    state.halfClock = 0;
+    state.currentHalf = 2;
+    state.players = [{
+      id: 1,
+      name: 'Avery',
+      onField: false,
+      totalPlayed: 600,
+      subInAt: null,
+      h1Snapshot: 300,
+      position: null,
+      positionTime: { CF: 600 },
+      positionStart: null,
+    }];
+
+    endGame();
+    window.dispatchEvent(new Event('beforeunload'));
+
+    return {
+      activeGame: localStorage.getItem('soccerActiveGame'),
+      history: JSON.parse(localStorage.getItem('soccerGameHistory') || '[]'),
+    };
+  });
+
+  expect(stored.activeGame).toBeNull();
+  expect(stored.history).toHaveLength(1);
+});
