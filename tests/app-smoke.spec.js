@@ -105,6 +105,24 @@ test('restore backup normalizes profile data and clears stale photos', async ({ 
   expect(stored.activeGame).toBeNull();
 });
 
+test('league CSV import skips duplicate names within the file', async ({ page }, testInfo) => {
+  const csvPath = testInfo.outputPath('league-roster.csv');
+  await fs.writeFile(csvPath, [
+    'player_first_name,player_last_name',
+    'Avery,Smith',
+    'Avery,Smith',
+    'Blair,Jones',
+  ].join('\n'), 'utf8');
+
+  page.on('dialog', dialog => dialog.accept());
+  await page.setInputFiles('#csv-file-input', csvPath);
+
+  await expect.poll(async () => {
+    const roster = await page.evaluate(() => JSON.parse(localStorage.getItem('soccerRoster') || '[]'));
+    return roster.map(p => p.name);
+  }).toEqual(['Avery S.', 'Blair J.']);
+});
+
 test('review game import validates and renders normalized game data', async ({ page }, testInfo) => {
   const reviewPath = testInfo.outputPath('review-game.json');
   await fs.writeFile(reviewPath, JSON.stringify({

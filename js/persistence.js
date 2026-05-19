@@ -196,9 +196,20 @@ export function parseCsvRoster(text) {
 
   if (!imported.length) { alert('No players found in CSV.'); return; }
 
-  const existing = state.roster.map(p => p.name.toLowerCase());
-  const newNames  = imported.filter(n => !existing.includes(n.toLowerCase()));
-  const dupNames  = imported.filter(n =>  existing.includes(n.toLowerCase()));
+  const existing = new Set(state.roster.map(p => p.name.toLowerCase()));
+  const seenImported = new Set();
+  const newNames = [];
+  const dupNames = [];
+
+  imported.forEach(name => {
+    const key = name.toLowerCase();
+    if (existing.has(key) || seenImported.has(key)) {
+      dupNames.push(name);
+      return;
+    }
+    seenImported.add(key);
+    newNames.push(name);
+  });
 
   const msg = [
     `Found ${imported.length} player(s) in CSV.`,
