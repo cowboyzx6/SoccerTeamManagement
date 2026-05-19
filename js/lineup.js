@@ -178,12 +178,12 @@ export function handleLineupPointerMove(e) {
   }
   moveFieldDragPreview(lineupPointerDrag.preview, e.clientX, e.clientY);
 
-  const overSlot = document.elementFromPoint(e.clientX, e.clientY)?.closest('#lineup-field-positions .pos-slot');
+  const overSlot = findNearestSlot(e.clientX, e.clientY, '#lineup-field-positions');
   if (lineupPointerDrag.overSlot && lineupPointerDrag.overSlot !== overSlot) {
     lineupPointerDrag.overSlot.classList.remove('drag-over');
   }
 
-  lineupPointerDrag.overSlot = overSlot && overSlot.dataset.position ? overSlot : null;
+  lineupPointerDrag.overSlot = overSlot || null;
   if (lineupPointerDrag.overSlot) lineupPointerDrag.overSlot.classList.add('drag-over');
 }
 
@@ -720,6 +720,20 @@ export function moveFieldDragPreview(preview, x, y) {
   if (!preview) return;
   preview.style.left = x + 'px';
   preview.style.top = y + 'px';
+}
+
+export function findNearestSlot(x, y, containerSelector, snapPx = 56) {
+  const hit = document.elementFromPoint(x, y)?.closest('.pos-slot');
+  if (hit?.dataset.position && hit.closest(containerSelector)) return hit;
+
+  let nearest = null;
+  let minDist = snapPx;
+  document.querySelectorAll(`${containerSelector} .pos-slot[data-position]`).forEach(slot => {
+    const r = slot.getBoundingClientRect();
+    const dist = Math.hypot(x - (r.left + r.right) / 2, y - (r.top + r.bottom) / 2);
+    if (dist < minDist) { minDist = dist; nearest = slot; }
+  });
+  return nearest;
 }
 
 export function removeFieldDragPreview(preview) {

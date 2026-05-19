@@ -3,7 +3,7 @@ import { buildGameRecord, clearActiveGame, exportProfile, saveActiveGame, saveGa
 import { avatarHtml, avatarParts } from './roster.js';
 import { showSummary } from './summary.js';
 import { closeModal, escHtml, fmt, openModal } from './utils.js';
-import { createFieldDragPreview, moveFieldDragPreview, removeFieldDragPreview } from './lineup.js';
+import { createFieldDragPreview, findNearestSlot, moveFieldDragPreview, removeFieldDragPreview } from './lineup.js';
 
 let intervalId = null;
 const HALF_DURATION = () => state.halfMinutes * 60;
@@ -236,12 +236,12 @@ export function handleFieldSlotPointerMove(e) {
   }
   moveFieldDragPreview(fieldPointerDrag.preview, e.clientX, e.clientY);
 
-  const overSlot = document.elementFromPoint(e.clientX, e.clientY)?.closest('.pos-slot');
+  const overSlot = findNearestSlot(e.clientX, e.clientY, '#field-positions');
   if (fieldPointerDrag.overSlot && fieldPointerDrag.overSlot !== overSlot) {
     fieldPointerDrag.overSlot.classList.remove('drag-over');
   }
 
-  fieldPointerDrag.overSlot = overSlot && overSlot.dataset.position ? overSlot : null;
+  fieldPointerDrag.overSlot = overSlot || null;
   if (fieldPointerDrag.overSlot) fieldPointerDrag.overSlot.classList.add('drag-over');
 }
 
