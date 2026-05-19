@@ -11,6 +11,12 @@ export function saveSettings() {
   }));
 }
 
+export function applySettingsToUi() {
+  document.getElementById('team-name-input').value = state.teamName;
+  document.getElementById('app-title-name').textContent = state.teamName;
+  document.getElementById('half-minutes-display').textContent = `${state.halfMinutes} min`;
+}
+
 export function loadSettings() {
   const raw = localStorage.getItem('soccerSettings');
   if (raw) {
@@ -20,9 +26,7 @@ export function loadSettings() {
       if (s.halfMinutes) state.halfMinutes = s.halfMinutes;
     } catch { localStorage.removeItem('soccerSettings'); }
   }
-  document.getElementById('team-name-input').value = state.teamName;
-  document.getElementById('app-title-name').textContent = state.teamName;
-  document.getElementById('half-minutes-display').textContent = `${state.halfMinutes} min`;
+  applySettingsToUi();
 }
 
 export function loadGameHistory() {
@@ -306,9 +310,7 @@ export function initEventListeners() {
         saveGameHistory();
         clearActiveGame();
 
-        document.getElementById('team-name-input').value = state.teamName;
-        document.getElementById('app-title-name').textContent = state.teamName;
-        document.getElementById('half-minutes-display').textContent = `${state.halfMinutes} min`;
+        applySettingsToUi();
         document.dispatchEvent(new CustomEvent('profile:imported'));
       } catch (err) {
         alert(`Invalid profile file. ${err.message}`);
