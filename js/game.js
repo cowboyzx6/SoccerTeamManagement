@@ -464,7 +464,7 @@ export function handleTap(id, zone) {
     const existingPlanIdx = state.subPlans.findIndex(pl => pl.inId === id);
     if (existingPlanIdx !== -1) {
       state.subPlans.splice(existingPlanIdx, 1);
-      if (state.planningBenchId === id) state.planningBenchId = null;
+      state.planningBenchId = null;
       renderGame();
       saveActiveGame();
       return;
