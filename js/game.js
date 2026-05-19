@@ -549,6 +549,7 @@ export function executeAllPlans() {
 export function moveFieldPlayerToBench(id) {
   const player = state.players.find(p => p.id === id);
   if (!player || !player.onField) return;
+  const vacatedPos = player.position;
   commitPositionTime(player);
   if (player.subInAt !== null) {
     player.totalPlayed += state.totalElapsed - player.subInAt;
@@ -556,6 +557,7 @@ export function moveFieldPlayerToBench(id) {
   player.onField   = false;
   player.subInAt   = null;
   player.position  = null;
+  state.subPlans = state.subPlans.filter(pl => pl.inId !== id && pl.pos !== vacatedPos);
   if (state.selectedId === id) state.selectedId = null;
   if (state.activeGoalieId === id) state.activeGoalieId = null;
   renderGame();
@@ -586,6 +588,9 @@ export function moveFieldPlayerToPosition(fromId, targetPos) {
     if (target) setActiveGoalie(target.id);
     else state.activeGoalieId = null;
   }
+
+  const affectedPositions = new Set([fromPos, targetPos].filter(Boolean));
+  state.subPlans = state.subPlans.filter(pl => !affectedPositions.has(pl.pos));
 
   state.selectedId = null;
   state.planningBenchId = null;
