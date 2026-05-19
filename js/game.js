@@ -499,6 +499,7 @@ export function createPlan(inId, pos) {
     inn.subInAt  = state.totalElapsed;
     inn.position = pos;
     startPositionTimer(inn);
+    if (pos === 'GK') setActiveGoalie(inn.id);
     state.planningBenchId = null;
     state.subPlans = state.subPlans.filter(pl => pl.inId !== inId && pl.pos !== pos);
     renderGame();
@@ -529,13 +530,13 @@ export function executeAllPlans() {
       out.onField  = false;
       out.subInAt  = null;
       out.position = null;
-      if (state.activeGoalieId === out.id) setActiveGoalie(inId);
     }
 
     inn.onField  = true;
     inn.subInAt  = state.totalElapsed;
     inn.position = pos;
     startPositionTimer(inn);
+    if (pos === 'GK') setActiveGoalie(inId);
   });
   state.subPlans        = [];
   state.planningBenchId = null;
