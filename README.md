@@ -43,6 +43,9 @@ The app is a **vanilla HTML/CSS/JavaScript app** with browser-native ES modules.
 - Sort the bench by name, playing time, or substitution priority.
 - Use color-coded cards to identify players who are under-played, balanced, or over-played.
 - Record goals for either team, with optional scorer attribution for your team.
+- **Minimum play time floor** — Set a per-game minimum minutes target; bench cards for players at risk of not meeting it (given remaining game time) are highlighted with an amber border and ⚠ indicator.
+- **Bench streak timer** — Each bench card shows how long that player has been sitting in their current stint (⏳ X:XX), so you can prioritize who goes in next.
+- **Undo last goal** — A single tap reverses the most recently recorded goal (ours or theirs) without leaving the game screen.
 
 ### Summaries and history
 

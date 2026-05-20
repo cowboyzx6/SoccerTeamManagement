@@ -119,6 +119,8 @@ There is no separate `review-screen` element. Game review imports are rendered t
 | Resume interrupted game | `saveActiveGame`, `checkForActiveGame`, `soccerActiveGame` |
 | Service worker / PWA | `navigator.serviceWorker.register`, `manifest.json`, `sw.js` |
 | Playwright smoke tests | `npm.cmd test`, `playwright.config.js`, `tests/app-smoke.spec.js`, `tests/global-setup.cjs`, `tests/global-teardown.cjs`, `scripts/test-server.js` |
+| Min play floor / bench streak | `isMinPlayAtRisk`, `changeMinPlayMinutes`, `benchSince`, `renderGrid`, `min-play-display` |
+| Undo last goal | `undoLastGoal`, `renderScore`, `undo-goal-btn`, `state.goals` |
 
 ## Key DOM ids
 
@@ -266,6 +268,8 @@ There is no separate `review-screen` element. Game review imports are rendered t
 - `totalElapsed`, `halfClock`, `timerBase`, `isRunning` - timer state.
 - `scoreUs`, `scoreThem`, `goals` - scoring state.
 - `gameDate`, `opponentName`, `teamName`, `halfMinutes` - game/team metadata.
+- `minPlayMinutes` - per-game minimum play time target in minutes (0 = off); persisted in settings.
+- `benchSince` (per-player) - `totalElapsed` value when the player was last benched; `null` when on field. Used to compute bench streak display.
 - `seasonSortKey`, `seasonSortDir` - season summary sorting state.
 - `APP_VERSION` - exported from `js/version.js`; shown in About and included in JSON exports.
 - `CACHE_VERSION` - declared in `sw.js`; stamped with `APP_VERSION` by `scripts/Update-AppVersion.ps1`.

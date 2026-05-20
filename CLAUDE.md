@@ -4,7 +4,7 @@ This file gives Claude Code project-specific guidance for this repository.
 
 ## App summary
 
-A no-build, single-file PWA for managing youth soccer player rotations during live games. It tracks playing time, position time, substitutions, goalies, goals, game summaries, season stats, roster data, and photos.
+A no-build, single-file PWA for managing youth soccer player rotations during live games. Built specifically for recreational youth soccer teams where equal playing time and sideline-friendly tooling matter most. It tracks playing time, position time, substitutions, goalies, goals, game summaries, season stats, roster data, and photos.
 
 ## Development workflow
 
@@ -117,6 +117,8 @@ All mutable app state lives in the `state` singleton exported from `js/state.js`
 ```js
 state.roster          // permanent roster, persisted
 state.players         // active-game player state
+// Per-player fields (in state.players entries):
+//   benchSince: totalElapsed value when player was last benched (null when on field)
 state.gameHistory     // completed games
 state.playerPhotos    // id -> base64 data URL
 
@@ -147,6 +149,7 @@ state.gameDate
 state.opponentName
 state.teamName
 state.halfMinutes
+state.minPlayMinutes  // configurable minimum play seconds target (0 = off); persisted in soccerSettings
 ```
 
 State changes do not update the UI automatically.
@@ -199,7 +202,8 @@ Use `PROJECT_MAP.md` for line ranges.
 - Game render: `renderGame`, `renderField`, `renderGrid`, `computeFairShare`, `getStatus`
 - Substitutions: `handleTap`, `createPlan`, `executeAllPlans`, `makeSub`, `moveFieldPlayerToBench`
 - Timer: `pauseGame`, `resumeGame`, `tick`, `renderClock`
-- Goals/score: `openGoalModal`, `recordGoal`, `confirmGoal`, `confirmTheirScore`, `renderScore`
+- Goals/score: `openGoalModal`, `recordGoal`, `confirmGoal`, `confirmTheirScore`, `renderScore`, `undoLastGoal`
+- Min play / bench assist: `changeMinPlayMinutes`, `isMinPlayAtRisk`
 - Half/end/summary: `handleHalfEnd`, `startSecondHalf`, `endGame`, `buildGameRecord`, `showSummary`, `showSeasonSummary`
 - Import/export/photos: `exportProfile`, `importProfile`, `importLeagueCsv`, `importGameReview`, `resizeAndStorePhoto`
 
