@@ -164,7 +164,10 @@ export function showSeasonSummary() {
     (game.playerStats || []).forEach(ps => {
       const key = playerKey(ps.id);
       if (!playerMap[key]) {
-        playerMap[key] = { id: ps.id, name: ps.name, games: 0, seconds: 0, goals: 0, posSeconds: {} };
+        const nameKey = Object.keys(playerMap).find(k => playerMap[k].name === ps.name);
+        playerMap[key] = nameKey
+          ? playerMap[nameKey]
+          : { id: ps.id, name: ps.name, games: 0, seconds: 0, goals: 0, posSeconds: {} };
       }
       const e = playerMap[key];
       e.games++;
