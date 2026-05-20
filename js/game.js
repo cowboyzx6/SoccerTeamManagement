@@ -111,6 +111,13 @@ export function getStatus(player, fairShare) {
   return 's-green';
 }
 
+function isMinPlayAtRisk(player) {
+  if (!state.minPlayMinutes || player.onField) return false;
+  const remainingSecs = (state.halfMinutes * 60 * 2) - state.totalElapsed;
+  const neededSecs = (state.minPlayMinutes * 60) - player.totalPlayed;
+  return neededSecs > remainingSecs;
+}
+
 
 export function commitPositionTime(player) {
   if (player.position && player.positionStart !== null) {
@@ -371,8 +378,9 @@ export function renderGrid(gridId, list, zone, fairShare) {
       sublabel = 'tap a position slot...';
     }
 
+    const atRisk = isMinPlayAtRisk(player);
     const card = document.createElement('div');
-    card.className = `player-card ${status}${selected}${planClass}`;
+    card.className = `player-card ${status}${selected}${planClass}${atRisk ? ' at-risk' : ''}`;
     card.dataset.playerId = String(player.id);
     card.onclick = e => {
       if (e.target.closest('.btn-remove-player')) return;
