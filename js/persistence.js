@@ -7,7 +7,8 @@ import { normalizeProfile } from './profile-normalizer.js';
 export function saveSettings() {
   localStorage.setItem('soccerSettings', JSON.stringify({
     teamName: state.teamName,
-    halfMinutes: state.halfMinutes
+    halfMinutes: state.halfMinutes,
+    minPlayMinutes: state.minPlayMinutes,
   }));
 }
 
@@ -15,6 +16,8 @@ export function applySettingsToUi() {
   document.getElementById('team-name-input').value = state.teamName;
   document.getElementById('app-title-name').textContent = state.teamName;
   document.getElementById('half-minutes-display').textContent = `${state.halfMinutes} min`;
+  const minPlayEl = document.getElementById('min-play-display');
+  if (minPlayEl) minPlayEl.textContent = state.minPlayMinutes === 0 ? 'off' : `${state.minPlayMinutes} min`;
 }
 
 export function loadSettings() {
@@ -22,8 +25,9 @@ export function loadSettings() {
   if (raw) {
     try {
       const s = JSON.parse(raw);
-      if (s.teamName)    state.teamName    = s.teamName;
-      if (s.halfMinutes) state.halfMinutes = s.halfMinutes;
+      if (s.teamName)               state.teamName       = s.teamName;
+      if (s.halfMinutes)            state.halfMinutes    = s.halfMinutes;
+      if (s.minPlayMinutes != null) state.minPlayMinutes = s.minPlayMinutes;
     } catch { localStorage.removeItem('soccerSettings'); }
   }
   applySettingsToUi();

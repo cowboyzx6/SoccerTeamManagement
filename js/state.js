@@ -14,6 +14,7 @@ export const state = {
   nextId: 1,
   halfActionIsEnd: false,
   halfMinutes: 25,
+  minPlayMinutes: 0,
   goalie1Id: null,
   goalie2Id: null,
   activeGoalieId: null,

@@ -98,7 +98,7 @@ test('restore backup normalizes profile data and clears stale photos', async ({ 
   }));
 
   expect(stored.roster).toEqual([{ id: 1, name: 'Avery' }]);
-  expect(stored.settings).toEqual({ teamName: 'Restored Team', halfMinutes: 30 });
+  expect(stored.settings).toEqual({ teamName: 'Restored Team', halfMinutes: 30, minPlayMinutes: 0 });
   expect(stored.history[0].playerStats[0].positionSeconds).toEqual({ GK: 120 });
   expect(stored.history[0].goals[0].scorerId).toBe(1);
   expect(stored.photos).toBeNull();
