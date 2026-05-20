@@ -536,14 +536,16 @@ export function executeAllPlans() {
       if (out.subInAt !== null) {
         out.totalPlayed += state.totalElapsed - out.subInAt;
       }
-      out.onField  = false;
-      out.subInAt  = null;
-      out.position = null;
+      out.onField    = false;
+      out.subInAt    = null;
+      out.position   = null;
+      out.benchSince = state.totalElapsed;
     }
 
-    inn.onField  = true;
-    inn.subInAt  = state.totalElapsed;
-    inn.position = pos;
+    inn.onField    = true;
+    inn.subInAt    = state.totalElapsed;
+    inn.position   = pos;
+    inn.benchSince = null;
     startPositionTimer(inn);
     if (pos === 'GK') setActiveGoalie(inId);
   });
@@ -563,9 +565,10 @@ export function moveFieldPlayerToBench(id) {
   if (player.subInAt !== null) {
     player.totalPlayed += state.totalElapsed - player.subInAt;
   }
-  player.onField   = false;
-  player.subInAt   = null;
-  player.position  = null;
+  player.onField    = false;
+  player.subInAt    = null;
+  player.position   = null;
+  player.benchSince = state.totalElapsed;
   state.subPlans = state.subPlans.filter(pl => pl.inId !== id && pl.pos !== vacatedPos);
   if (state.selectedId === id) state.selectedId = null;
   if (state.activeGoalieId === id) state.activeGoalieId = null;
@@ -625,13 +628,15 @@ export function makeSub(outId, inId) {
   }
 
   const outPosition = out.position;
-  out.onField  = false;
-  out.subInAt  = null;
-  out.position = null;
+  out.onField    = false;
+  out.subInAt    = null;
+  out.position   = null;
+  out.benchSince = state.totalElapsed;
 
-  inn.onField  = true;
-  inn.subInAt  = state.totalElapsed;
-  inn.position = outPosition;
+  inn.onField    = true;
+  inn.subInAt    = state.totalElapsed;
+  inn.position   = outPosition;
+  inn.benchSince = null;
   startPositionTimer(inn);
 
   // If goalie was subbed out, incoming player takes the goalie role
@@ -775,13 +780,15 @@ export function startSecondHalf() {
     p.subInAt       = null;
     p.position      = null;
     p.positionStart = null;
+    p.benchSince    = state.totalElapsed;
   });
 
   const secondHalfGoalie = state.players.find(p => p.id === secondHalfGoalieId);
   if (secondHalfGoalie) {
-    secondHalfGoalie.onField  = true;
-    secondHalfGoalie.subInAt  = state.totalElapsed;
-    secondHalfGoalie.position = 'GK';
+    secondHalfGoalie.onField    = true;
+    secondHalfGoalie.subInAt    = state.totalElapsed;
+    secondHalfGoalie.position   = 'GK';
+    secondHalfGoalie.benchSince = null;
   }
 
   // Start 2nd half position timers after all position changes are settled
