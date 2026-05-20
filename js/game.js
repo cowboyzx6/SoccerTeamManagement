@@ -111,10 +111,11 @@ export function getStatus(player, fairShare) {
   return 's-green';
 }
 
+// Returns true when a bench player cannot accumulate enough play time to meet the minimum floor
 function isMinPlayAtRisk(player) {
   if (!state.minPlayMinutes || player.onField) return false;
   const remainingSecs = (state.halfMinutes * 60 * 2) - state.totalElapsed;
-  const neededSecs = (state.minPlayMinutes * 60) - player.totalPlayed;
+  const neededSecs = (state.minPlayMinutes * 60) - getPlayedTime(player);
   return neededSecs > remainingSecs;
 }
 
