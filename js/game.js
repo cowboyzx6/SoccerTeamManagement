@@ -430,8 +430,9 @@ export function confirmRemovePlayer() {
         p.totalPlayed += state.totalElapsed - p.subInAt;
         p.subInAt = null;
       }
-      p.onField  = false;
-      p.position = null;
+      p.onField    = false;
+      p.position   = null;
+      p.benchSince = state.totalElapsed;
     }
     p.leftEarly = true;
   }
@@ -828,7 +829,7 @@ export function renderScore() {
 }
 
 export function undoLastGoal() {
-  if (!state.goals.length) return;
+  if (!state.goals.length || state.gameFinalized) return;
   const last = state.goals.pop();
   if (last.team === 'us') state.scoreUs = Math.max(0, state.scoreUs - 1);
   else state.scoreThem = Math.max(0, state.scoreThem - 1);
