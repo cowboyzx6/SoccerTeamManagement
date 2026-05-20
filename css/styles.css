@@ -888,6 +888,7 @@
     .s-green  { background: var(--status-green-bg);  border-color: #2e7d32; }
     .s-yellow { background: var(--status-yellow-bg); border-color: #f57c00; }
     .s-red    { background: var(--status-red-bg);    border-color: #c62828; }
+    /* !important overrides status border-color (s-red/s-yellow) — at-risk is a secondary indicator layered on top */
     .player-card.at-risk { border-left: 4px solid #ff8f00 !important; }
 
     /* Selected to come off */
