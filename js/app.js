@@ -15,6 +15,7 @@ import {
 import {
   addRosterPlayer,
   changeHalfMinutes,
+  changeMinPlayMinutes,
   checkAllPlayers,
   closeRemoveRosterModal,
   closeRenameModal,
@@ -180,6 +181,8 @@ document.getElementById('opponent-input').addEventListener('input', updateStartB
 document.getElementById('check-all-btn').addEventListener('click', checkAllPlayers);
 document.getElementById('half-minus-btn').addEventListener('click', () => changeHalfMinutes(-1));
 document.getElementById('half-plus-btn').addEventListener('click', () => changeHalfMinutes(1));
+document.getElementById('min-play-minus-btn').addEventListener('click', () => changeMinPlayMinutes(-5));
+document.getElementById('min-play-plus-btn').addEventListener('click', () => changeMinPlayMinutes(5));
 document.getElementById('start-btn').addEventListener('click', goToLineup);
 document.getElementById('team-setup-back-btn').addEventListener('click', goBackFromTeamSetup);
 document.getElementById('import-csv-btn').addEventListener('click', importLeagueCsv);

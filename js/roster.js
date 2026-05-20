@@ -11,6 +11,16 @@ export function changeHalfMinutes(delta) {
   saveSettings();
 }
 
+export function changeMinPlayMinutes(delta) {
+  let val = state.minPlayMinutes + delta;
+  if (val > 45) val = 0;
+  if (val < 0) val = 0;
+  state.minPlayMinutes = val;
+  const label = state.minPlayMinutes === 0 ? 'off' : `${state.minPlayMinutes} min`;
+  document.getElementById('min-play-display').textContent = label;
+  saveSettings();
+}
+
 export function loadPhotos() {
   const saved = localStorage.getItem('playerPhotos');
   if (saved) {
