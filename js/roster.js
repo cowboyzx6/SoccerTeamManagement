@@ -12,8 +12,9 @@ export function changeHalfMinutes(delta) {
 }
 
 export function changeMinPlayMinutes(delta) {
+  const maxMinPlay = state.halfMinutes * 2;
   let val = state.minPlayMinutes + delta;
-  if (val > 45) val = 0; // wrap back to "off" after max
+  if (val > maxMinPlay) val = 0; // wrap back to "off" after max
   if (val < 0) val = 0;
   state.minPlayMinutes = val;
   const label = state.minPlayMinutes === 0 ? 'off' : `${state.minPlayMinutes} min`;

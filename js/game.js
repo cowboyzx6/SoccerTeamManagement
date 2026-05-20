@@ -111,9 +111,11 @@ export function getStatus(player, fairShare) {
   return 's-green';
 }
 
-// Returns true when a bench player cannot accumulate enough play time to meet the minimum floor
+// Returns true when a bench player cannot accumulate enough play time to meet the minimum floor.
+// Does not fire during halftime (clock stopped at end of H1) so the coach isn't alarmed mid-break.
 function isMinPlayAtRisk(player) {
   if (!state.minPlayMinutes || player.onField) return false;
+  if (!state.isRunning && state.currentHalf === 1) return false; // halftime break
   const remainingSecs = (state.halfMinutes * 60 * 2) - state.totalElapsed;
   const neededSecs = (state.minPlayMinutes * 60) - getPlayedTime(player);
   return neededSecs > remainingSecs;
@@ -782,11 +784,13 @@ export function startSecondHalf() {
       p.totalPlayed += state.totalElapsed - p.subInAt;
     }
     p.h1Snapshot    = p.totalPlayed;
+    const wasOnField = p.onField;
     p.onField       = false;
     p.subInAt       = null;
     p.position      = null;
     p.positionStart = null;
-    p.benchSince    = state.totalElapsed;
+    // Only reset streak for players coming off the field; bench players keep their running streak
+    if (wasOnField) p.benchSince = state.totalElapsed;
   });
 
   const secondHalfGoalie = state.players.find(p => p.id === secondHalfGoalieId);
