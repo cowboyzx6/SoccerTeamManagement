@@ -88,6 +88,7 @@ import {
   setBenchSort,
   syncGamePhaseUi,
   togglePause,
+  undoLastGoal,
   updateGoalBtn
 } from './game.js';
 import { applyTheme, closeModal, toggleTheme } from './utils.js';
@@ -198,6 +199,7 @@ document.getElementById('about-close-btn').addEventListener('click', () => close
 document.getElementById('lineup-back-btn').addEventListener('click', goBackFromLineup);
 document.getElementById('launch-btn').addEventListener('click', launchGame);
 document.getElementById('goal-btn').addEventListener('click', openGoalModal);
+document.getElementById('undo-goal-btn').addEventListener('click', undoLastGoal);
 document.getElementById('pause-btn').addEventListener('click', togglePause);
 document.getElementById('action-btn').addEventListener('click', handleHalfEnd);
 document.getElementById('sort-name-btn').addEventListener('click', () => setBenchSort('name'));

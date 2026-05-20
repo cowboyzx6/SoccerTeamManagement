@@ -823,6 +823,17 @@ export function startSecondHalf() {
 export function renderScore() {
   document.getElementById('score-us').textContent   = state.scoreUs;
   document.getElementById('score-them').textContent = state.scoreThem;
+  const undoBtn = document.getElementById('undo-goal-btn');
+  if (undoBtn) undoBtn.style.display = state.goals.length ? '' : 'none';
+}
+
+export function undoLastGoal() {
+  if (!state.goals.length) return;
+  const last = state.goals.pop();
+  if (last.team === 'us') state.scoreUs = Math.max(0, state.scoreUs - 1);
+  else state.scoreThem = Math.max(0, state.scoreThem - 1);
+  renderScore();
+  saveActiveGame();
 }
 
 export function updateGoalBtn() {
