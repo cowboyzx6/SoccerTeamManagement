@@ -388,11 +388,15 @@ export function renderGrid(gridId, list, zone, fairShare) {
       handleTap(player.id, zone);
     };
     const [avatarBg, avatarContent] = avatarParts(player.id, player.name);
+    const benchStreakHtml = player.benchSince != null
+      ? `<div class="bench-streak">${atRisk ? '&#9888; ' : ''}&#9203; ${fmt(state.totalElapsed - player.benchSince)}</div>`
+      : '';
     card.innerHTML = `
       <div class="p-avatar" style="${avatarBg}">${avatarContent}</div>
       <div class="p-info">
         <div class="p-name">${escHtml(player.name)}</div>
         <div class="p-time">${fmt(time)}</div>
+        ${benchStreakHtml}
         <div class="p-sublabel">${sublabel}</div>
       </div>
       <button class="btn-remove-player" title="Remove from game">&#10005;</button>
