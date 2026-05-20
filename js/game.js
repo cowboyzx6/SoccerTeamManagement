@@ -846,13 +846,13 @@ export function recordGoal(team) {
 
 export function adjustTheirScore(delta) {
   const preview = document.getElementById('goal-them-preview');
-  const current = parseInt(preview.textContent);
+  const current = parseInt(preview.textContent, 10);
   if (isNaN(current)) return;
   preview.textContent = Math.max(0, current + delta);
 }
 
 export function confirmTheirScore() {
-  const newScore = parseInt(document.getElementById('goal-them-preview').textContent);
+  const newScore = parseInt(document.getElementById('goal-them-preview').textContent, 10);
   if (isNaN(newScore)) return;
   const delta    = newScore - state.scoreThem;
   state.scoreThem = newScore;
