@@ -699,6 +699,20 @@
 
     .score-goal-btn:active { opacity: 0.8; }
 
+    .score-undo-btn {
+      background: #455a64;
+      border: 1px solid #607d8b;
+      color: #fff;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 5px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      margin-left: 4px;
+    }
+    .score-undo-btn:active { opacity: 0.8; }
+
     .header-btns {
       display: flex;
       gap: 8px;
@@ -874,6 +888,7 @@
     .s-green  { background: var(--status-green-bg);  border-color: #2e7d32; }
     .s-yellow { background: var(--status-yellow-bg); border-color: #f57c00; }
     .s-red    { background: var(--status-red-bg);    border-color: #c62828; }
+    .player-card.at-risk { border-left: 4px solid #ff8f00 !important; }
 
     /* Selected to come off */
     .player-card.selected {
@@ -931,6 +946,13 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--text-card-label);
+    }
+
+    .bench-streak {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-top: 1px;
+      font-variant-numeric: tabular-nums;
     }
 
     .btn-remove-player {
