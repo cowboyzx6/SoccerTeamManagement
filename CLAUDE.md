@@ -116,9 +116,8 @@ All mutable app state lives in the `state` singleton exported from `js/state.js`
 
 ```js
 state.roster          // permanent roster, persisted
-state.players         // active-game player state
-// Per-player fields (in state.players entries):
-//   benchSince: totalElapsed value when player was last benched (null when on field)
+state.players         // active-game players and runtime stats; each entry also carries:
+                      //   benchSince: totalElapsed when last benched (null when on field)
 state.gameHistory     // completed games
 state.playerPhotos    // id -> base64 data URL
 
@@ -149,7 +148,7 @@ state.gameDate
 state.opponentName
 state.teamName
 state.halfMinutes
-state.minPlayMinutes  // configurable minimum play seconds target (0 = off); persisted in soccerSettings
+state.minPlayMinutes  // minimum play time per game in minutes (0 = off); persisted in soccerSettings
 ```
 
 State changes do not update the UI automatically.
