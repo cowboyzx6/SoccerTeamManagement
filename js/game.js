@@ -504,9 +504,10 @@ export function createPlan(inId, pos) {
   const out = state.players.find(p => p.onField && p.position === pos);
   if (!out) {
     // Empty slot: place the bench player directly into the position.
-    inn.onField  = true;
-    inn.subInAt  = state.totalElapsed;
-    inn.position = pos;
+    inn.onField    = true;
+    inn.subInAt    = state.totalElapsed;
+    inn.position   = pos;
+    inn.benchSince = null;
     startPositionTimer(inn);
     if (pos === 'GK') setActiveGoalie(inn.id);
     state.planningBenchId = null;
