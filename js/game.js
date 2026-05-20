@@ -691,6 +691,7 @@ export function confirmLateArrival(rosterId) {
     position:      null,
     positionTime:  {},
     positionStart: null,
+    benchSince:    state.totalElapsed,
   });
   closeLateModal();
   renderGame();

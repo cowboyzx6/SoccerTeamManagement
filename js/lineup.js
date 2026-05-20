@@ -653,6 +653,7 @@ function startGameDirect() {
     position: p.position || null,
     positionTime: {},
     positionStart: (p.onField && p.position) ? 0 : null,
+    benchSince: p.onField ? null : 0,
   }));
 
   initGame();
