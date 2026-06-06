@@ -1834,8 +1834,10 @@
       line-height: 1;
       width: 100%;
       text-align: center;
-      display: block;
+      display: none;
     }
+
+    .pos-slot.selected .pos-bench-btn { display: block; }
 
     .pos-bench-btn:active { color: #fff; background: rgba(255,255,255,0.18); }
 
